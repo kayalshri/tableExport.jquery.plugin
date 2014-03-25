@@ -1,0 +1,20 @@
+{
+    "name" : "tableExport",
+    "version" : "1.0.0",
+    "licenses" : [{
+        "type": "MIT license (MIT)",
+        "url": "http://opensource.org/licenses/MIT"
+    }],
+    "title" : "HTML Table export",
+    "author" : {
+        "name" : "Giriraj",
+        "email" : "kayalshri@gmail.com",
+        "url" : "http://ngiriraj.com"
+    },
+    "keywords" : ["table2JSON", "table2XML", "table2PNG","table2CSV","table2Excel","table2Word","table2Powerpoint","table2txt","table2PDF"],
+    "bugs" : "https://github.com/kayalshri/tableExport.jquery.plugin/issues",
+    "homepage" : "https://github.com/kayalshri/tableExport.jquery.plugin",
+    "dependencies" : {
+        "jquery" : ">=1.10"
+    }
+}
