@@ -24,18 +24,20 @@ THE SOFTWARE.*/
         $.fn.extend({
             tableExport: function(options) {
                 var defaults = {
-				separator: ',',
-				ignoreColumn: [],
-				tableName:'yourTableName',
-				type:'csv',
-				pdfFontSize:14,
-				pdfLeftMargin:20
+						separator: ',',
+						ignoreColumn: [],
+						tableName:'yourTableName',
+						type:'csv',
+						pdfFontSize:14,
+						pdfLeftMargin:20,
+						escape:'true',
+						htmlContent:'false'
 				};
                 
 				var options = $.extend(defaults, options);
 				var el = this;
 				
-				if(defaults.type == 'csv'){
+				if(defaults.type == 'csv' || defaults.type == 'txt'){
 				
 					// Header
 					var tdData ="";
@@ -44,7 +46,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '"' + $(this).text().trim() + '"' + defaults.separator;									
+									tdData += '"' + parseString($(this)) + '"' + defaults.separator;									
 								}
 							}
 							
@@ -59,7 +61,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '"'+ $(this).text().trim() + '"'+ defaults.separator;
+									tdData += '"'+ parseString($(this)) + '"'+ defaults.separator;
 								}
 							}
 						});
@@ -70,45 +72,7 @@ THE SOFTWARE.*/
 					//output
 					//console.log(tdData);
 					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/csv;filename=exportData;' + base64data);
-				}else if(defaults.type == 'txt'){
-				
-					// Header
-					var tdData ="";
-					$(el).find('thead').find('tr').each(function() {
-					tdData += "\n";					
-						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
-								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '"' + $(this).text().trim() + '"' + defaults.separator;									
-								}
-							}
-							
-						});
-						tdData = $.trim(tdData);
-						tdData = $.trim(tdData).substring(0, tdData.length -1);
-					});
-					
-					// Row vs Column
-					$(el).find('tbody').find('tr').each(function() {
-					tdData += "\n";
-						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
-								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '"'+ $(this).text().trim() + '"'+ defaults.separator;
-								}
-							}
-						});
-						//tdData = $.trim(tdData);
-						tdData = $.trim(tdData).substring(0, tdData.length -1);
-					});
-					
-					//output
-					//console.log(tdData);
-					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/txt;filename=exportData;' + base64data);
-					
-				
+					window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
 				}else if(defaults.type == 'sql'){
 				
 					// Header
@@ -118,7 +82,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '`' + $(this).text().trim() + '`,' ;									
+									tdData += '`' + parseString($(this)) + '`,' ;									
 								}
 							}
 							
@@ -133,7 +97,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '"'+ escape($(this).text().trim()) + '",';
+									tdData += '"'+ parseString($(this)) + '",';
 								}
 							}
 						});
@@ -160,7 +124,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									jsonArrayTd.push(escape($(this).text().trim()));
+									jsonArrayTd.push(parseString($(this)));									
 								}
 							}
 						});									
@@ -176,7 +140,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									jsonArrayTd.push(escape($(this).text().trim()));
+									jsonArrayTd.push(parseString($(this)));									
 								}
 							}
 						});									
@@ -205,7 +169,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									xml += "<field>" + escape($(this).text().trim()) + "</field>";
+									xml += "<field>" + parseString($(this)) + "</field>";
 								}
 							}
 						});									
@@ -220,7 +184,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									xml += "<column-"+colCount+">"+escape($(this).text().trim())+"</column-"+colCount+">";
+									xml += "<column-"+colCount+">"+parseString($(this))+"</column-"+colCount+">";
 								}
 							}
 							colCount++;
@@ -243,7 +207,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									excel += "<td>" + $(this).html().trim()+ "</td>";
+									excel += "<td>" + parseString($(this))+ "</td>";
 								}
 							}
 						});	
@@ -260,7 +224,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									excel += "<td>"+$(this).html().trim()+"</td>";
+									excel += "<td>"+parseString($(this))+"</td>";
 								}
 							}
 							colCount++;
@@ -320,7 +284,7 @@ THE SOFTWARE.*/
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									var colPosition = startColPosition+ (index * 50);									
-									doc.text(colPosition,20, $(this).text().trim());
+									doc.text(colPosition,20, parseString($(this)));
 								}
 							}
 						});									
@@ -343,18 +307,33 @@ THE SOFTWARE.*/
 							if ($(this).css('display') != 'none'){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									var colPosition = startColPosition+ (index * 50);									
-									doc.text(colPosition,rowPosition, $(this).text().trim());
+									doc.text(colPosition,rowPosition, parseString($(this)));
 								}
 							}
 							
 						});															
 						
 					});					
-					//doc.text(20,rowPosition+10, "test Msg");
-					
+										
 					// Output as Data URI
 					doc.output('datauri');
 	
+				}
+				
+				
+				function parseString(data){
+				
+					if(defaults.htmlContent == 'true'){
+						content_data = data.html().trim();
+					}else{
+						content_data = data.text().trim();
+					}
+					
+					if(defaults.escape == 'true'){
+						content_data = escape(content_data);
+					}
+					
+					return content_data;
 				}
 			
 			}
