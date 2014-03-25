@@ -31,7 +31,8 @@ THE SOFTWARE.*/
 						pdfFontSize:14,
 						pdfLeftMargin:20,
 						escape:'true',
-						htmlContent:'false'
+						htmlContent:'false',
+						consoleLog:'true'
 				};
                 
 				var options = $.extend(defaults, options);
@@ -70,7 +71,9 @@ THE SOFTWARE.*/
 					});
 					
 					//output
-					//console.log(tdData);
+					if(defaults.consoleLog == 'true'){
+						console.log(tdData);
+					}
 					var base64data = "base64," + $.base64.encode(tdData);
 					window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
 				}else if(defaults.type == 'sql'){
@@ -110,6 +113,11 @@ THE SOFTWARE.*/
 					
 					//output
 					//console.log(tdData);
+					
+					if(defaults.consoleLog == 'true'){
+						console.log(tdData);
+					}
+					
 					var base64data = "base64," + $.base64.encode(tdData);
 					window.open('data:application/sql;filename=exportData;' + base64data);
 					
@@ -156,7 +164,9 @@ THE SOFTWARE.*/
 					
 					//Return as Array
 					//console.log(jsonExportArray);
-					
+					if(defaults.consoleLog == 'true'){
+						console.log(JSON.stringify(jsonExportArray));
+					}
 					var base64data = "base64," + $.base64.encode(JSON.stringify(jsonExportArray));
 					window.open('data:application/json;filename=exportData;' + base64data);
 				}else if(defaults.type == 'xml'){
@@ -194,7 +204,10 @@ THE SOFTWARE.*/
 					});					
 					xml += '</data></tabledata>'
 					
-					//console.log(xml);
+					if(defaults.consoleLog == 'true'){
+						console.log(xml);
+					}
+					
 					var base64data = "base64," + $.base64.encode(xml);
 					window.open('data:application/xml;filename=exportData;' + base64data);
 
@@ -234,7 +247,9 @@ THE SOFTWARE.*/
 					});					
 					excel += '</table>'
 					
-					//console.log(excel);
+					if(defaults.consoleLog == 'true'){
+						console.log(excel);
+					}
 					
 					var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
 					excelFile += "<head>";
@@ -332,6 +347,8 @@ THE SOFTWARE.*/
 					if(defaults.escape == 'true'){
 						content_data = escape(content_data);
 					}
+					
+					
 					
 					return content_data;
 				}
