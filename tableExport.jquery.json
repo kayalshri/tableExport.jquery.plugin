@@ -11,7 +11,7 @@
         "email" : "kayalshri@gmail.com",
         "url" : "http://ngiriraj.com"
     },
-    "keywords" : ["table2JSON", "table2XML", "table2PNG","table2CSV","table2Excel","table2Word","table2Powerpoint","table2txt","table2PDF"],
+    "keywords" : ["table2JSON", "table2XML", "table2PNG","table2CSV","table2Excel","table2Word","table2Powerpoint","table2txt","table2PDF","table2sql"],
     "bugs" : "https://github.com/kayalshri/tableExport.jquery.plugin/issues",
     "homepage" : "http://ngiriraj.com/tableExport",
     "dependencies" : {
