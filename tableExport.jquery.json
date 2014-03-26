@@ -13,7 +13,7 @@
     },
     "keywords" : ["table2JSON", "table2XML", "table2PNG","table2CSV","table2Excel","table2Word","table2Powerpoint","table2txt","table2PDF"],
     "bugs" : "https://github.com/kayalshri/tableExport.jquery.plugin/issues",
-    "homepage" : "https://github.com/kayalshri/tableExport.jquery.plugin",
+    "homepage" : "http://ngiriraj.com/tableExport",
     "dependencies" : {
         "jquery" : ">=1.10"
     }
