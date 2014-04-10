@@ -3,7 +3,6 @@ tableExport.jquery.plugin
 
 "table2JSON", "table2XML", "table2PNG","table2CSV","table2Excel","table2Word","table2Powerpoint","table2txt","table2PDF"
 
-<a href='htmltable_export.zip'><small class="label label-success"><i class="fa fa-cloud-download"></i> Zip File</small></a>
 
 Installation
 ============
