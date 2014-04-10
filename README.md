@@ -1,7 +1,7 @@
 tableExport.jquery.plugin
 =========================
 
-<h3>Export HTML Table to<h3>
+<h3>Export HTML Table to</h3>
 <ul>
 <li> JSON
 <li> XML
