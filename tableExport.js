@@ -32,7 +32,7 @@ THE SOFTWARE.*/
 						pdfLeftMargin:20,
 						escape:'true',
 						htmlContent:'false',
-						consoleLog:'true'
+						consoleLog:'false'
 				};
                 
 				var options = $.extend(defaults, options);
