@@ -1,4 +1,3 @@
-
 /**
  * jsPDF
  * (c) 2009 James Hall
