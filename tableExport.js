@@ -44,7 +44,7 @@ THE SOFTWARE.*/
 					var tdData ="";
 					$(el).find('thead').find('tr').each(function() {
 					tdData += "\n";					
-						$(this).filter(':visible').find('th').each(function(index,data) {
+						$(this).filter(':visible').find('th,td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									tdData += '"' + parseString($(this)) + '"' + defaults.separator;									
@@ -82,7 +82,7 @@ THE SOFTWARE.*/
 					var tdData ="INSERT INTO `"+defaults.tableName+"` (";
 					$(el).find('thead').find('tr').each(function() {
 					
-						$(this).filter(':visible').find('th').each(function(index,data) {
+						$(this).filter(':visible').find('th,td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									tdData += '`' + parseString($(this)) + '`,' ;									
@@ -129,7 +129,7 @@ THE SOFTWARE.*/
 						var tdData ="";	
 						var jsonArrayTd = [];
 					
-						$(this).filter(':visible').find('th').each(function(index,data) {
+						$(this).filter(':visible').find('th,td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									jsonArrayTd.push(parseString($(this)));									
@@ -176,7 +176,7 @@ THE SOFTWARE.*/
 
 					// Header
 					$(el).find('thead').find('tr').each(function() {
-						$(this).filter(':visible').find('th').each(function(index,data) {
+						$(this).filter(':visible').find('th,td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									xml += "<field>" + parseString($(this)) + "</field>";
@@ -217,7 +217,7 @@ THE SOFTWARE.*/
 					// Header
 					$(el).find('thead').find('tr').each(function() {
 						excel += "<tr>";
-						$(this).filter(':visible').find('th').each(function(index,data) {
+						$(this).filter(':visible').find('th,td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									excel += "<td>" + parseString($(this))+ "</td>";
@@ -295,7 +295,7 @@ THE SOFTWARE.*/
 					// Header
 					var startColPosition=defaults.pdfLeftMargin;
 					$(el).find('thead').find('tr').each(function() {
-						$(this).filter(':visible').find('th').each(function(index,data) {
+						$(this).filter(':visible').find('th,td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									var colPosition = startColPosition+ (index * 50);									
