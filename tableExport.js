@@ -294,12 +294,15 @@ THE SOFTWARE.*/
 					
 					// Header
 					var startColPosition=defaults.pdfLeftMargin;
+                    			var col = 0;
 					$(el).find('thead').find('tr').each(function() {
+
 						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){					
+							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									var colPosition = startColPosition+ (index * 50);									
+									var colPosition = startColPosition+ (col * 50);
 									doc.text(colPosition,20, parseString($(this)));
+                                    					col += 1;
 								}
 							}
 						});									
@@ -317,12 +320,14 @@ THE SOFTWARE.*/
 						startRowPosition=startRowPosition+10;
 					}
 					rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
-						
+
+                        			var col = 0;
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){	
+							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									var colPosition = startColPosition+ (index * 50);									
+									var colPosition = startColPosition+ (col * 50);
 									doc.text(colPosition,rowPosition, parseString($(this)));
+                                    					col += 1;
 								}
 							}
 							
