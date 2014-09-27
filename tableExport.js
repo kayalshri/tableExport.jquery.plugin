@@ -32,7 +32,8 @@ THE SOFTWARE.*/
 						pdfLeftMargin:20,
 						escape:'true',
 						htmlContent:'false',
-						consoleLog:'false'
+						consoleLog:'false',
+						columnSpace: 50
 				};
                 
 				var options = $.extend(defaults, options);
@@ -294,11 +295,12 @@ THE SOFTWARE.*/
 					
 					// Header
 					var startColPosition=defaults.pdfLeftMargin;
+					var spaceBetweenColumn = defaults.columnSpace;
 					$(el).find('thead').find('tr').each(function() {
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									var colPosition = startColPosition+ (index * 50);									
+									var colPosition = startColPosition+ (index * spaceBetweenColumn);									
 									doc.text(colPosition,20, parseString($(this)));
 								}
 							}
@@ -321,7 +323,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									var colPosition = startColPosition+ (index * 50);									
+									var colPosition = startColPosition+ (index * spaceBetweenColumn);									
 									doc.text(colPosition,rowPosition, parseString($(this)));
 								}
 							}
