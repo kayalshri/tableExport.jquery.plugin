@@ -33,7 +33,8 @@ THE SOFTWARE.*/
 						escape:'true',
 						htmlContent:'false',
 						consoleLog:'false',
-						columnSpace: 50
+						columnSpace: 50,
+						rowperPage: 5
 				};
                 
 				var options = $.extend(defaults, options);
@@ -296,6 +297,7 @@ THE SOFTWARE.*/
 					// Header
 					var startColPosition=defaults.pdfLeftMargin;
 					var spaceBetweenColumn = defaults.columnSpace;
+					var totalRowperPage = defaults.rowperPage;
 					$(el).find('thead').find('tr').each(function() {
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
@@ -312,13 +314,13 @@ THE SOFTWARE.*/
 					var startRowPosition = 20; var page =1;var rowPosition=0;
 					$(el).find('tbody').find('tr').each(function(index,data) {
 						rowCalc = index+1;
+					
 						
-					if (rowCalc % 26 == 0){
+					if (rowCalc % totalRowperPage == 0){
 						doc.addPage();
 						page++;
-						startRowPosition=startRowPosition+10;
 					}
-					rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
+					rowPosition=(startRowPosition + (rowCalc % totalRowperPage)*10 );
 						
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){	
