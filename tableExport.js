@@ -27,6 +27,7 @@ THE SOFTWARE.*/
 						separator: ',',
 						ignoreColumn: [],
 						tableName:'yourTableName',
+						worksheetName: 'yourWorksheetName',
 						type:'csv',
 						pdfFontSize:14,
 						pdfLeftMargin:20,
@@ -259,7 +260,7 @@ THE SOFTWARE.*/
 					excelFile += "<x:ExcelWorksheets>";
 					excelFile += "<x:ExcelWorksheet>";
 					excelFile += "<x:Name>";
-					excelFile += "{worksheet}";
+					excelFile += "" + defaults.worksheetName + "";
 					excelFile += "</x:Name>";
 					excelFile += "<x:WorksheetOptions>";
 					excelFile += "<x:DisplayGridlines/>";
