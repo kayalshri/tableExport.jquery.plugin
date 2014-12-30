@@ -74,8 +74,15 @@ THE SOFTWARE.*/
 					if(defaults.consoleLog == 'true'){
 						console.log(tdData);
 					}
-					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
+					var base64data = "data:application/"+defaults.type+";base64," + $.base64.encode(tdData);
+					var octetData = 'data:application/octet-stream,' + encodeURIComponent(tdData);
+					var a = $("<a>", {
+						download: "export."+defaults.type,
+						href: octetData,
+						_target: "blank"
+					});
+					a[0].click();
+					a.remove();
 				}else if(defaults.type == 'sql'){
 				
 					// Header
@@ -118,10 +125,15 @@ THE SOFTWARE.*/
 						console.log(tdData);
 					}
 					
-					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/sql;filename=exportData;' + base64data);
-					
-				
+					var base64data = "data:application/sql;base64," + $.base64.encode(tdData);
+					var octetData = 'data:application/octet-stream,' + encodeURIComponent(tdData);
+					var a = $("<a>", {
+						download: "export.sql",
+						href: octetData,
+						_target: "blank"
+					});
+					a[0].click();
+					a.remove();
 				}else if(defaults.type == 'json'){
 				
 					var jsonHeaderArray = [];
@@ -167,8 +179,15 @@ THE SOFTWARE.*/
 					if(defaults.consoleLog == 'true'){
 						console.log(JSON.stringify(jsonExportArray));
 					}
-					var base64data = "base64," + $.base64.encode(JSON.stringify(jsonExportArray));
-					window.open('data:application/json;filename=exportData;' + base64data);
+					var base64data = "data:application/json;base64," + $.base64.encode(JSON.stringify(jsonExportArray));
+					var octetData = 'data:application/octet-stream,' + encodeURIComponent(JSON.stringify(jsonExportArray));
+					var a = $("<a>", {
+						download: "export.json",
+						href: octetData,
+						_target: "blank"
+					});
+					a[0].click();
+					a.remove();	
 				}else if(defaults.type == 'xml'){
 				
 					var xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -208,9 +227,15 @@ THE SOFTWARE.*/
 						console.log(xml);
 					}
 					
-					var base64data = "base64," + $.base64.encode(xml);
-					window.open('data:application/xml;filename=exportData;' + base64data);
-
+					var base64data = "data:application/xml;base64," + $.base64.encode(xml);
+  					var octetData = 'data:application/octet-stream,' + encodeURIComponent(xml);
+					var a = $("<a>", {
+						download: "export.xml",
+						href: octetData,
+						_target: "blank"
+					});
+					a[0].click();
+					a.remove();					
 				}else if(defaults.type == 'excel' || defaults.type == 'doc'|| defaults.type == 'powerpoint'  ){
 					//console.log($(this).html());
 					var excel="<table>";
@@ -275,9 +300,25 @@ THE SOFTWARE.*/
 					excelFile += "</body>";
 					excelFile += "</html>";
 
-					var base64data = "base64," + $.base64.encode(excelFile);
-					window.open('data:application/vnd.ms-'+defaults.type+';filename=exportData.doc;' + base64data);
-					
+					var extension;
+					if (defaults.type == 'excel') 
+						extension = 'xls';
+
+					if (defaults.type == 'doc')
+						extension = 'doc';
+
+					if (defaults.type == 'powerpoint')
+						extension = 'ppt';
+
+					var base64data = "data:application/"+extension+";base64," + $.base64.encode(excelFile);
+					var octetData = 'data:application/octet-stream,' + encodeURIComponent(excelFile);
+					var a = $("<a>", {
+						download: "export."+extension,
+						href: base64data,
+						_target: "blank"
+					});
+					a[0].click();
+					a.remove();	
 				}else if(defaults.type == 'png'){
 					html2canvas($(el), {
 						onrendered: function(canvas) {										
