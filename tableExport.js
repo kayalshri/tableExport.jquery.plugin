@@ -27,6 +27,7 @@ THE SOFTWARE.*/
 						separator: ',',
 						ignoreColumn: [],
 						tableName:'yourTableName',
+						filename:'exportData',
 						type:'csv',
 						pdfFontSize:14,
 						pdfLeftMargin:20,
@@ -47,7 +48,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '"' + parseString($(this)) + '"' + defaults.separator;									
+									tdData += '"' + parseString($(this).find(':visible')) + '"' + defaults.separator;									
 								}
 							}
 							
@@ -74,8 +75,15 @@ THE SOFTWARE.*/
 					if(defaults.consoleLog == 'true'){
 						console.log(tdData);
 					}
-					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
+
+					var mimeType = 'csv';
+					if(defaults.type === 'txt') {
+						mimeType = 'plain';
+					}
+
+					var base64data = "base64," + B64.encode(tdData);
+
+					openDownloadLink(defaults.filename + '.' + defaults.type, 'data:text/'+mimeType+';charset=utf-8;filename=' + defaults.filename + '.' + defaults.type + ';' + base64data);
 				}else if(defaults.type == 'sql'){
 				
 					// Header
@@ -85,7 +93,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									tdData += '`' + parseString($(this)) + '`,' ;									
+									tdData += '`' + parseString($(this).find(':visible')) + '`,' ;									
 								}
 							}
 							
@@ -118,10 +126,9 @@ THE SOFTWARE.*/
 						console.log(tdData);
 					}
 					
-					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/sql;filename=exportData;' + base64data);
-					
-				
+					var base64data = "base64," + B64.encode(tdData);
+
+					openDownloadLink(defaults.filename + '.sql', 'data:application/sql;filename=' + defaults.filename + '.sql;' + base64data);
 				}else if(defaults.type == 'json'){
 				
 					var jsonHeaderArray = [];
@@ -132,7 +139,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									jsonArrayTd.push(parseString($(this)));									
+									jsonArrayTd.push(parseString($(this).find(':visible')));									
 								}
 							}
 						});									
@@ -167,8 +174,8 @@ THE SOFTWARE.*/
 					if(defaults.consoleLog == 'true'){
 						console.log(JSON.stringify(jsonExportArray));
 					}
-					var base64data = "base64," + $.base64.encode(JSON.stringify(jsonExportArray));
-					window.open('data:application/json;filename=exportData;' + base64data);
+					var base64data = "base64," + B64.encode(JSON.stringify(jsonExportArray));
+					openDownloadLink(defaults.filename + '.json', 'data:application/json;filename=' + defaults.filename + '.json;' + base64data);
 				}else if(defaults.type == 'xml'){
 				
 					var xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -179,7 +186,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									xml += "<field>" + parseString($(this)) + "</field>";
+									xml += "<field>" + parseString($(this).find(':visible')) + "</field>";
 								}
 							}
 						});									
@@ -208,9 +215,8 @@ THE SOFTWARE.*/
 						console.log(xml);
 					}
 					
-					var base64data = "base64," + $.base64.encode(xml);
-					window.open('data:application/xml;filename=exportData;' + base64data);
-
+					var base64data = "base64," + B64.encode(xml);
+					openDownloadLink(defaults.filename + '.xml', 'data:application/xml;filename=' + defaults.filename + '.xml;' + base64data);
 				}else if(defaults.type == 'excel' || defaults.type == 'doc'|| defaults.type == 'powerpoint'  ){
 					//console.log($(this).html());
 					var excel="<table>";
@@ -220,7 +226,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									excel += "<td>" + parseString($(this))+ "</td>";
+									excel += "<td>" + parseString($(this).find(':visible'))+ "</td>";
 								}
 							}
 						});	
@@ -253,6 +259,7 @@ THE SOFTWARE.*/
 					
 					var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
 					excelFile += "<head>";
+					excelFile += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">';
 					excelFile += "<!--[if gte mso 9]>";
 					excelFile += "<xml>";
 					excelFile += "<x:ExcelWorkbook>";
@@ -275,9 +282,17 @@ THE SOFTWARE.*/
 					excelFile += "</body>";
 					excelFile += "</html>";
 
-					var base64data = "base64," + $.base64.encode(excelFile);
-					window.open('data:application/vnd.ms-'+defaults.type+';filename=exportData.doc;' + base64data);
-					
+					var extension = 'doc';
+					if(defaults.type === 'excel') {
+						extension = 'xls';
+					}
+					if(defaults.type === 'powerpoint') {
+						extension = 'ppt';
+					}
+
+					var base64data = "base64," + B64.encode(excelFile);
+
+					openDownloadLink(defaults.filename + '.' + extension, 'data:application/vnd.ms-'+defaults.type+';charset=utf-8;filename='+defaults.filename+'.'+extension+';' + base64data);
 				}else if(defaults.type == 'png'){
 					html2canvas($(el), {
 						onrendered: function(canvas) {										
@@ -299,7 +314,7 @@ THE SOFTWARE.*/
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									var colPosition = startColPosition+ (index * 50);									
-									doc.text(colPosition,20, parseString($(this)));
+									doc.text(colPosition,20, parseString($(this).find(':visible')));
 								}
 							}
 						});									
@@ -311,12 +326,12 @@ THE SOFTWARE.*/
 					$(el).find('tbody').find('tr').each(function(index,data) {
 						rowCalc = index+1;
 						
-					if (rowCalc % 26 == 0){
-						doc.addPage();
-						page++;
-						startRowPosition=startRowPosition+10;
-					}
-					rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
+						if (rowCalc % 26 == 0){
+							doc.addPage();
+							page++;
+							startRowPosition=startRowPosition+10;
+						}
+						rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
 						
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){	
@@ -352,8 +367,16 @@ THE SOFTWARE.*/
 					
 					return content_data;
 				}
-			
+
+				function openDownloadLink(filename, href) {
+					var a = document.createElement('a');
+					document.body.appendChild(a);
+					a.style = 'display: none';
+					a.href = href;
+					a.download = filename;
+					a.click();
+					document.body.removeChild(a);
+				}
 			}
         });
     })(jQuery);
-        
