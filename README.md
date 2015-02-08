@@ -37,12 +37,17 @@ onClick ="$('#tableID').tableExport({type:'pdf',escape:'false'});"<BR>
 
 Options
 =======
-separator: ','<BR>
-ignoreColumn: [2,3],<BR>
+csvSeparator: ','<BR>
+csvEnclosure: '"'<BR>
+onCellData: null<BR>
+ignoreColumn: [2,3]<BR>
+theadSelector:'tr'<BR>
 tableName:'yourTableName'<BR>
 type:'csv'<BR>
 pdfFontSize:14<BR>
 pdfLeftMargin:20<BR>
 escape:'true'<BR>
 htmlContent:'false'<BR>
-consoleLog:'false' <BR>
+consoleLog:'false'<BR>
+outputMode:'file'<BR>
+fileName:'exportData'<BR>
