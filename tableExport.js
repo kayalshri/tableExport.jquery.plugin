@@ -40,13 +40,13 @@ THE SOFTWARE.*/
 						outputMode:'file',  // file|string|base64
 						fileName:'exportData'
 				};
-                
+
 				var options = $.extend(defaults, options);
 				var el = this;
 				var DownloadEvt = null;
 				
 				if(defaults.type == 'csv' || defaults.type == 'txt'){
-				
+
 					// Header
 					var tdData ="";
 					var rowIndex = 0;
@@ -58,13 +58,13 @@ THE SOFTWARE.*/
 									tdData += csvString(this, rowIndex, index) + defaults.csvSeparator;
 								}
 							}
-							
+
 						});
 						rowIndex++;
 						tdData = $.trim(tdData);
 						tdData = $.trim(tdData).substring(0, tdData.length -1);
 					});
-					
+
 					// Row vs Column
 					$(el).find('tbody').find('tr').each(function() {
 					tdData += "\n";
@@ -79,7 +79,7 @@ THE SOFTWARE.*/
 						//tdData = $.trim(tdData);
 						tdData = $.trim(tdData).substring(0, tdData.length -1);
 					});
-					
+
 					//output
 					if(defaults.consoleLog == 'true')
 						console.log(tdData);
@@ -95,7 +95,7 @@ THE SOFTWARE.*/
 					downloadFile(defaults.fileName+'.csv', 'data:text/csv;charset=utf-8;base64,' + base64data);
 					
 				}else if(defaults.type == 'sql'){
-				
+
 					// Header
 					var tdData ="INSERT INTO `"+defaults.tableName+"` (";
 					$(el).find('thead').find(defaults.theadSelector).each(function() {
@@ -106,7 +106,7 @@ THE SOFTWARE.*/
 									tdData += '`' + parseString(this, rowIndex, index) + '`,' ;
 								}
 							}
-							
+
 						});
 						rowIndex++;
 						tdData = $.trim(tdData);
@@ -130,7 +130,7 @@ THE SOFTWARE.*/
 
 					tdData = $.trim(tdData).substring(0, tdData.length -1);
 					tdData += ";";
-					
+
 					//output
 					if(defaults.consoleLog == 'true')
 						console.log(tdData);
@@ -146,7 +146,7 @@ THE SOFTWARE.*/
 					downloadFile(defaults.fileName+'.sql', 'data:application/sql;charset=utf-8;base64,' + base64data);
 					
 				}else if(defaults.type == 'json'){
-				
+
 					var jsonHeaderArray = [];
 					$(el).find('thead').find(defaults.theadSelector).each(function() {
 						var tdData ="";	
@@ -164,12 +164,12 @@ THE SOFTWARE.*/
 						jsonHeaderArray.push(jsonArrayTd);
 						
 					});
-					
+
 					var jsonArray = [];
 					$(el).find('tbody').find('tr').each(function() {
-						var tdData ="";	
+						var tdData ="";
 						var jsonArrayTd = [];
-					
+
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -180,7 +180,7 @@ THE SOFTWARE.*/
 						rowIndex++;
 						jsonArray.push(jsonArrayTd);
 					});
-					
+
 					var jsonExportArray =[];
 					jsonExportArray.push({header:jsonHeaderArray,data:jsonArray});
 					
@@ -215,14 +215,14 @@ THE SOFTWARE.*/
 						rowIndex++;
 					});
 					xml += '</fields><data>';
-					
+
 					// Row Vs Column
 					var rowCount=1;
 					$(el).find('tbody').find('tr').each(function() {
 						xml += '<row id="'+rowCount+'">';
 						var colCount=0;
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){	
+							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									xml += "<column-"+colCount+">"+parseString(this, rowIndex, index)+"</column-"+colCount+">";
 								}
@@ -363,7 +363,7 @@ THE SOFTWARE.*/
 						startRowPosition=startRowPosition+10;
 					}
 					rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
-						
+
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -415,7 +415,7 @@ THE SOFTWARE.*/
 					}else{
 						content_data = $cell.text().trim().replace(/\u00AD/g, ""); // remove soft hyphens
 					}
-					
+
 					if(defaults.escape == 'true'){
 						content_data = escape(content_data);
 					}
