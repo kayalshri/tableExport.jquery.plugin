@@ -59,4 +59,4 @@ Optional html data attributes
 =============================
 (can be set while generating the table you want to export)
 
-<td data-tableexport-display="none">...</td> -> cell will not be exported
+&lt;td data-tableexport-display="none">...&lt;/td> -> cell will not be exported
