@@ -74,7 +74,9 @@ THE SOFTWARE.*/
 					if(defaults.consoleLog == 'true'){
 						console.log(tdData);
 					}
-					var base64data = "base64," + $.base64.encode(tdData);
+						
+					var base64data = "base64," + encode64(tdData);
+									
 					window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
 				}else if(defaults.type == 'sql'){
 				
@@ -118,7 +120,7 @@ THE SOFTWARE.*/
 						console.log(tdData);
 					}
 					
-					var base64data = "base64," + $.base64.encode(tdData);
+					var base64data = "base64," + encode64(tdData);
 					window.open('data:application/sql;filename=exportData;' + base64data);
 					
 				
@@ -167,7 +169,7 @@ THE SOFTWARE.*/
 					if(defaults.consoleLog == 'true'){
 						console.log(JSON.stringify(jsonExportArray));
 					}
-					var base64data = "base64," + $.base64.encode(JSON.stringify(jsonExportArray));
+					var base64data = "base64," + encode64(JSON.stringify(jsonExportArray));
 					window.open('data:application/json;filename=exportData;' + base64data);
 				}else if(defaults.type == 'xml'){
 				
@@ -208,7 +210,7 @@ THE SOFTWARE.*/
 						console.log(xml);
 					}
 					
-					var base64data = "base64," + $.base64.encode(xml);
+					var base64data = "base64," + encode64(xml);
 					window.open('data:application/xml;filename=exportData;' + base64data);
 
 				}else if(defaults.type == 'excel' || defaults.type == 'doc'|| defaults.type == 'powerpoint'  ){
@@ -252,6 +254,7 @@ THE SOFTWARE.*/
 					}
 					
 					var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
+				    excelFile += "<meta http-equiv='content-type' content='application/vnd.ms-excel; charset=UTF-8'>";
 					excelFile += "<head>";
 					excelFile += "<!--[if gte mso 9]>";
 					excelFile += "<xml>";
@@ -275,7 +278,7 @@ THE SOFTWARE.*/
 					excelFile += "</body>";
 					excelFile += "</html>";
 
-					var base64data = "base64," + $.base64.encode(excelFile);
+					var base64data = "base64," + encode64(excelFile);
 					window.open('data:application/vnd.ms-'+defaults.type+';filename=exportData.doc;' + base64data);
 					
 				}else if(defaults.type == 'png'){
@@ -352,7 +355,65 @@ THE SOFTWARE.*/
 					
 					return content_data;
 				}
-			
+				
+				  
+				  // https://github.com/rwz/base64.coffee
+				
+				  function encode64 (input) {
+					input = unpack(input);
+					var chr1, chr2, chr3, enc1, enc2, enc3, enc4, invalidChar, output, _j, _len1, _ref2;
+					var CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+					
+					output = '';
+					i = 0;
+					while (i < input.length) {
+					  chr1 = input.charCodeAt(i++);
+					  chr2 = input.charCodeAt(i++);
+					  chr3 = input.charCodeAt(i++);
+					  if (invalidChar = Math.max(chr1, chr2, chr3) > 0xFF) {
+						throw new InvalidSequenceError(invalidChar);
+					  }
+					  enc1 = chr1 >> 2;
+					  enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+					  enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+					  enc4 = chr3 & 63;
+					  if (isNaN(chr2)) {
+						enc3 = enc4 = 64;
+					  } else if (isNaN(chr3)) {
+						enc4 = 64;
+					  }
+					  _ref2 = [enc1, enc2, enc3, enc4];
+					  for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+						char = _ref2[_j];
+						output += CHARACTERS.charAt(char);
+					  }
+					}
+					return output;
+					
+					
+					
+					function unpack(utfstring) {
+						var c, string, _j, _ref3;
+						utfstring = utfstring.replace(/\r\n/g, '\n');
+						string = '';
+						for (i = _j = 0, _ref3 = utfstring.length - 1; 0 <= _ref3 ? _j <= _ref3 : _j >= _ref3; i = 0 <= _ref3 ? ++_j : --_j) {
+						  c = utfstring.charCodeAt(i);
+						  if (c < 128) {
+							string += String.fromCharCode(c);
+						  } else if (c > 127 && c < 2048) {
+							string += String.fromCharCode((c >> 6) | 192);
+							string += String.fromCharCode((c & 63) | 128);
+						  } else {
+							string += String.fromCharCode((c >> 12) | 224);
+							string += String.fromCharCode(((c >> 6) & 63) | 128);
+							string += String.fromCharCode((c & 63) | 128);
+						  }
+						}
+						return string;
+					 };
+				  
+				  };
+
 			}
         });
     })(jQuery);
