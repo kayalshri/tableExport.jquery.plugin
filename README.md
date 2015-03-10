@@ -20,7 +20,7 @@ Installation
 jquery Plugin<BR>
 &lt;script type="text/javascript" src="tableExport.js"><BR>
 &lt;script type="text/javascript" src="jquery.base64.js"><BR>
-<BR>
+
 PNG Export
 ==========
 &lt;script type="text/javascript" src="html2canvas.js">
@@ -41,15 +41,22 @@ csvSeparator: ','<BR>
 csvEnclosure: '"'<BR>
 onCellData: null<BR>
 ignoreColumn: [2,3]<BR>
-theadSelector:'tr'<BR>
-tableName:'yourTableName'<BR>
-type:'csv'<BR>
-pdfFontSize:14<BR>
-pdfLeftMargin:20<BR>
-escape:'true'<BR>
-htmlContent:'false'<BR>
-consoleLog:'false'<BR>
-outputMode:'file'<BR>
-fileName:'exportData'<BR>
-worksheetName:'yourWorksheetName'<BR>
-excelstyles:['css','properties','to','export','to','excel']<BR>
+theadSelector: 'tr'<BR>
+tbodySelector: 'tr'<BR>
+tableName: 'sqlTableName'<BR>
+type: 'csv'<BR>
+pdfFontSize: 14<BR>
+pdfLeftMargin: 20<BR>
+escape: 'true'<BR>
+htmlContent: 'false'<BR>
+consoleLog: 'false'<BR>
+outputMode: 'file'<BR>
+fileName: 'tableExport'<BR>
+excelstyles: ['css','properties','to','export','to','excel']<BR>
+worksheetName: 'xlsWorksheetName'<BR>
+
+Optional html data attributes 
+=============================
+(can be set while generating the table you want to export)
+
+<td data-tableexport-display="none">...</td> -> cell will not be exported

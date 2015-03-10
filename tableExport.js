@@ -29,8 +29,9 @@ THE SOFTWARE.*/
             onCellData: null,
             ignoreColumn: [],
             theadSelector:'tr',
-            tableName:'yourTableName',
-            worksheetName: 'yourWorksheetName',
+            tbodySelector: 'tr',
+            tableName:'sqlTableName',
+            worksheetName: 'xlsWorksheetName',
             type:'csv',
             pdfFontSize:14,
             pdfLeftMargin:20,
@@ -38,7 +39,7 @@ THE SOFTWARE.*/
             htmlContent:'false',
             consoleLog:'false',
             outputMode:'file',  // file|string|base64
-            fileName:'exportData',
+            fileName:'tableExport',
             excelstyles: [ 'border-bottom', 'border-top', 'border-left', 'border-right' ]
         };
 
@@ -54,7 +55,8 @@ THE SOFTWARE.*/
           $(el).find('thead').find(defaults.theadSelector).each(function() {
           tdData += "\n";
             $(this).filter(':visible').find('th').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   tdData += csvString(this, rowIndex, index) + defaults.csvSeparator;
                 }
@@ -67,10 +69,11 @@ THE SOFTWARE.*/
           });
 
           // Row vs Column
-          $(el).find('tbody').find('tr').each(function() {
+          $(el).find('tbody').find(defaults.tbodySelector).each(function() {
           tdData += "\n";
             $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   tdData += csvString(this, rowIndex, index) + defaults.csvSeparator;
                 }
@@ -98,11 +101,13 @@ THE SOFTWARE.*/
         }else if(defaults.type == 'sql'){
 
           // Header
+          var rowIndex = 0;
           var tdData ="INSERT INTO `"+defaults.tableName+"` (";
           $(el).find('thead').find(defaults.theadSelector).each(function() {
 
             $(this).filter(':visible').find('th').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   tdData += '`' + parseString(this, rowIndex, index) + '`,' ;
                 }
@@ -115,10 +120,11 @@ THE SOFTWARE.*/
           });
           tdData += ") VALUES ";
           // Row vs Column
-          $(el).find('tbody').find('tr').each(function() {
+          $(el).find('tbody').find(defaults.tbodySelector).each(function() {
           tdData += "(";
             $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   tdData += '"' + parseString(this, rowIndex, index) + '",';
                 }
@@ -155,7 +161,8 @@ THE SOFTWARE.*/
             var rowIndex = 0;
 
             $(this).filter(':visible').find('th').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   jsonArrayTd.push(parseString(this, rowIndex, index));
                 }
@@ -167,12 +174,13 @@ THE SOFTWARE.*/
           });
 
           var jsonArray = [];
-          $(el).find('tbody').find('tr').each(function() {
+          $(el).find('tbody').find(defaults.tbodySelector).each(function() {
             var tdData ="";
             var jsonArrayTd = [];
 
             $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   jsonArrayTd.push(parseString(this, rowIndex, index));
                 }
@@ -207,7 +215,8 @@ THE SOFTWARE.*/
           // Header
           $(el).find('thead').find(defaults.theadSelector).each(function() {
             $(this).filter(':visible').find('th').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   xml += "<field>" + parseString(this, rowIndex, index) + "</field>";
                 }
@@ -219,11 +228,12 @@ THE SOFTWARE.*/
 
           // Row Vs Column
           var rowCount=1;
-          $(el).find('tbody').find('tr').each(function() {
+          $(el).find('tbody').find(defaults.tbodySelector).each(function() {
             xml += '<row id="'+rowCount+'">';
             var colCount=0;
             $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   xml += "<column-"+colCount+">"+parseString(this, rowIndex, index)+"</column-"+colCount+">";
                 }
@@ -250,7 +260,7 @@ THE SOFTWARE.*/
 
           downloadFile(defaults.fileName+'.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
 
-        }else if(defaults.type == 'excel' || defaults.type == 'doc'|| defaults.type == 'powerpoint'  ){
+        }else if(defaults.type == 'excel' || defaults.type == 'doc'|| defaults.type == 'powerpoint'){
           //console.log($(this).html());
 
           var rowIndex = 0;
@@ -259,7 +269,8 @@ THE SOFTWARE.*/
           $(el).find('thead').find(defaults.theadSelector).each(function() {
             excel += "<tr>";
             $(this).filter(':visible').find('th').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   excel += "<td style='";
                   for( var styles in defaults.excelstyles ) {
@@ -277,11 +288,12 @@ THE SOFTWARE.*/
 
           // Row Vs Column
           var rowCount=1;
-          $(el).find('tbody').find('tr').each(function() {
+          $(el).find('tbody').find(defaults.tbodySelector).each(function() {
             excel += "<tr>";
             var colCount=0;
             $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   excel += "<td style='";
                   for( var styles in defaults.excelstyles ) {
@@ -355,7 +367,8 @@ THE SOFTWARE.*/
           var startColPosition=defaults.pdfLeftMargin;
           $(el).find('thead').find(defaults.theadSelector).each(function() {
             $(this).filter(':visible').find('th').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   var colPosition = startColPosition+ (index * 50);
                   doc.text(colPosition,20, parseString(this, rowIndex, index));
@@ -367,7 +380,7 @@ THE SOFTWARE.*/
 
           // Row Vs Column
           var startRowPosition = 20; var page =1;var rowPosition=0;
-          $(el).find('tbody').find('tr').each(function(index,data) {
+          $(el).find('tbody').find(defaults.tbodySelector).each(function(index,data) {
             rowCalc = index+1;
 
           if (rowCalc % 26 == 0){
@@ -378,7 +391,8 @@ THE SOFTWARE.*/
           rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
 
             $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none'){
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
                   var colPosition = startColPosition+ (index * 50);
                   doc.text(colPosition,rowPosition, parseString(this, rowIndex, index));
@@ -410,12 +424,13 @@ THE SOFTWARE.*/
           var csvValue = (dataString === null || dataString == '')? '' : dataString.toString();
 
           if ( dataString instanceof Date )
-            csvValue = defaults.csvEnclosure + dataString.toLocaleString() + defaults.csvEnclosure;
+            result = defaults.csvEnclosure + dataString.toLocaleString() + defaults.csvEnclosure;
+          else{
+            result = replaceAll (csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
 
-          var result = replaceAll (csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
-
-          if ( result.indexOf (defaults.csvSeparator) >= 0 || result.indexOf (' ') >= 0 )
-            result = defaults.csvEnclosure + result + defaults.csvEnclosure;
+            if ( result.indexOf (defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result) )
+              result = defaults.csvEnclosure + result + defaults.csvEnclosure;
+          }
 
           return result;
         }
