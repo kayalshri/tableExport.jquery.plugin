@@ -28,9 +28,10 @@ THE SOFTWARE.*/
             csvEnclosure: '"',
             onCellData: null,
             ignoreColumn: [],
+            displayTableName: 'false',
             theadSelector:'tr',
             tbodySelector: 'tr',
-            tableName:'sqlTableName',
+            tableName:'myTableName',
             worksheetName: 'xlsWorksheetName',
             type:'csv',
             pdfFontSize:14,
@@ -268,7 +269,7 @@ THE SOFTWARE.*/
           // Header
           $(el).find('thead').find(defaults.theadSelector).each(function() {
             excel += "<tr>";
-            $(this).filter(':visible').find('th').each(function(index,data) {
+            $(this).filter(':visible').find('th,td').each(function(index,data) {
               if ($(this).css('display') != 'none' &&
                   $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -310,6 +311,9 @@ THE SOFTWARE.*/
             rowIndex++;
             excel += '</tr>';
           });
+          
+          if(defaults.displayTableName) excel +="<tr><td></td></tr><tr><td></td></tr><tr><td>" + parseString($('<p>' + defaults.tableName + '</p>')) + "</td></tr>";
+
           excel += '</table>'
 
           if(defaults.consoleLog == 'true')
