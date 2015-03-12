@@ -41,9 +41,10 @@ csvSeparator: ','<BR>
 csvEnclosure: '"'<BR>
 onCellData: null<BR>
 ignoreColumn: [2,3]<BR>
+displayTableName: 'false',<BR>
 theadSelector: 'tr'<BR>
 tbodySelector: 'tr'<BR>
-tableName: 'sqlTableName'<BR>
+tableName: 'myTableName'<BR>
 type: 'csv'<BR>
 pdfFontSize: 14<BR>
 pdfLeftMargin: 20<BR>
