@@ -34,9 +34,9 @@ THE SOFTWARE.*/
             tableName:'myTableName',
             worksheetName: 'xlsWorksheetName',
             type:'csv',
-            pdfFontSize:14,
+            dpi:0,
             pdfLeftMargin:20,
-            escape:'true',
+            escape:'false',
             htmlContent:'false',
             consoleLog:'false',
             outputMode:'file',  // file|string|base64
@@ -92,12 +92,13 @@ THE SOFTWARE.*/
           if(defaults.outputMode == 'string')
             return tdData;
 
-          var base64data = $.base64.encode(tdData);
-
           if(defaults.outputMode == 'base64')
-            return base64data;
+            return base64encode(tdData);
 
-          downloadFile(defaults.fileName+'.csv', 'data:text/csv;charset=utf-8;base64,' + base64data);
+          downloadFile(defaults.fileName + '.' + defaults.type,
+                       'data:text/csv;charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
+                       encodeURIComponent(tdData));
+
 
         }else if(defaults.type == 'sql'){
 
@@ -110,7 +111,7 @@ THE SOFTWARE.*/
               if ($(this).css('display') != 'none' &&
                   $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
-                  tdData += '`' + parseString(this, rowIndex, index) + '`,' ;
+                  tdData += "'" + parseString(this, rowIndex, index) + "'," ;
                 }
               }
 
@@ -127,7 +128,7 @@ THE SOFTWARE.*/
               if ($(this).css('display') != 'none' &&
                   $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
-                  tdData += '"' + parseString(this, rowIndex, index) + '",';
+                  tdData += "'" + parseString(this, rowIndex, index) + "',";
                 }
               }
             });
@@ -146,12 +147,10 @@ THE SOFTWARE.*/
           if(defaults.outputMode == 'string')
             return tdData;
 
-          var base64data = $.base64.encode(tdData);
-
           if(defaults.outputMode == 'base64')
-            return base64data;
+            return base64encode(tdData);
 
-          downloadFile(defaults.fileName+'.sql', 'data:application/sql;charset=utf-8;base64,' + base64data);
+          downloadFile(defaults.fileName+'.sql', 'data:application/sql;charset=utf-8,' + encodeURIComponent(tdData));
 
         }else if(defaults.type == 'json'){
 
@@ -200,7 +199,7 @@ THE SOFTWARE.*/
           if(defaults.outputMode == 'string')
             return JSON.stringify(jsonExportArray);
 
-          var base64data = $.base64.encode(JSON.stringify(jsonExportArray));
+          var base64data = base64encode(JSON.stringify(jsonExportArray));
 
           if(defaults.outputMode == 'base64')
             return base64data;
@@ -254,14 +253,14 @@ THE SOFTWARE.*/
           if(defaults.outputMode == 'string')
             return xml;
 
-          var base64data = $.base64.encode(xml);
+          var base64data = base64encode(xml);
 
           if(defaults.outputMode == 'base64')
           return base64data;
 
           downloadFile(defaults.fileName+'.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
 
-        }else if(defaults.type == 'excel' || defaults.type == 'doc'|| defaults.type == 'powerpoint'){
+        }else if(defaults.type == 'excel' || defaults.type == 'doc'){
           //console.log($(this).html());
 
           var rowIndex = 0;
@@ -311,8 +310,9 @@ THE SOFTWARE.*/
             rowIndex++;
             excel += '</tr>';
           });
-          
-          if(defaults.displayTableName) excel +="<tr><td></td></tr><tr><td></td></tr><tr><td>" + parseString($('<p>' + defaults.tableName + '</p>')) + "</td></tr>";
+
+          if(defaults.displayTableName)
+            excel +="<tr><td></td></tr><tr><td></td></tr><tr><td>" + parseString($('<p>' + defaults.tableName + '</p>')) + "</td></tr>";
 
           excel += '</table>'
 
@@ -320,23 +320,26 @@ THE SOFTWARE.*/
             console.log(excel);
 
           var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
+          excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-'+defaults.type+'; charset=UTF-8">';
           excelFile += "<head>";
-          excelFile += "<!--[if gte mso 9]>";
-          excelFile += "<xml>";
-          excelFile += "<x:ExcelWorkbook>";
-          excelFile += "<x:ExcelWorksheets>";
-          excelFile += "<x:ExcelWorksheet>";
-          excelFile += "<x:Name>";
-          excelFile += "" + defaults.worksheetName + "";
-          excelFile += "</x:Name>";
-          excelFile += "<x:WorksheetOptions>";
-          excelFile += "<x:DisplayGridlines/>";
-          excelFile += "</x:WorksheetOptions>";
-          excelFile += "</x:ExcelWorksheet>";
-          excelFile += "</x:ExcelWorksheets>";
-          excelFile += "</x:ExcelWorkbook>";
-          excelFile += "</xml>";
-          excelFile += "<![endif]-->";
+          if (defaults.type == 'excel') {
+            excelFile += "<!--[if gte mso 9]>";
+            excelFile += "<xml>";
+            excelFile += "<x:ExcelWorkbook>";
+            excelFile += "<x:ExcelWorksheets>";
+            excelFile += "<x:ExcelWorksheet>";
+            excelFile += "<x:Name>";
+            excelFile += defaults.worksheetName;
+            excelFile += "</x:Name>";
+            excelFile += "<x:WorksheetOptions>";
+            excelFile += "<x:DisplayGridlines/>";
+            excelFile += "</x:WorksheetOptions>";
+            excelFile += "</x:ExcelWorksheet>";
+            excelFile += "</x:ExcelWorksheets>";
+            excelFile += "</x:ExcelWorkbook>";
+            excelFile += "</xml>";
+            excelFile += "<![endif]-->";
+          }
           excelFile += "</head>";
           excelFile += "<body>";
           excelFile += excel;
@@ -346,12 +349,12 @@ THE SOFTWARE.*/
           if(defaults.outputMode == 'string')
             return excelFile;
 
-          var base64data = $.base64.encode(excelFile);
+          var base64data = base64encode(excelFile);
 
           if(defaults.outputMode == 'base64')
             return base64data;
 
-          var extension = (defaults.type == 'excel')? 'xls' : (defaults.type == 'doc')? 'doc' : 'ppt';
+          var extension = (defaults.type == 'excel')? 'xls' : 'doc';
           downloadFile(defaults.fileName+'.'+extension, 'data:application/vnd.ms-'+defaults.type+';base64,' + base64data);
 
         }else if(defaults.type == 'png'){
@@ -362,56 +365,37 @@ THE SOFTWARE.*/
             }
           });
         }else if(defaults.type == 'pdf'){
+          var doc = new jsPDF();
 
-          var rowIndex = 0;
-          var doc = new jsPDF('p','pt', 'a4', true);
-          doc.setFontSize(defaults.pdfFontSize);
-
-          // Header
-          var startColPosition=defaults.pdfLeftMargin;
-          $(el).find('thead').find(defaults.theadSelector).each(function() {
-            $(this).filter(':visible').find('th').each(function(index,data) {
-              if ($(this).css('display') != 'none' &&
-                  $(this).data("tableexport-display") != 'none'){
-                if(defaults.ignoreColumn.indexOf(index) == -1){
-                  var colPosition = startColPosition+ (index * 50);
-                  doc.text(colPosition,20, parseString(this, rowIndex, index));
-                }
-              }
-            });
-            rowIndex++;
-          });
-
-          // Row Vs Column
-          var startRowPosition = 20; var page =1;var rowPosition=0;
-          $(el).find('tbody').find(defaults.tbodySelector).each(function(index,data) {
-            rowCalc = index+1;
-
-          if (rowCalc % 26 == 0){
-            doc.addPage();
-            page++;
-            startRowPosition=startRowPosition+10;
+          var k = getDPI() / 25.4;
+          var options = {
+            dim:{
+              w: ($(el).width()/k),
+              h: ($(el).height()/k)
+            }
           }
-          rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
 
-            $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none' &&
-                  $(this).data("tableexport-display") != 'none'){
-                if(defaults.ignoreColumn.indexOf(index) == -1){
-                  var colPosition = startColPosition+ (index * 50);
-                  doc.text(colPosition,rowPosition, parseString(this, rowIndex, index));
-                }
-              }
-
-            });
-            rowIndex++;
+          doc.addHTML($(el),defaults.pdfLeftMargin,0,options,function() {
+            doc.output('datauri');
           });
-
-          // Output as Data URI
-          doc.output('datauri');
-
         }
 
+        function getDPI(){
+          if (defaults.dpi == 0){
+            var dpiDIV = document.createElement('div');
+
+            if ( dpiDIV ){
+              dpiDIV.style = 'height: 1in; left: -100%; position: absolute; top: -100%; width: 1in;';
+              document.body.appendChild(dpiDIV);
+              defaults.dpi = dpiDIV.offsetWidth;
+              document.body.removeChild(dpiDIV);
+            }
+            if (defaults.dpi == 0)
+              defaults.dpi = 96;
+          }
+
+          return defaults.dpi;
+        }
 
         function escapeRegExp(string){
           return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -482,6 +466,53 @@ THE SOFTWARE.*/
 
             document.body.removeChild(DownloadLink);
           }
+        }
+
+        function utf8Encode(string) {
+          string = string.replace(/\x0d\x0a/g, "\x0a");
+          var utftext = "";
+          for (var n = 0; n < string.length; n++) {
+            var c = string.charCodeAt(n);
+            if (c < 128) {
+              utftext += String.fromCharCode(c);
+            }
+            else if((c > 127) && (c < 2048)) {
+              utftext += String.fromCharCode((c >> 6) | 192);
+              utftext += String.fromCharCode((c & 63) | 128);
+            }
+            else {
+              utftext += String.fromCharCode((c >> 12) | 224);
+              utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+              utftext += String.fromCharCode((c & 63) | 128);
+            }
+          }
+          return utftext;
+        }
+
+        function base64encode(input) {
+          var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+          var output = "";
+          var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+          var i = 0;
+          input = utf8Encode(input);
+          while (i < input.length) {
+            chr1 = input.charCodeAt(i++);
+            chr2 = input.charCodeAt(i++);
+            chr3 = input.charCodeAt(i++);
+            enc1 = chr1 >> 2;
+            enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+            enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+            enc4 = chr3 & 63;
+            if (isNaN(chr2)) {
+              enc3 = enc4 = 64;
+            } else if (isNaN(chr3)) {
+              enc4 = 64;
+            }
+            output = output +
+              keyStr.charAt(enc1) + keyStr.charAt(enc2) +
+              keyStr.charAt(enc3) + keyStr.charAt(enc4);
+          }
+          return output;
         }
       }
     });

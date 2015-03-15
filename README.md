@@ -3,52 +3,51 @@ tableExport.jquery.plugin
 
 <h3>Export HTML Table to</h3>
 <ul>
-<li> JSON
-<li> XML
-<li> PNG
 <li> CSV
 <li> TXT
+<li> JSON
+<li> XML
 <li> SQL
-<li> MS-Word
-<li> Ms-Excel
-<li> Ms-Powerpoint
+<li> XLS
+<li> DOC
+<li> PNG
 <li> PDF
 </ul>
 
 Installation
 ============
-jquery Plugin<BR>
+As jquery Plugin to export CSV,TXT,JSON,XML,SQL,XLS,DOC add:<BR>
+
 &lt;script type="text/javascript" src="tableExport.js"><BR>
-&lt;script type="text/javascript" src="jquery.base64.js"><BR>
 
-PNG Export
-==========
-&lt;script type="text/javascript" src="html2canvas.js">
+for PNG export add:<BR>
 
-PDF Export
-==========
-&lt;script type="text/javascript" src="jspdf/libs/sprintf.js"><BR>
-&lt;script type="text/javascript" src="jspdf/jspdf.js"><BR>
-&lt;script type="text/javascript" src="jspdf/libs/base64.js"><BR>
+&lt;script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"><BR>
+
+for PDF export add:<BR>
+
+&lt;script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"><BR>
+&lt;script type="text/javascript" src="libs/jsPDF/jspdf.min.js"><BR>
+&lt;script type="text/javascript" src="libs/jsPDF/jspdf.plugin.addhtml.js"><BR>
 
 Usage
 ======
-onClick ="$('#tableID').tableExport({type:'pdf',escape:'false'});"<BR>
+onClick ="$('#tableID').tableExport({type:'csv'});"<BR>
 
 Options
 =======
 csvSeparator: ','<BR>
 csvEnclosure: '"'<BR>
 onCellData: null<BR>
-ignoreColumn: [2,3]<BR>
+ignoreColumn: []<BR>
 displayTableName: 'false',<BR>
 theadSelector: 'tr'<BR>
 tbodySelector: 'tr'<BR>
 tableName: 'myTableName'<BR>
 type: 'csv'<BR>
-pdfFontSize: 14<BR>
+dpi: 0<BR>
 pdfLeftMargin: 20<BR>
-escape: 'true'<BR>
+escape: 'false'<BR>
 htmlContent: 'false'<BR>
 consoleLog: 'false'<BR>
 outputMode: 'file'<BR>
