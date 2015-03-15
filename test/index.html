@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <script type="text/javascript" src="../libs/html2canvas/html2canvas.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF/jspdf.plugin.addhtml.js"></script>
+  <style type="text/css">
+  <!--
+  .table-striped {
+      background-color: white;
+  }
+  .table-striped > thead > tr > th {
+      background-color: gray;
+	  color: white;
+  }
+  .table-striped > tbody > tr:nth-child(2n+1) > td {
+      background-color: #ccdf88;
+  }
+  -->
+  </style>
+  <script type="text/javaScript">
+  function doExport (params){
+    var options = {tableName: 'Countries',
+	               worksheetName: 'Countries by population'};
+	
+	$.extend(true, options, params);
+
+	$('#customers').tableExport(options);
+  }
+  </script>
+  <body>
+    <div>
+      <section>
+        <h1>
+          HTML Table Export<br>
+        </h1>
+      </section>
+      <section>
+        <div>
+          <ul>
+            <li><a href="#" onClick ="doExport({type:'csv'});"> <img src='icons/csv.png' width='24px'> CSV</a></li>
+            <li><a href="#" onClick ="doExport({type:'txt'});"> <img src='icons/txt.png' width='24px'> TXT</a></li>
+            <li class="divider"></li>
+            <li><a href="#" onClick ="doExport({type:'json'});"> <img src='icons/json.png' width='24px'> JSON</a></li>
+            <li><a href="#" onClick ="doExport({type:'json',ignoreColumn:'[2,3]'});"> <img src='icons/json.png' width='24px'> JSON (ignoreColumn)</a></li>
+            <li><a href="#" onClick ="doExport({type:'json',escape:'true'});"> <img src='icons/json.png' width='24px'> JSON (with Escape)</a></li>
+            <li class="divider"></li>
+            <li><a href="#" onClick ="doExport({type:'xml'});"> <img src='icons/xml.png' width='24px'> XML</a></li>
+            <li><a href="#" onClick ="doExport({type:'sql'});"> <img src='icons/sql.png' width='24px'> SQL</a></li>
+            <li class="divider"></li>
+            <li><a href="#" onClick ="doExport({type:'excel'});"> <img src='icons/xls.png' width='24px'> XLS</a></li>
+            <li><a href="#" onClick ="doExport({type:'doc'});"> <img src='icons/word.png' width='24px'> Word</a></li>
+            <li class="divider"></li>
+            <li><a href="#" onClick ="doExport({type:'png'});"> <img src='icons/png.png' width='24px'> PNG</a></li>
+            <li><a href="#" onClick ="doExport({type:'pdf'});"> <img src='icons/pdf.png' width='24px'> PDF</a></li>
+          </ul>
+          <!-- Countries and dependencies by population -->
+          <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
+          <table id="customers" class="table-striped">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Country</th>
+                <th>Population</th>
+                <th>Date</th>
+                <th>% of world</th>
+                <th>Language</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>China</td>
+                <td>1,368,710,000</td>
+                <td>March 14, 2015</td>
+                <td>18.9%</td>
+                <td>中文</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>India</td>
+                <td>1,268,220,000</td>
+                <td>March 14, 2015</td>
+                <td>17.5%</td>
+                <td>हिन्दी</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>United States</td>
+                <td>320,583,000</td>
+                <td>March 14, 2015</td>
+                <td>4.43%</td>
+                <td>English</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Indonesia</td>
+                <td>255,461,700</td>
+                <td>July 1, 2015</td>
+                <td>3.53%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Brazil</td>
+                <td>204,014,000</td>
+                <td>March 14, 2015</td>
+                <td>2.82%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Pakistan</td>
+                <td>189,223,000</td>
+                <td>March 14, 2015</td>
+                <td>2.62%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Nigeria</td>
+                <td>183,523,000</td>
+                <td>July 1, 2015</td>
+                <td>2.54%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Bangladesh</td>
+                <td>157,986,000</td>
+                <td>March 14, 2015</td>
+                <td>2.18%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Russia</td>
+                <td>146,270,033</td>
+                <td>January 1, 2015</td>
+                <td>2.02%</td>
+                <td>Русский</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>Japan</td>
+                <td>126,970,000</td>
+                <td>February 1, 2015</td>
+                <td>1.76%</td>
+                <td>日本語</td>
+              </tr>
+              <tr>
+                <td>11</td>
+                <td>Mexico</td>
+                <td>121,005,815</td>
+                <td>July 1, 2015</td>
+                <td>1.67%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>12</td>
+                <td>Philippines</td>
+                <td>101,137,900</td>
+                <td>March 14, 2015</td>
+                <td>1.4%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>13</td>
+                <td>Vietnam</td>
+                <td>90,730,000</td>
+                <td>July 1, 2014</td>
+                <td>1.25%</td>
+                <td>Tiếng Việt</td>
+              </tr>
+              <tr>
+                <td>14</td>
+                <td>Ethiopia</td>
+                <td>90,076,012</td>
+                <td>July 1, 2015</td>
+                <td>1.25%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>15</td>
+                <td>Egypt</td>
+                <td>88,168,200</td>
+                <td>March 14, 2015</td>
+                <td>1.22%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>16</td>
+                <td>Germany</td>
+                <td>80,925,000</td>
+                <td>June 30, 2014</td>
+                <td>1.12%</td>
+                <td>Deutsch</td>
+              </tr>
+              <tr>
+                <td>17</td>
+                <td>Iran</td>
+                <td>78,184,800</td>
+                <td>March 14, 2015</td>
+                <td>1.08%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>18</td>
+                <td>Turkey</td>
+                <td>77,695,904</td>
+                <td>December 31, 2014</td>
+                <td>1.07%</td>
+                <td>Türkçe</td>
+              </tr>
+              <tr>
+                <td>19</td>
+                <td>Democratic Republic of the Congo</td>
+                <td>71,246,000</td>
+                <td>July 1, 2015</td>
+                <td>0.99%</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>20</td>
+                <td>France</td>
+                <td>66,104,000</td>
+                <td>February 1, 2015</td>
+                <td>0.91%</td>
+                <td>Français</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
