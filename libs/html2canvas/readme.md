@@ -1,9 +1,8 @@
 html2canvas
 ===========
 
-[Homepage](http://html2canvas.hertzen.com) | [Downloads](https://github.com/niklasvh/html2canvas/releases) | [Questions](http://stackoverflow.com/questions/tagged/html2canvas?sort=newest) | [Donate](https://www.gittip.com/niklasvh/)
-
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/niklasvh/html2canvas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Build Status](https://travis-ci.org/niklasvh/html2canvas.png)](https://travis-ci.org/niklasvh/html2canvas)
+### Current build status ###
+[![Build Status](https://travis-ci.org/niklasvh/html2canvas.png)](https://travis-ci.org/niklasvh/html2canvas)
 
 #### JavaScript HTML renderer ####
 
@@ -31,29 +30,23 @@ The script should work fine on the following browsers:
 As each CSS property needs to be manually built to be supported, there are a number of properties that are not yet supported.
 
 ### Usage ###
-
-**Note!** These instructions are for using the current dev version of 0.5, for the latest release version (0.4.1), checkout the [old readme](https://github.com/niklasvh/html2canvas/blob/v0.4/readme.md).
-
 To render an `element` with html2canvas, simply call:
-` html2canvas(element[, options]);`
+` html2canvas(element, options);`
 
-The function returns a [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) containing the `<canvas>` element. Simply add a promise fullfillment handler to the promise using `then`:
+To access the created canvas, provide the `onrendered` event in the options which returns the canvas element as the first argument, as such:
 
-    html2canvas(document.body).then(function(canvas) {
-        document.body.appendChild(canvas);
+    html2canvas(document.body, {
+        onrendered: function(canvas) {
+            /* canvas is the actual canvas element,
+               to append it to the page call for example
+               document.body.appendChild( canvas );
+            */
+        }
     });
 
 ### Building ###
 
-The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you can download the latest build from [here](https://github.com/niklasvh/html2canvas/blob/master/dist/html2canvas.js).
-
-Clone git repository with submodules:
-
-    $ git clone --recursive git://github.com/niklasvh/html2canvas.git
-
-Install Grunt and uglifyjs:
-
-    $ npm install -g grunt-cli uglify-js
+The library uses [grunt](http://gruntjs.com/) for building. Alternatively, you can download the latest build from [here](http://html2canvas.hertzen.com/build/html2canvas.js).
 
 Run the full build process (including lint, qunit and webdriver tests):
 
@@ -84,3 +77,46 @@ For more information and examples, please visit the [homepage](http://html2canva
 ### Contributing ###
 
 If you wish to contribute to the project, please send the pull requests to the develop branch. Before submitting any changes, try and test that the changes work with all the support browsers. If some CSS property isn't supported or is incomplete, please create appropriate tests for it as well before submitting any code changes.
+
+### Changelog ###
+
+v0.4.1 - 7.9.2013
+ * Added support for bower
+ * Improved z-index ordering
+ * Basic implementation for CSS transformations
+ * Fixed inline text in top element
+ * Basic implementation for text-shadow
+
+v0.4.0 - 30.1.2013
+ * Added rendering tests with <a href="https://github.com/niklasvh/webdriver.js">webdriver</a>
+ * Switched to using grunt for building
+ * Removed support for IE<9, including any FlashCanvas bits
+ * Support for border-radius
+ * Support for multiple background images, size, and clipping
+ * Support for :before and :after pseudo elements
+ * Support for placeholder rendering
+ * Reformatted all tests to small units to test specific features
+
+v0.3.4 - 26.6.2012
+
+* Removed (last?) jQuery dependencies (<a href="https://github.com/niklasvh/html2canvas/commit/343b86705fe163766fcf735eb0217130e4bd5b17">niklasvh</a>)
+* SVG-powered rendering (<a href="https://github.com/niklasvh/html2canvas/commit/67d3e0d0f59a5a654caf71a2e3be6494ff146c75">niklasvh</a>)
+* Radial gradients (<a href="https://github.com/niklasvh/html2canvas/commit/4f22c18043a73c0c3bbf3b5e4d62714c56acd3c7">SunboX</a>)
+* Split renderers to their own objects (<a href="https://github.com/niklasvh/html2canvas/commit/94f2f799a457cd29a21cc56ef8c06f1697866739">niklasvh</a>)
+* Simplified API, cleaned up code (<a href="https://github.com/niklasvh/html2canvas/commit/c7d526c9eaa6a4abf4754d205fe1dee360c7660e">niklasvh</a>)
+
+v0.3.3 - 2.3.2012
+
+* SVG taint fix, and additional taint testing options for rendering (<a href="https://github.com/niklasvh/html2canvas/commit/2dc8b9385e656696cb019d615bdfa1d98b17d5d4">niklasvh</a>)
+* Added support for CORS images and option to create canvas as tainted (<a href="https://github.com/niklasvh/html2canvas/commit/3ad49efa0032cde25c6ed32a39e35d1505d3b2ef">niklasvh</a>)
+* Improved minification saved ~1K! (<a href="https://github.com/cobexer/html2canvas/commit/b82be022b2b9240bd503e078ac980bde2b953e43">cobexer</a>)
+* Added integrated support for Flashcanvas (<a href="https://github.com/niklasvh/html2canvas/commit/e9257191519f67d74fd5e364d8dee3c0963ba5fc">niklasvh</a>)
+* Fixed a variety of legacy IE bugs (<a href="https://github.com/niklasvh/html2canvas/commit/b65357c55d0701017bafcd357bc654b54d458f8f">niklasvh</a>)
+
+v0.3.2 - 20.2.2012
+
+* Added changelog!
+* Added bookmarklet (<a href="https://github.com/niklasvh/html2canvas/commit/b320dd306e1a2d32a3bc5a71b6ebf6d8c060cde5">cobexer</a>)
+* Option to select single element to render (<a href="https://github.com/niklasvh/html2canvas/commit/0cb252ada91c84ef411288b317c03e97da1f12ad">niklasvh</a>)
+* Fixed closure compiler warnings (<a href="https://github.com/niklasvh/html2canvas/commit/36ff1ec7aadcbdf66851a0b77f0b9e87e4a8e4a1">cobexer</a>)
+* Enable profiling in FF (<a href="https://github.com/niklasvh/html2canvas/commit/bbd75286a8406cf9e5aea01fdb7950d547edefb9">cobexer</a>)
