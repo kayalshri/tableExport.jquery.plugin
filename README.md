@@ -28,7 +28,6 @@ for PDF export add:<BR>
 
 &lt;script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"><BR>
 &lt;script type="text/javascript" src="libs/jsPDF/jspdf.min.js"><BR>
-&lt;script type="text/javascript" src="libs/jsPDF/jspdf.plugin.addhtml.js"><BR>
 
 Usage
 ======
@@ -45,7 +44,6 @@ theadSelector: 'tr'<BR>
 tbodySelector: 'tr'<BR>
 tableName: 'myTableName'<BR>
 type: 'csv'<BR>
-dpi: 0<BR>
 pdfLeftMargin: 20<BR>
 escape: 'false'<BR>
 htmlContent: 'false'<BR>
