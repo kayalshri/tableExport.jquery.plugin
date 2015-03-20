@@ -16,21 +16,22 @@ tableExport.jquery.plugin
 
 Installation
 ============
-As jquery Plugin to export CSV,TXT,JSON,XML,SQL,XLS,DOC add:<BR>
+To export a html table in CSV,TXT,JSON,XML,SQL,XLS or DOC format include:<BR>
 
-&lt;script type="text/javascript" src="tableExport.js"><BR>
+&lt;script type="text/javascript" src="tableExport.js">&lt;/script><BR>
+&lt;script type="text/javascript" src="libs/FileSaver/FileSaver.min.js">&lt;/script><BR>
 
 for PNG export add:<BR>
 
-&lt;script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"><BR>
+&lt;script type="text/javascript" src="libs/html2canvas/html2canvas.min.js">&lt;/script><BR>
 
 for PDF export add:<BR>
 
-&lt;script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"><BR>
-&lt;script type="text/javascript" src="libs/jsPDF/jspdf.min.js"><BR>
+&lt;script type="text/javascript" src="libs/html2canvas/html2canvas.min.js">&lt;/script><BR>
+&lt;script type="text/javascript" src="libs/jsPDF/jspdf.min.js">&lt;/script><BR>
 
 Usage
-======
+=====
 onClick ="$('#tableID').tableExport({type:'csv'});"<BR>
 
 Options

@@ -96,10 +96,15 @@ THE SOFTWARE.*/
         if(defaults.outputMode == 'base64')
           return base64encode(tdData);
 
-        downloadFile(defaults.fileName + '.' + defaults.type,
-                     'data:text/csv;charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
-                     encodeURIComponent(tdData));
-
+        try {
+          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + tdData], {type: "text/csv;charset=utf-8"});
+          saveAs (blob, defaults.fileName + '.' + defaults.type);
+        }
+        catch (e) {
+          downloadFile(defaults.fileName + '.' + defaults.type,
+                       'data:text/csv;charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
+                       encodeURIComponent(tdData));
+        }
 
       }else if(defaults.type == 'sql'){
 
@@ -151,7 +156,13 @@ THE SOFTWARE.*/
         if(defaults.outputMode == 'base64')
           return base64encode(tdData);
 
-        downloadFile(defaults.fileName+'.sql', 'data:application/sql;charset=utf-8,' + encodeURIComponent(tdData));
+        try {
+          var blob = new Blob([tdData], {type: "application/sql;charset=utf-8"});
+          saveAs (blob, defaults.fileName + '.sql');
+        }
+        catch (e) {
+          downloadFile(defaults.fileName+'.sql', 'data:application/sql;charset=utf-8,' + encodeURIComponent(tdData));
+        }
 
       }else if(defaults.type == 'json'){
 
@@ -194,18 +205,26 @@ THE SOFTWARE.*/
         var jsonExportArray =[];
         jsonExportArray.push({header:jsonHeaderArray,data:jsonArray});
 
+        var sdata = JSON.stringify(jsonExportArray);
+
         if(defaults.consoleLog == 'true')
-        console.log(JSON.stringify(jsonExportArray));
+          console.log(sdata);
 
         if(defaults.outputMode == 'string')
-          return JSON.stringify(jsonExportArray);
+          return sdata;
 
-        var base64data = base64encode(JSON.stringify(jsonExportArray));
+        var base64data = base64encode(sdata);
 
         if(defaults.outputMode == 'base64')
           return base64data;
 
-        downloadFile(defaults.fileName+'.json', 'data:application/json;charset=utf-8;base64,' + base64data);
+        try {
+          var blob = new Blob([sdata], {type: "application/json;charset=utf-8"});
+          saveAs (blob, defaults.fileName + '.json');
+        }
+        catch (e) {
+          downloadFile(defaults.fileName+'.json', 'data:application/json;charset=utf-8;base64,' + base64data);
+        }
 
       }else if(defaults.type == 'xml'){
 
@@ -257,9 +276,15 @@ THE SOFTWARE.*/
         var base64data = base64encode(xml);
 
         if(defaults.outputMode == 'base64')
-        return base64data;
+          return base64data;
 
-        downloadFile(defaults.fileName+'.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
+        try {
+          var blob = new Blob([xml], {type: "application/xml;charset=utf-8"});
+          saveAs (blob, defaults.fileName + '.xml');
+        }
+        catch (e) {
+          downloadFile(defaults.fileName+'.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
+        }
 
       }else if(defaults.type == 'excel' || defaults.type == 'doc'){
         //console.log($(this).html());
@@ -356,13 +381,35 @@ THE SOFTWARE.*/
           return base64data;
 
         var extension = (defaults.type == 'excel')? 'xls' : 'doc';
-        downloadFile(defaults.fileName+'.'+extension, 'data:application/vnd.ms-'+defaults.type+';base64,' + base64data);
+        try {
+          var blob = new Blob([excelFile], {type: 'application/vnd.ms-'+defaults.type});
+          saveAs (blob, defaults.fileName+'.'+extension);
+        }
+        catch (e) {
+          downloadFile(defaults.fileName+'.'+extension, 'data:application/vnd.ms-'+defaults.type+';base64,' + base64data);
+        }
 
       }else if(defaults.type == 'png'){
         html2canvas($(el), {
           onrendered: function(canvas) {
-            var img = canvas.toDataURL("image/png");
-            window.open(img);
+
+            var image = canvas.toDataURL();
+            image = image.substring(22); // remove data stuff
+
+            var byteString = atob(image);
+            var buffer = new ArrayBuffer(byteString.length);
+            var intArray = new Uint8Array(buffer);
+
+            for (var i = 0; i < byteString.length; i++)
+              intArray[i] = byteString.charCodeAt(i);
+
+            try {
+              var blob = new Blob([buffer], { type: "image/png" });
+              saveAs (blob, defaults.fileName + '.png');
+            }
+            catch (e) {
+              downloadFile(defaults.fileName+'.png', 'data:image/png;base64,' + image);
+            }
           }
         });
       }else if(defaults.type == 'pdf'){
@@ -375,7 +422,26 @@ THE SOFTWARE.*/
         }
 
         doc.addHTML($(el),defaults.pdfLeftMargin,0,options,function() {
-          doc.output('dataurlnewwindow');
+          var pdfdata = doc.output();
+
+          if(defaults.consoleLog == 'true')
+            console.log(pdfdata);
+
+          if(defaults.outputMode == 'string')
+            return pdfdata;
+
+          var base64data = base64encode(pdfdata);
+
+          if(defaults.outputMode == 'base64')
+            return base64data;
+
+          try {
+            var blob = doc.output('blob');
+            saveAs (blob, defaults.fileName + '.pdf');
+          }
+          catch (e) {
+            downloadFile(defaults.fileName+'.pdf', 'data:application/pdf;base64,' + base64data);
+          }
         });
       }
 
@@ -438,7 +504,7 @@ THE SOFTWARE.*/
         if(target.currentStyle){ // ie
           return target.currentStyle[prop];
         }
-        return target.style[prop];        
+        return target.style[prop];
       }
 
       function getPropertyUnitValue (target, prop, unit){
@@ -447,7 +513,7 @@ THE SOFTWARE.*/
         var value = getStyle(target, prop);  // get the computed style value
 
         var numeric = value.match(/\d+/);  // get the numeric component
-        if(numeric !== null) {  
+        if(numeric !== null) {
           numeric = numeric[0];  // get the string
 
           var temp = document.createElement("div");  // create temporary element
