@@ -75,7 +75,8 @@ THE SOFTWARE.*/
 						console.log(tdData);
 					}
 					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
+					//window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
+					$('<a style="display:none" href="data:application/'+defaults.type+';filename=exportData;'+base64data+'" download="'+defaults.tableName.toString()+'.'+defaults.type+'"><span></span></a>').appendTo(document.body).find('span').trigger("click").parent().remove();
 				}else if(defaults.type == 'sql'){
 				
 					// Header
@@ -119,7 +120,8 @@ THE SOFTWARE.*/
 					}
 					
 					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/sql;filename=exportData;' + base64data);
+					//window.open('data:application/sql;filename=exportData;' + base64data);
+					$('<a style="display:none" href="data:application/'+defaults.type+';filename=exportData;'+base64data+'" download="'+defaults.tableName.toString()+'.'+defaults.type+'"><span></span></a>').appendTo(document.body).find('span').trigger("click").parent().remove();;
 					
 				
 				}else if(defaults.type == 'json'){
@@ -168,7 +170,8 @@ THE SOFTWARE.*/
 						console.log(JSON.stringify(jsonExportArray));
 					}
 					var base64data = "base64," + $.base64.encode(JSON.stringify(jsonExportArray));
-					window.open('data:application/json;filename=exportData;' + base64data);
+					//window.open('data:application/json;filename=exportData;' + base64data);
+					$('<a style="display:none" href="data:application/'+defaults.type+';filename=exportData;'+base64data+'" download="'+defaults.tableName.toString()+'.'+defaults.type+'"><span></span></a>').appendTo(document.body).find('span').trigger("click").parent().remove();
 				}else if(defaults.type == 'xml'){
 				
 					var xml = '<?xml version="1.0" encoding="utf-8"?>';
@@ -209,7 +212,8 @@ THE SOFTWARE.*/
 					}
 					
 					var base64data = "base64," + $.base64.encode(xml);
-					window.open('data:application/xml;filename=exportData;' + base64data);
+					//window.open('data:application/xml;filename=exportData;' + base64data);
+					$('<a style="display:none" href="data:application/'+defaults.type+';filename=exportData;'+base64data+'" download="'+defaults.tableName.toString()+'.'+defaults.type+'"><span></span></a>').appendTo(document.body).find('span').trigger("click").parent().remove();
 
 				}else if(defaults.type == 'excel' || defaults.type == 'doc'|| defaults.type == 'powerpoint'  ){
 					//console.log($(this).html());
@@ -276,7 +280,18 @@ THE SOFTWARE.*/
 					excelFile += "</html>";
 
 					var base64data = "base64," + $.base64.encode(excelFile);
-					window.open('data:application/vnd.ms-'+defaults.type+';filename=exportData.doc;' + base64data);
+					//window.open('data:application/vnd.ms-'+defaults.type+';filename=exportData.doc;' + base64data);
+					switch(defaults.type) {
+						case 'excel':
+						$('<a style="display:none" href="data:application/vnd.ms-'+defaults.type+';filename=exportData.xlsx;'+base64data+'" download="'+defaults.tableName.toString()+'.xlsx"><span></span></a>').appendTo(document.body).find('span').trigger("click").parent().remove();
+						break;
+						case 'doc':
+						$('<a style="display:none" href="data:application/vnd.ms-'+defaults.type+';filename=exportData.docx;'+base64data+'" download="'+defaults.tableName.toString()+'.docx"><span></span></a>').appendTo(document.body).find('span').trigger("click").parent().remove();
+						break;
+						case 'powerpoint':
+						$('<a style="display:none" href="data:application/vnd.ms-'+defaults.type+';filename=exportData.pptx;'+base64data+'" download="'+defaults.tableName.toString()+'.pptx"><span></span></a>').appendTo(document.body).find('span').trigger("click").parent().remove();
+						break;
+					}
 					
 				}else if(defaults.type == 'png'){
 					html2canvas($(el), {
