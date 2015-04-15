@@ -327,6 +327,8 @@ THE SOFTWARE.*/
                     excel += defaults.excelstyles[styles] + ": " + $(this).css(defaults.excelstyles[styles]) + ";";
                   }
                 }
+                if ($(this).is("[colspan]"))
+                  excel += "' colspan='" + $(this).attr('colspan');
                 excel += "'>" + parseString(this, rowIndex, index) + "</td>";
               }
             }
