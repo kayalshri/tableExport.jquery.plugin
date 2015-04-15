@@ -97,12 +97,12 @@ THE SOFTWARE.*/
           return base64encode(tdData);
 
         try {
-          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + tdData], {type: "text/csv;charset=utf-8"});
+          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + tdData], {type: "text/"+(defaults.type == 'csv' ? 'csv' : 'plain')+";charset=utf-8"});
           saveAs (blob, defaults.fileName + '.' + defaults.type);
         }
         catch (e) {
           downloadFile(defaults.fileName + '.' + defaults.type,
-                       'data:text/csv;charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
+                       'data:text/'+(defaults.type == 'csv' ? 'csv' : 'plain')+';charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
                        encodeURIComponent(tdData));
         }
 
@@ -157,7 +157,7 @@ THE SOFTWARE.*/
           return base64encode(tdData);
 
         try {
-          var blob = new Blob([tdData], {type: "application/sql;charset=utf-8"});
+          var blob = new Blob([tdData], {type: "text/plain;charset=utf-8"});
           saveAs (blob, defaults.fileName + '.sql');
         }
         catch (e) {
@@ -347,6 +347,9 @@ THE SOFTWARE.*/
 
         var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
         excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-'+defaults.type+'; charset=UTF-8">';
+        excelFile += '<meta http-equiv="content-type" content="application/';
+        excelFile += (defaults.type == 'excel')? 'vnd.ms-excel' : 'msword';
+        excelFile += '; charset=UTF-8">';
         excelFile += "<head>";
         if (defaults.type == 'excel') {
           excelFile += "<!--[if gte mso 9]>";
