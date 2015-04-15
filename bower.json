@@ -1,0 +1,31 @@
+{
+  "name": "tableExport.jquery.plugin",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": ">=1.9.1"
+  },
+  "authors": [
+    "hhurz",
+    "kayalshri"
+  ],
+  "description": "tableExport",
+  "main": "tableExport.min.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "html5",
+    "javascript",
+    "jquery",
+    "ui",
+    "framework",
+    "table"
+  ],
+  "ignore": [
+    "tools",
+    "test",
+    "libs",
+    "test",
+    "tests"
+  ]
+}
