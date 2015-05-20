@@ -77,7 +77,7 @@ THE SOFTWARE.*/
 					var base64data = "data:application/"+defaults.type+";base64," + $.base64.encode(tdData);
 					var octetData = 'data:application/octet-stream,' + encodeURIComponent(tdData);
 					var a = $("<a>", {
-						download: "export."+defaults.type,
+						download: defaults.tableName+"."+defaults.type,
 						href: octetData,
 						_target: "blank"
 					});
@@ -128,7 +128,7 @@ THE SOFTWARE.*/
 					var base64data = "data:application/sql;base64," + $.base64.encode(tdData);
 					var octetData = 'data:application/octet-stream,' + encodeURIComponent(tdData);
 					var a = $("<a>", {
-						download: "export.sql",
+						download: defaults.tableName+".sql",
 						href: octetData,
 						_target: "blank"
 					});
@@ -182,7 +182,7 @@ THE SOFTWARE.*/
 					var base64data = "data:application/json;base64," + $.base64.encode(JSON.stringify(jsonExportArray));
 					var octetData = 'data:application/octet-stream,' + encodeURIComponent(JSON.stringify(jsonExportArray));
 					var a = $("<a>", {
-						download: "export.json",
+						download: defaults.tableName+".json",
 						href: octetData,
 						_target: "blank"
 					});
@@ -230,7 +230,7 @@ THE SOFTWARE.*/
 					var base64data = "data:application/xml;base64," + $.base64.encode(xml);
   					var octetData = 'data:application/octet-stream,' + encodeURIComponent(xml);
 					var a = $("<a>", {
-						download: "export.xml",
+						download: defaults.tableName+".xml",
 						href: octetData,
 						_target: "blank"
 					});
@@ -313,7 +313,7 @@ THE SOFTWARE.*/
 					var base64data = "data:application/"+extension+";base64," + $.base64.encode(excelFile);
 					var octetData = 'data:application/octet-stream,' + encodeURIComponent(excelFile);
 					var a = $("<a>", {
-						download: "export."+extension,
+						download: defaults.tableName+"."+extension,
 						href: base64data,
 						_target: "blank"
 					});
