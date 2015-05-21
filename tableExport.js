@@ -35,7 +35,9 @@ THE SOFTWARE.*/
         tableName: 'myTableName',
         worksheetName: 'xlsWorksheetName',
         type: 'csv',
-        pdfLeftMargin:20,
+        jspdf: { orientation: 'p', unit:'pt', format:'a4',
+                 margins: {left: 20, right: 10, top: 10, bottom: 10},
+                 autotable: {padding: 2, lineHeight: 12, fontSize: 8} },
         escape: false,
         htmlContent: false,
         consoleLog: false,
@@ -416,37 +418,79 @@ THE SOFTWARE.*/
             }
           }
         });
+
       }else if(defaults.type == 'pdf'){
-        var doc = new jsPDF();
-        var options = {
-          dim:{
-            w: getPropertyUnitValue ($(el).get(0), 'width', 'mm'),
-            h: getPropertyUnitValue ($(el).get(0), 'height', 'mm')
+        var doc = new jsPDF(defaults.jspdf.orientation, defaults.jspdf.unit, defaults.jspdf.format);
+
+        if ( defaults.jspdf.autotable === false ) {
+          var options = {
+            dim:{
+              w: getPropertyUnitValue ($(el).get(0), 'width', 'mm'),
+              h: getPropertyUnitValue ($(el).get(0), 'height', 'mm')
+            }
           }
+          doc.addHTML($(el),defaults.jspdf.margins.left,defaults.jspdf.margins.top,options,function() {
+            jsPdfOutput (doc);
+          });
         }
+        else {
+          var headers = [];
+          $(el).find('thead').find(defaults.theadSelector).each(function() {
+            var rowIndex = 0;
 
-        doc.addHTML($(el),defaults.pdfLeftMargin,0,options,function() {
-          var pdfdata = doc.output();
+            $(this).filter(':visible').find('th').each(function(index,data) {
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
+                if(defaults.ignoreColumn.indexOf(index) == -1){
+                  headers.push(parseString(this, rowIndex, index));
+                }
+              }
+            });
+            rowIndex++;
+          });
 
-          if(defaults.consoleLog === true)
-            console.log(pdfdata);
+          var rows = [];
+          $(el).find('tbody').find(defaults.tbodySelector).each(function() {
+            var rowData = [];
 
-          if(defaults.outputMode == 'string')
-            return pdfdata;
+            $(this).filter(':visible').find('td').each(function(index,data) {
+              if ($(this).css('display') != 'none' &&
+                  $(this).data("tableexport-display") != 'none'){
+                if(defaults.ignoreColumn.indexOf(index) == -1){
+                  rowData.push(parseString(this, rowIndex, index));
+                }
+              }
+            });
+            rowIndex++;
+            rows.push(rowData);
+          });
+          
+          defaults.jspdf.autotable.margins = {};
+          $.extend(true, defaults.jspdf.autotable.margins, defaults.jspdf.margins);
 
-          var base64data = base64encode(pdfdata);
+          doc.autoTable(headers, rows, defaults.jspdf.autotable);
+          
+          jsPdfOutput (doc);
+        }
+      }
 
-          if(defaults.outputMode == 'base64')
-            return base64data;
+      function jsPdfOutput (doc){
+        if(defaults.consoleLog === true)
+          console.log(doc.output());
 
-          try {
-            var blob = doc.output('blob');
-            saveAs (blob, defaults.fileName + '.pdf');
-          }
-          catch (e) {
-            downloadFile(defaults.fileName+'.pdf', 'data:application/pdf;base64,' + base64data);
-          }
-        });
+        if(defaults.outputMode == 'string')
+          return doc.output();
+
+        if(defaults.outputMode == 'base64')
+          return base64encode(doc.output());
+
+        try {
+          var blob = doc.output('blob');
+          saveAs (blob, defaults.fileName + '.pdf');
+        }
+        catch (e) {
+          downloadFile(defaults.fileName+'.pdf', 'data:application/pdf;base64,' + base64encode(doc.output()));
+        }
       }
 
       function escapeRegExp(string){

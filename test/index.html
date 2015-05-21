@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <title>HTML table Export</title>
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script type="text/javascript" src="../tableExport.js"></script>
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../libs/html2canvas/html2canvas.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
   <!--
   .table-striped {
@@ -46,8 +47,8 @@
             <li><a href="#" onClick ="doExport({type:'txt'});"> <img src='icons/txt.png' width='24px'> TXT</a></li>
             <li class="divider"></li>
             <li><a href="#" onClick ="doExport({type:'json'});"> <img src='icons/json.png' width='24px'> JSON</a></li>
-            <li><a href="#" onClick ="doExport({type:'json',ignoreColumn:'[2,3]'});"> <img src='icons/json.png' width='24px'> JSON (ignoreColumn)</a></li>
-            <li><a href="#" onClick ="doExport({type:'json',escape:'true'});"> <img src='icons/json.png' width='24px'> JSON (with Escape)</a></li>
+            <li><a href="#" onClick ="doExport({type:'json',ignoreColumn:'[2,3]'});"> <img src='icons/json.png' width='24px'> JSON (ignore column)</a></li>
+            <li><a href="#" onClick ="doExport({type:'json',escape:'true'});"> <img src='icons/json.png' width='24px'> JSON (with escape)</a></li>
             <li class="divider"></li>
             <li><a href="#" onClick ="doExport({type:'xml'});"> <img src='icons/xml.png' width='24px'> XML</a></li>
             <li><a href="#" onClick ="doExport({type:'sql'});"> <img src='icons/sql.png' width='24px'> SQL</a></li>
@@ -56,7 +57,8 @@
             <li><a href="#" onClick ="doExport({type:'doc'});"> <img src='icons/word.png' width='24px'> Word</a></li>
             <li class="divider"></li>
             <li><a href="#" onClick ="doExport({type:'png'});"> <img src='icons/png.png' width='24px'> PNG</a></li>
-            <li><a href="#" onClick ="doExport({type:'pdf'});"> <img src='icons/pdf.png' width='24px'> PDF</a></li>
+            <li><a href="#" onClick ="doExport({type:'pdf', jspdf:{orientation: 'l', margins: {right:10, left:10, top:40, bottom:40}, autotable: {extendWidth: true}}});"> <img src='icons/pdf.png' width='24px'> PDF (AutoTable)</a></li>
+          </<li><a href="#" onClick ="doExport({type:'pdf', jspdf:{orientation: 'p', unit: 'mm', margins: {left:20, top:10}, autotable: false}});"> <img src='icons/pdf.png' width='24px'> PDF (html2canvas)</a></li>
           </ul>
           <!-- Countries and dependencies by population -->
           <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
