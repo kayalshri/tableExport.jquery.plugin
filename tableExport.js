@@ -29,19 +29,18 @@ THE SOFTWARE.*/
         csvEnclosure: '"',
         onCellData: null,
         ignoreColumn: [],
-        displayTableName: 'false',
-        theadSelector:'tr',
+        displayTableName: false,
+        theadSelector: 'tr',
         tbodySelector: 'tr',
-        tableName:'myTableName',
+        tableName: 'myTableName',
         worksheetName: 'xlsWorksheetName',
-        type:'csv',
-        dpi:0,
+        type: 'csv',
         pdfLeftMargin:20,
-        escape:'false',
-        htmlContent:'false',
-        consoleLog:'false',
-        outputMode:'file',  // file|string|base64
-        fileName:'tableExport',
+        escape: false,
+        htmlContent: false,
+        consoleLog: false,
+        outputMode: 'file',  // file|string|base64
+        fileName: 'tableExport',
         excelstyles: [ 'border-bottom', 'border-top', 'border-left', 'border-right' ]
       };
 
@@ -87,7 +86,7 @@ THE SOFTWARE.*/
         });
 
         //output
-        if(defaults.consoleLog == 'true')
+        if(defaults.consoleLog === true)
           console.log(tdData);
 
         if(defaults.outputMode == 'string')
@@ -147,7 +146,7 @@ THE SOFTWARE.*/
         tdData += ";";
 
         //output
-        if(defaults.consoleLog == 'true')
+        if(defaults.consoleLog === true)
           console.log(tdData);
 
         if(defaults.outputMode == 'string')
@@ -207,7 +206,7 @@ THE SOFTWARE.*/
 
         var sdata = JSON.stringify(jsonExportArray);
 
-        if(defaults.consoleLog == 'true')
+        if(defaults.consoleLog === true)
           console.log(sdata);
 
         if(defaults.outputMode == 'string')
@@ -267,7 +266,7 @@ THE SOFTWARE.*/
         xml += '</data></tabledata>'
 
         //output
-        if(defaults.consoleLog == 'true')
+        if(defaults.consoleLog === true)
           console.log(xml);
 
         if(defaults.outputMode == 'string')
@@ -344,7 +343,7 @@ THE SOFTWARE.*/
 
         excel += '</table>'
 
-        if(defaults.consoleLog == 'true')
+        if(defaults.consoleLog === true)
           console.log(excel);
 
         var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
@@ -429,7 +428,7 @@ THE SOFTWARE.*/
         doc.addHTML($(el),defaults.pdfLeftMargin,0,options,function() {
           var pdfdata = doc.output();
 
-          if(defaults.consoleLog == 'true')
+          if(defaults.consoleLog === true)
             console.log(pdfdata);
 
           if(defaults.outputMode == 'string')
@@ -479,13 +478,13 @@ THE SOFTWARE.*/
       function parseString(cell, rowIndex, colIndex){
         var $cell = $(cell);
 
-        if(defaults.htmlContent == 'true'){
+        if(defaults.htmlContent === true){
           content_data = $cell.html().trim();
         }else{
           content_data = $cell.text().trim().replace(/\u00AD/g, ""); // remove soft hyphens
         }
 
-        if(defaults.escape == 'true'){
+        if(defaults.escape === true){
           content_data = escape(content_data);
         }
 
