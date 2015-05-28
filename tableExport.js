@@ -1,25 +1,3 @@
-/*The MIT License (MIT)
-
-Copyright (c) 2014 https://github.com/kayalshri/
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.*/
-
 (function($){
         $.fn.extend({
             tableExport: function(options) {
@@ -30,6 +8,7 @@ THE SOFTWARE.*/
 						type:'csv',
 						pdfFontSize:14,
 						pdfLeftMargin:20,
+						pdfColSize:'auto',
 						escape:'true',
 						htmlContent:'false',
 						consoleLog:'false'
@@ -291,14 +270,36 @@ THE SOFTWARE.*/
 	
 					var doc = new jsPDF('p','pt', 'a4', true);
 					doc.setFontSize(defaults.pdfFontSize);
-					
-					// Header
 					var startColPosition=defaults.pdfLeftMargin;
+					
+					var colSize = 0;
+					// Checks if the user has defined a ColSize, anything else will default to auto
+					if(typeof(defaults.pdfColSize) == 'number' && defaults.pdfColSize > 0){
+						colSize = defaults.pdfColSize;
+					} else {
+						// Count the number of table headers, to dinamically set the column length
+						var colCount = 0
+						$(el).find('thead').find('tr').each(function(){
+							$(this).filter(':visible').find('th').each(function(index, data){
+								if($(this).css('display') != 'none') {
+									if(defaults.ignoreColumn.indexOf(index) == -1){
+										colCount += 1;
+									}
+								}
+							});
+						});
+						var availableSize = 210 - startColPosition;
+						if(colCount == 0)	//Prevents dividing by zero
+							colCount = 1	
+						colSize = Math.floor(availableSize / colCount);
+					}
+
+					// Header
 					$(el).find('thead').find('tr').each(function() {
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									var colPosition = startColPosition+ (index * 50);									
+									var colPosition = startColPosition+ (index * colSize);									
 									doc.text(colPosition,20, parseString($(this)));
 								}
 							}
@@ -321,7 +322,7 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('td').each(function(index,data) {
 							if ($(this).css('display') != 'none'){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									var colPosition = startColPosition+ (index * 50);									
+									var colPosition = startColPosition+ (index * colSize);									
 									doc.text(colPosition,rowPosition, parseString($(this)));
 								}
 							}
@@ -332,7 +333,6 @@ THE SOFTWARE.*/
 										
 					// Output as Data URI
 					doc.output('datauri');
-	
 				}
 				
 				
