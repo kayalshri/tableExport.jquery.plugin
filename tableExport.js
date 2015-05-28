@@ -332,8 +332,7 @@
 					});					
 										
 					// Output as Data URI
-					//doc.output('datauri');
-					console.log(colSize);
+					doc.output('datauri');
 				}
 				
 				
