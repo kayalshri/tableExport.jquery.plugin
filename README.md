@@ -16,20 +16,20 @@ tableExport.jquery.plugin
 
 Installation
 ============
-To export a html table in CSV,TXT,JSON,XML,SQL,XLS or DOC format include:
+To export a html table in CSV, TXT, JSON, XML, SQL, XLS or DOC formats include:
 
 ```javascript
 <script type="text/javascript" src="tableExport.js"></script>
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
 ```
 
-To export the table in PNG format additionally include:
+To export the table in PNG format additionally include :
 
 ```javascript
 <script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"></script>
 ```
 
-To export the table as a PDF file the following includes are required:
+To export the table as a PDF file the following includes are required :
 
 ```javascript
 <script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"></script>
