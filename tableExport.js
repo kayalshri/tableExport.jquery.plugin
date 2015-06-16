@@ -57,7 +57,7 @@ THE SOFTWARE.*/
         var rowIndex = 0;
         $(el).find('thead').find(defaults.theadSelector).each(function() {
         tdData += "\n";
-          $(this).filter(':visible').find('th').each(function(index,data) {
+          $(this).filter(':visible').find('th,td').each(function(index,data) {
             if ($(this).css('display') != 'none' &&
                 $(this).data("tableexport-display") != 'none'){
               if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -114,7 +114,7 @@ THE SOFTWARE.*/
         var tdData ="INSERT INTO `"+defaults.tableName+"` (";
         $(el).find('thead').find(defaults.theadSelector).each(function() {
 
-          $(this).filter(':visible').find('th').each(function(index,data) {
+          $(this).filter(':visible').find('th,td').each(function(index,data) {
             if ($(this).css('display') != 'none' &&
                 $(this).data("tableexport-display") != 'none'){
               if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -173,7 +173,7 @@ THE SOFTWARE.*/
           var jsonArrayTd = [];
           var rowIndex = 0;
 
-          $(this).filter(':visible').find('th').each(function(index,data) {
+          $(this).filter(':visible').find('th,td').each(function(index,data) {
             if ($(this).css('display') != 'none' &&
                 $(this).data("tableexport-display") != 'none'){
               if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -235,7 +235,7 @@ THE SOFTWARE.*/
 
         // Header
         $(el).find('thead').find(defaults.theadSelector).each(function() {
-          $(this).filter(':visible').find('th').each(function(index,data) {
+          $(this).filter(':visible').find('th,td').each(function(index,data) {
             if ($(this).css('display') != 'none' &&
                 $(this).data("tableexport-display") != 'none'){
               if(defaults.ignoreColumn.indexOf(index) == -1){
@@ -438,7 +438,7 @@ THE SOFTWARE.*/
           $(el).find('thead').find(defaults.theadSelector).each(function() {
             var rowIndex = 0;
 
-            $(this).filter(':visible').find('th').each(function(index,data) {
+            $(this).filter(':visible').find('th,td').each(function(index,data) {
               if ($(this).css('display') != 'none' &&
                   $(this).data("tableexport-display") != 'none'){
                 if(defaults.ignoreColumn.indexOf(index) == -1){
