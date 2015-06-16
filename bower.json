@@ -1,6 +1,6 @@
 {
   "name": "tableExport.jquery.plugin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "dependencies": {
     "jquery": ">=1.9.1",
     "jspdf": "~1.0.272"
