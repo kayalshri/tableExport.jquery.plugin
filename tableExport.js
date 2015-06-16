@@ -56,16 +56,11 @@ THE SOFTWARE.*/
         var tdData ="";
         var rowIndex = 0;
         $(el).find('thead').find(defaults.theadSelector).each(function() {
-        tdData += "\n";
-          $(this).filter(':visible').find('th,td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                tdData += csvString(this, rowIndex, index) + defaults.csvSeparator;
-              }
-            }
-
-          });
+          tdData += "\n";
+          ForEachVisibleCell(this, 'th,td', rowIndex,
+                             function(cell, row, col) {
+                               tdData += csvString(cell, row, col) + defaults.csvSeparator;
+                             });
           rowIndex++;
           tdData = $.trim(tdData);
           tdData = $.trim(tdData).substring(0, tdData.length -1);
@@ -73,19 +68,19 @@ THE SOFTWARE.*/
 
         // Row vs Column
         $(el).find('tbody').find(defaults.tbodySelector).each(function() {
-        tdData += "\n";
-          $(this).filter(':visible').find('td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                tdData += csvString(this, rowIndex, index) + defaults.csvSeparator;
-              }
-            }
-          });
+          trData = "";
+          ForEachVisibleCell(this, 'td', rowIndex,
+                             function(cell, row, col) {
+                               trData += csvString(cell, row, col) + defaults.csvSeparator;
+                             });
+          if (trData.length > defaults.csvSeparator.length)
+            tdData += "\n" + trData;
           rowIndex++;
           //tdData = $.trim(tdData);
           tdData = $.trim(tdData).substring(0, tdData.length -1);
         });
+
+        tdData += "\n";
 
         //output
         if(defaults.consoleLog === true)
@@ -114,15 +109,10 @@ THE SOFTWARE.*/
         var tdData ="INSERT INTO `"+defaults.tableName+"` (";
         $(el).find('thead').find(defaults.theadSelector).each(function() {
 
-          $(this).filter(':visible').find('th,td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                tdData += "'" + parseString(this, rowIndex, index) + "'," ;
-              }
-            }
-
-          });
+          ForEachVisibleCell(this, 'th,td', rowIndex,
+                             function(cell, row, col) {
+                               tdData += "'" + parseString(cell, row, col) + "'," ;
+                             });
           rowIndex++;
           tdData = $.trim(tdData);
           tdData = $.trim(tdData).substring(0, tdData.length -1);
@@ -130,18 +120,18 @@ THE SOFTWARE.*/
         tdData += ") VALUES ";
         // Row vs Column
         $(el).find('tbody').find(defaults.tbodySelector).each(function() {
-        tdData += "(";
-          $(this).filter(':visible').find('td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                tdData += "'" + parseString(this, rowIndex, index) + "',";
-              }
-            }
-          });
+          trData = "";
+          ForEachVisibleCell(this, 'td', rowIndex,
+                             function(cell, row, col) {
+                               trData += "'" + parseString(cell, row, col) + "'," ;
+                             });
+          if (trData.length > 3){
+            tdData += "(" + trData;
+            tdData = $.trim(tdData).substring(0, tdData.length -1);
+            tdData += "),";
+          }
+
           rowIndex++;
-          tdData = $.trim(tdData).substring(0, tdData.length -1);
-          tdData += "),";
         });
 
         tdData = $.trim(tdData).substring(0, tdData.length -1);
@@ -173,14 +163,10 @@ THE SOFTWARE.*/
           var jsonArrayTd = [];
           var rowIndex = 0;
 
-          $(this).filter(':visible').find('th,td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                jsonArrayTd.push(parseString(this, rowIndex, index));
-              }
-            }
-          });
+          ForEachVisibleCell(this, 'th,td', rowIndex,
+                             function(cell, row, col) {
+                               jsonArrayTd.push(parseString(cell, row, col));
+                             });
           rowIndex++;
           jsonHeaderArray.push(jsonArrayTd);
 
@@ -191,16 +177,15 @@ THE SOFTWARE.*/
           var tdData ="";
           var jsonArrayTd = [];
 
-          $(this).filter(':visible').find('td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                jsonArrayTd.push(parseString(this, rowIndex, index));
-              }
-            }
-          });
+          ForEachVisibleCell(this, 'td', rowIndex,
+                             function(cell, row, col) {
+                               jsonArrayTd.push(parseString(cell, row, col));
+                             });
+
+          if (jsonArrayTd.length > 0 && (jsonArrayTd.length != 1 || jsonArrayTd[0] != "") )
+            jsonArray.push(jsonArrayTd);
+
           rowIndex++;
-          jsonArray.push(jsonArrayTd);
         });
 
         var jsonExportArray =[];
@@ -235,14 +220,11 @@ THE SOFTWARE.*/
 
         // Header
         $(el).find('thead').find(defaults.theadSelector).each(function() {
-          $(this).filter(':visible').find('th,td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                xml += "<field>" + parseString(this, rowIndex, index) + "</field>";
-              }
-            }
-          });
+
+          ForEachVisibleCell(this, 'th,td', rowIndex,
+                             function(cell, row, col) {
+                               xml += "<field>" + parseString(cell, row, col) + "</field>";
+                             });
           rowIndex++;
         });
         xml += '</fields><data>';
@@ -250,20 +232,18 @@ THE SOFTWARE.*/
         // Row Vs Column
         var rowCount=1;
         $(el).find('tbody').find(defaults.tbodySelector).each(function() {
-          xml += '<row id="'+rowCount+'">';
-          var colCount=0;
-          $(this).filter(':visible').find('td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                xml += "<column-"+colCount+">"+parseString(this, rowIndex, index)+"</column-"+colCount+">";
-              }
-            }
-            colCount++;
-          });
-          rowCount++;
+          var colCount=1;
+          var rxml="";
+          ForEachVisibleCell(this, 'td', rowIndex,
+                             function(cell, row, col) {
+                               rxml += "<column-"+colCount+">"+parseString(cell, row, col)+"</column-"+colCount+">";
+                               colCount++;
+                             });
+          if (rxml != "<column-1></column-1>"){
+            xml += '<row id="'+rowCount+'">' + rxml + '</row>';
+            rowCount++;
+          }
           rowIndex++;
-          xml += '</row>';
         });
         xml += '</data></tabledata>'
 
@@ -295,20 +275,16 @@ THE SOFTWARE.*/
         // Header
         $(el).find('thead').find(defaults.theadSelector).each(function() {
           excel += "<tr>";
-          $(this).filter(':visible').find('th,td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                excel += "<td style='";
-                for( var styles in defaults.excelstyles ) {
-                  if( defaults.excelstyles.hasOwnProperty(styles) ) {
-                    excel += defaults.excelstyles[styles] + ": " + $(this).css(defaults.excelstyles[styles]) + ";";
-                  }
-                }
-                excel += "'>" + parseString(this, rowIndex, index)+ "</td>";
-              }
-            }
-          });
+          ForEachVisibleCell(this, 'th,td', rowIndex,
+                             function(cell, row, col) {
+                               excel += "<td style='";
+                               for( var styles in defaults.excelstyles ) {
+                                 if( defaults.excelstyles.hasOwnProperty(styles) ) {
+                                   excel += defaults.excelstyles[styles] + ": " + $(this).css(defaults.excelstyles[styles]) + ";";
+                                 }
+                               }
+                               excel += "'>" + parseString(cell, row, col)+ "</td>";
+                             });
           rowIndex++;
           excel += '</tr>';
         });
@@ -317,24 +293,18 @@ THE SOFTWARE.*/
         var rowCount=1;
         $(el).find('tbody').find(defaults.tbodySelector).each(function() {
           excel += "<tr>";
-          var colCount=0;
-          $(this).filter(':visible').find('td').each(function(index,data) {
-            if ($(this).css('display') != 'none' &&
-                $(this).data("tableexport-display") != 'none'){
-              if(defaults.ignoreColumn.indexOf(index) == -1){
-                excel += "<td style='";
-                for( var styles in defaults.excelstyles ) {
-                  if( defaults.excelstyles.hasOwnProperty(styles) ) {
-                    excel += defaults.excelstyles[styles] + ": " + $(this).css(defaults.excelstyles[styles]) + ";";
-                  }
-                }
-                if ($(this).is("[colspan]"))
-                  excel += "' colspan='" + $(this).attr('colspan');
-                excel += "'>" + parseString(this, rowIndex, index) + "</td>";
-              }
-            }
-            colCount++;
-          });
+          ForEachVisibleCell(this, 'td', rowIndex,
+                             function(cell, row, col) {
+                               excel += "<td style='";
+                               for( var styles in defaults.excelstyles ) {
+                                 if( defaults.excelstyles.hasOwnProperty(styles) ) {
+                                   excel += defaults.excelstyles[styles] + ": " + $(this).css(defaults.excelstyles[styles]) + ";";
+                                 }
+                               }
+                               if ($(this).is("[colspan]"))
+                                 excel += "' colspan='" + $(this).attr('colspan');
+                               excel += "'>" + parseString(cell, row, col) + "</td>";
+                             });
           rowCount++;
           rowIndex++;
           excel += '</tr>';
@@ -438,14 +408,10 @@ THE SOFTWARE.*/
           $(el).find('thead').find(defaults.theadSelector).each(function() {
             var rowIndex = 0;
 
-            $(this).filter(':visible').find('th,td').each(function(index,data) {
-              if ($(this).css('display') != 'none' &&
-                  $(this).data("tableexport-display") != 'none'){
-                if(defaults.ignoreColumn.indexOf(index) == -1){
-                  headers.push(parseString(this, rowIndex, index));
-                }
-              }
-            });
+            ForEachVisibleCell(this, 'th,td', rowIndex,
+                               function(cell, row, col) {
+                                 headers.push(parseString(cell, row, col));
+                               });
             rowIndex++;
           });
 
@@ -453,25 +419,34 @@ THE SOFTWARE.*/
           $(el).find('tbody').find(defaults.tbodySelector).each(function() {
             var rowData = [];
 
-            $(this).filter(':visible').find('td').each(function(index,data) {
-              if ($(this).css('display') != 'none' &&
-                  $(this).data("tableexport-display") != 'none'){
-                if(defaults.ignoreColumn.indexOf(index) == -1){
-                  rowData.push(parseString(this, rowIndex, index));
-                }
-              }
-            });
+            ForEachVisibleCell(this, 'td', rowIndex,
+                               function(cell, row, col) {
+                                 rowData.push(parseString(cell, row, col));
+                               });
             rowIndex++;
             rows.push(rowData);
           });
-          
+
           defaults.jspdf.autotable.margins = {};
           $.extend(true, defaults.jspdf.autotable.margins, defaults.jspdf.margins);
 
           doc.autoTable(headers, rows, defaults.jspdf.autotable);
-          
+
           jsPdfOutput (doc);
         }
+      }
+
+      function ForEachVisibleCell (cell, selector, rowIndex, cellcallback) {
+        $(cell).filter(':visible').find(selector).each(function(index,data) {
+          if ($(this).css('display') != 'none' &&
+              $(this).data("tableexport-display") != 'none') {
+            if(defaults.ignoreColumn.indexOf(index) == -1) {
+              if (typeof(cellcallback) === "function") {
+                cellcallback(this, rowIndex, index);
+              }
+            }
+          }
+        });
       }
 
       function jsPdfOutput (doc){
