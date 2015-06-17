@@ -280,7 +280,7 @@ THE SOFTWARE.*/
                                excel += "<td style='";
                                for( var styles in defaults.excelstyles ) {
                                  if( defaults.excelstyles.hasOwnProperty(styles) ) {
-                                   excel += defaults.excelstyles[styles] + ": " + $(this).css(defaults.excelstyles[styles]) + ";";
+                                   excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
                                  }
                                }
                                excel += "'>" + parseString(cell, row, col)+ "</td>";
@@ -298,11 +298,11 @@ THE SOFTWARE.*/
                                excel += "<td style='";
                                for( var styles in defaults.excelstyles ) {
                                  if( defaults.excelstyles.hasOwnProperty(styles) ) {
-                                   excel += defaults.excelstyles[styles] + ": " + $(this).css(defaults.excelstyles[styles]) + ";";
+                                   excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
                                  }
                                }
-                               if ($(this).is("[colspan]"))
-                                 excel += "' colspan='" + $(this).attr('colspan');
+                               if ($(cell).is("[colspan]"))
+                                 excel += "' colspan='" + $(cell).attr('colspan');
                                excel += "'>" + parseString(cell, row, col) + "</td>";
                              });
           rowCount++;
