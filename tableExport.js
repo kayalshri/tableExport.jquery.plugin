@@ -412,34 +412,38 @@ THE SOFTWARE.*/
           });
         }
         else {
-          var headers = [];
-          var rowIndex = 0;
-
-          $(el).find('thead').first().find(defaults.theadSelector).each(function() {
-
-            ForEachVisibleCell(this, 'th,td', rowIndex,
-                               function(cell, row, col) {
-                                 headers.push(parseString(cell, row, col));
-                               });
-            rowIndex++;
-          });
-
-          var rows = [];
-          $(el).find('tbody').first().find(defaults.tbodySelector).each(function() {
-            var rowData = [];
-
-            ForEachVisibleCell(this, 'td', rowIndex,
-                               function(cell, row, col) {
-                                 rowData.push(parseString(cell, row, col));
-                               });
-            rowIndex++;
-            rows.push(rowData);
-          });
-
           defaults.jspdf.autotable.margins = {};
           $.extend(true, defaults.jspdf.autotable.margins, defaults.jspdf.margins);
 
-          doc.autoTable(headers, rows, defaults.jspdf.autotable);
+          $(el).each(function() {
+            var headers = [];
+            var rows = [];
+            var rowIndex = 0;
+
+            $(this).find('thead').find(defaults.theadSelector).each(function() {
+
+              ForEachVisibleCell(this, 'th,td', rowIndex,
+                                 function(cell, row, col) {
+                                   headers.push(parseString(cell, row, col));
+                                 });
+              rowIndex++;
+            });
+
+            $(this).find('tbody').find(defaults.tbodySelector).each(function() {
+              var rowData = [];
+
+              ForEachVisibleCell(this, 'td', rowIndex,
+                                 function(cell, row, col) {
+                                   rowData.push(parseString(cell, row, col));
+                                 });
+              rowIndex++;
+              rows.push(rowData);
+            });
+
+            doc.autoTable(headers, rows, defaults.jspdf.autotable);
+
+            defaults.jspdf.autotable.startY = doc.autoTableEndPosY() + defaults.jspdf.autotable.margins.top;
+          });
 
           jsPdfOutput (doc);
         }
