@@ -21,17 +21,31 @@
   .table-striped > tbody > tr:nth-child(2n+1) > td {
       background-color: #ccdf88;
   }
+  .table-numformat > tbody > tr > td {
+      text-align: right;
+	  vertical-align: top;
+  }
   -->
   </style>
   <script type="text/javaScript">
-  function doExport (params){
+
+  function doExport (selector, params){
     var options = {tableName: 'Countries',
-	               worksheetName: 'Countries by population'};
+                   worksheetName: 'Countries by population'};
 	
 	$.extend(true, options, params);
 
-	$('#customers').tableExport(options);
+//	$('#mixspans').tableExport(options);
+	$(selector).tableExport(options);
   }
+
+	var header = function (doc, pageCount, options) {
+		doc.text("header", options.margins.horizontal, doc.autoTableEndPosY() - doc.internal.getLineHeight() / 2);
+	};
+	var footer = function (doc, lastCellPos, pageCount, options) {
+		doc.text("footer", options.margins.horizontal, doc.autoTableEndPosY() + doc.internal.getLineHeight());
+	};
+
   </script>
   <body>
     <div>
@@ -43,26 +57,79 @@
       <section>
         <div>
           <ul>
-            <li><a href="#" onClick ="doExport({type:'csv'});"> <img src='icons/csv.png' width='24px'> CSV</a></li>
-            <li><a href="#" onClick ="doExport({type:'txt'});"> <img src='icons/txt.png' width='24px'> TXT</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'csv'});"> <img src='icons/csv.png' width='24px'> CSV</a></li>
+            <li><a href="#" onClick ="doExport('#rowspans',{type:'csv'});"> <img src='icons/csv.png' width='24px'> CSV (rowspan)</a></li>
+            <li><a href="#" onClick ="doExport('#mixspans',{type:'csv'});"> <img src='icons/csv.png' width='24px'> CSV (colspan + rowspan)</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'txt'});"> <img src='icons/txt.png' width='24px'> TXT</a></li>
             <li class="divider"></li>
-            <li><a href="#" onClick ="doExport({type:'json'});"> <img src='icons/json.png' width='24px'> JSON</a></li>
-            <li><a href="#" onClick ="doExport({type:'json',ignoreColumn:'[2,3]'});"> <img src='icons/json.png' width='24px'> JSON (ignore column)</a></li>
-            <li><a href="#" onClick ="doExport({type:'json',escape:'true'});"> <img src='icons/json.png' width='24px'> JSON (with escape)</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'json'});"> <img src='icons/json.png' width='24px'> JSON</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'json',ignoreColumn:'[2,3]'});"> <img src='icons/json.png' width='24px'> JSON (ignore column)</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'json',escape:'true'});"> <img src='icons/json.png' width='24px'> JSON (with escape)</a></li>
             <li class="divider"></li>
-            <li><a href="#" onClick ="doExport({type:'xml'});"> <img src='icons/xml.png' width='24px'> XML</a></li>
-            <li><a href="#" onClick ="doExport({type:'sql'});"> <img src='icons/sql.png' width='24px'> SQL</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'xml'});"> <img src='icons/xml.png' width='24px'> XML</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'sql'});"> <img src='icons/sql.png' width='24px'> SQL</a></li>
             <li class="divider"></li>
-            <li><a href="#" onClick ="doExport({type:'excel'});"> <img src='icons/xls.png' width='24px'> XLS</a></li>
-            <li><a href="#" onClick ="doExport({type:'doc'});"> <img src='icons/word.png' width='24px'> Word</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'excel'});"> <img src='icons/xls.png' width='24px'> XLS</a></li>
+            <li><a href="#" onClick ="doExport('#countries',{type:'doc'});"> <img src='icons/word.png' width='24px'> Word</a></li>
             <li class="divider"></li>
-            <li><a href="#" onClick ="doExport({type:'png'});"> <img src='icons/png.png' width='24px'> PNG</a></li>
-            <li><a href="#" onClick ="doExport({type:'pdf', jspdf:{orientation: 'l', margins: {right:10, left:10, top:40, bottom:40}, autotable: {extendWidth: true}}});"> <img src='icons/pdf.png' width='24px'> PDF (AutoTable)</a></li>
-          </<li><a href="#" onClick ="doExport({type:'pdf', jspdf:{orientation: 'p', unit: 'mm', margins: {left:20, top:10}, autotable: false}});"> <img src='icons/pdf.png' width='24px'> PDF (html2canvas)</a></li>
-          </ul>
+            <li><a href="#" onClick ="doExport('#countries',{type:'png'});"> <img src='icons/png.png' width='24px'> PNG</a></li>
+            <li><a href="#" onClick ="doExport('#countries',
+                                               {type:'pdf', 
+                                                jspdf:{orientation: 'l', 
+                                                       margins: {right:10, left:10, top:40, bottom:40}, 
+                                                       autotable: {extendWidth: true}}});"> 
+                  <img src='icons/pdf.png' width='24px'> PDF (AutoTable)
+                </a>
+            </li>
+            <li><a href="#" onClick ="doExport('table',
+                                               {type:'pdf', 
+                                                jspdf:{orientation: 'p', 
+                                                       margins: {right:20, left:20, top:30, bottom:30}, 
+                                                       autotable: {extendWidth: false,
+                                                                   renderHeader: header, 
+                                                                   renderFooter: footer}}});"> 
+                  <img src='icons/pdf.png' width='24px'> PDF (AutoTable - multiple tables)
+                </a>
+            </li>
+            </<li><a href="#" onClick ="doExport('#countries',{type:'pdf', jspdf:{orientation: 'p', unit: 'mm', margins: {left:20, top:10}, autotable: false}});"> <img src='icons/pdf.png' width='24px'> PDF (html2canvas)</a></li>
+            </ul>
+            
+            <p>
+            <table id="rowspans" class="table-striped table-numformat">
+              <thead>
+                <tr>
+                  <th>C1</th><th>C2</th><th>C3</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>            <td>1</td><td>2</td><td>3</td></tr>
+                <tr><td rowspan="3">1</td><td>2</td><td>3</td></tr> 
+                <tr>          <td rowspan="3">2</td><td>3</td></tr>
+                <tr>                                <td>3</td></tr> 
+                <tr><td>1</td>                      <td>3</td></tr> 
+            </tbody>
+          </table>
+          </p>
+          <p>
+          <table id="mixspans" class="table-striped table-numformat">
+            <thead>
+              <tr>
+                <th>C1</th><th>C2</th><th>C3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>                        <td>1</td><td>2</td><td>3</td></tr>
+              <tr><td rowspan="3" colspan="2">1</td>          <td>3</td></tr>
+              <tr>                                            <td>3</td></tr>
+              <tr>                                            <td>3</td></tr>
+              <tr>                        <td>1</td><td>2</td><td>3</td></tr> 
+            </tbody>
+          </table> 
+          </p>
+          <p>
           <!-- Countries and dependencies by population -->
           <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
-          <table id="customers" class="table-striped">
+          <table id="countries" class="table-striped">
             <thead>
               <tr>
                 <th>Rank</th>
@@ -239,6 +306,7 @@
               </tr>
             </tbody>
           </table>
+          </p>
         </div>
       </section>
     </div>
