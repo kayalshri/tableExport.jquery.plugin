@@ -36,14 +36,14 @@
                 doc.setTextColor(255, 255, 255);
                 doc.setFontStyle('bold');
                 doc.rect(x, y, width, height, 'F');
-                y += settings.lineHeight / 2 + doc.internal.getLineHeight() / 2;
+                y += settings.lineHeight / 2 + API.autoTableTextHeight() / 2;
                 doc.text(value, x + settings.padding, y);
             },
             renderCell: function (x, y, width, height, key, value, row, settings) {
                 doc.setFillColor(row % 2 === 0 ? 245 : 255);
                 doc.setTextColor(50);
                 doc.rect(x, y, width, height, 'F');
-                y += settings.lineHeight / 2 + doc.internal.getLineHeight() / 2 - 2.5;
+                y += settings.lineHeight / 2 + API.autoTableTextHeight() / 2 - 2.5;
                 doc.text(value, x + settings.padding, y);
             },
             margins: {right: 40, left: 40, top: 50, bottom: 40},
@@ -152,6 +152,17 @@
 
             return data;
         }
+    };
+
+    /**
+     * Basically the same as getLineHeight() in 1.0+ versions of jsPDF, however
+     * added here for backwards compatibility with version 0.9
+     *
+     * Export it to make it available in drawCell and drawHeaderCell
+     */
+    API.autoTableTextHeight = function() {
+        // The value 1.15 comes from from the jsPDF source code and looks about right
+        return doc.internal.getFontSize() * 1.15;
     };
 
     /**
@@ -266,6 +277,9 @@
         // (to do that the maxium amount of rows first need to be found)
         var maxRows = 1;
         if (settings.overflow === 'linebreak') {
+            // Font style must be the same as in function renderHeaderCell()
+            doc.setFontStyle('bold');
+
             headers.forEach(function (header) {
                 if (isOverflowColumn(header)) {
                     var value = header.title || '';
@@ -276,7 +290,18 @@
                 }
             });
         }
-        var rowHeight = settings.lineHeight + (maxRows - 1) * doc.internal.getLineHeight() + 5;
+        var rowHeight = settings.lineHeight + (maxRows - 1) * API.autoTableTextHeight() + 5;
+
+        // Avoid isolated table headers when drawing multiple tables. Add a new page 
+        // if cellpos would be at the end of page after drawing the header row
+        var newPage = (cellPos.y + settings.margins.bottom + rowHeight * 2) >= doc.internal.pageSize.height;
+        if (newPage) {
+            settings.renderFooter(doc, cellPos, pageCount, settings);
+            doc.addPage();
+            cellPos = {x: settings.margins.left, y: settings.margins.top};
+            pageCount++;
+            settings.renderHeader(doc, pageCount, settings);
+        }
 
         headers.forEach(function (header) {
             var width = columnWidths[header.key] + settings.padding * 2;
@@ -316,7 +341,7 @@
                     }
                 });
             }
-            var rowHeight = settings.lineHeight + (maxRows - 1) * doc.internal.getLineHeight();
+            var rowHeight = settings.lineHeight + (maxRows - 1) * API.autoTableTextHeight();
 
 
             // Render the cell
@@ -335,14 +360,16 @@
             });
 
             // Add a new page if cellpos is at the end of page
-            var newPage = (cellPos.y + settings.margins.bottom + settings.lineHeight * 2) >= doc.internal.pageSize.height;
+            var newPage = (cellPos.y + settings.margins.bottom + rowHeight * 2) >= doc.internal.pageSize.height;
             if (newPage) {
-                settings.renderFooter(doc, cellPos, pageCount, settings);
-                doc.addPage();
-                cellPos = {x: settings.margins.left, y: settings.margins.top};
-                pageCount++;
-                settings.renderHeader(doc, pageCount, settings);
-                printHeader(headers, columnWidths);
+                if (i+1 < rows.length) {
+                    settings.renderFooter(doc, cellPos, pageCount, settings);
+                    doc.addPage();
+                    cellPos = {x: settings.margins.left, y: settings.margins.top};
+                    pageCount++;
+                    settings.renderHeader(doc, pageCount, settings);
+                    printHeader(headers, columnWidths);
+                }
             } else {
                 cellPos.y += rowHeight;
                 cellPos.x = settings.margins.left;
