@@ -19,7 +19,7 @@ Installation
 To export a html table in CSV, TXT, JSON, XML, SQL, XLS or DOC formats include:
 
 ```javascript
-<script type="text/javascript" src="tableExport.js"></script>
+<script type="text/javascript" src="tableExport.min.js"></script>
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
 ```
 
@@ -55,9 +55,25 @@ $('#tableID').tableExport({type:'pdf',
 ```javascript
 $('#tableID').tableExport({type:'pdf',
                            jspdf: {orientation: 'l',
+                                   format: 'a3',
                                    margins: {left:10, right:10, top:20, bottom:20},
-                                   autotable: {extendWidth: false}
+                                   autotable: {extendWidth: true}
                           });
+```
+
+```javascript
+function DoCellData(cell, row, col, data) {}
+function DoBeforeAutotable(table, headers, rows, AutotableSettings) {}
+
+$('table').tableExport({fileName: sFileName,
+                        type: 'pdf',
+                        jspdf: { format: 'bestfit',
+                                 margins: {left:20, right:10, top:20, bottom:20},
+                                 autotable: {extendWidth: false,
+                                             overflow: 'linebreak',
+                                             tableExport: {onBeforeAutotable: DoBeforeAutotable,
+                                                           onCellData: DoCellData}}}
+                       });
 ```
 
 Options
@@ -66,20 +82,29 @@ Options
 ```javascript
 csvSeparator: ','
 csvEnclosure: '"'
-onCellData: null
+consoleLog: false
+displayTableName: false
+escape: false
+excelstyles: ['css','properties','to','export','to','excel']
+fileName: 'tableExport'
+htmlContent: false
 ignoreColumn: []
-displayTableName: 'false'
-theadSelector: 'tr'
+jspdf: orientation: 'p'
+       unit:'pt'
+       format: 'bestfit'
+       margins: { left: 20, right: 10, top: 10, bottom: 10 }
+       autotable: padding: 2
+                  lineHeight: 12
+                  fontSize: 8
+                  tableExport: onAfterAutotable: null
+                               onBeforeAutotable: null
+                               onTable: null
+onCellData: null
+outputMode: 'file'
 tbodySelector: 'tr'
+theadSelector: 'tr'
 tableName: 'myTableName'
 type: 'csv'
-jspdf: {}
-escape: 'false'
-htmlContent: 'false'
-consoleLog: 'false'
-outputMode: 'file'
-fileName: 'tableExport'
-excelstyles: ['css','properties','to','export','to','excel']
 worksheetName: 'xlsWorksheetName'
 ```
 
