@@ -475,10 +475,11 @@ THE SOFTWARE.*/
 
           $(el).filter(':visible').each(function() {
             if ($(this).css('display') != 'none') {
-              var headers = [];
-              var rows = [];
               var rowIndex = 0;
               var atOptions = {};
+              
+              teOptions.columns = [];
+              teOptions.rows = [];
 
               // onTable: optional callback function for every matching table that can be used 
               // to modify the tableExport options or to skip the output of a particular table 
@@ -494,12 +495,44 @@ THE SOFTWARE.*/
               atOptions.margins = {};
               $.extend(true, atOptions.margins, defaults.jspdf.margins);
 
+              if (typeof atOptions.renderCell !== 'function') {
+  
+                // draw cell text with original <td> alignment
+                atOptions.renderCell = function (x, y, width, height, key, value, row, settings)
+                {
+                  var doc = settings.tableExport.doc;
+                  var col = settings.tableExport.columns [key];
+                  var xoffset = 0;
+
+                  doc.setFillColor(row % 2 === 0 ? 245 : 255);
+                  doc.setTextColor(50);
+                  doc.rect(x, y, width, height, 'F');
+                  y += settings.lineHeight / 2 + doc.autoTableTextHeight() / 2 - 2.5;
+
+                  if (col.style.align == 'right')
+                    xoffset = width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize() - settings.padding;
+                  else if (col.style.align == 'center')
+                    xoffset = (width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize()) / 2;
+                  
+                  if (xoffset < settings.padding)
+                    xoffset = settings.padding;
+
+                  doc.text(value, x + xoffset, y);
+                }
+              }
+
               // collect header and data rows
               $(this).find('thead').find(defaults.theadSelector).each(function() {
-
+              
                 ForEachVisibleCell(this, 'th,td', rowIndex,
                                    function(cell, row, col) {
-                                     headers.push(parseString(cell, row, col));
+                                     var obj = {title: parseString(cell, row, col), 
+                                                key: col,
+                                                style: {align: getStyle(cell, 'text-align'),
+                                                        bcolor: getStyle(cell, 'background-color')
+                                                       }
+                                               };
+                                     teOptions.columns.push (obj);
                                    });
                 rowIndex++;
               });
@@ -512,15 +545,15 @@ THE SOFTWARE.*/
                                      rowData.push(parseString(cell, row, col));
                                    });
                 rowIndex++;
-                rows.push(rowData);
+                teOptions.rows.push(rowData);
               });
 
               // onBeforeAutotable: optional callback function before calling 
               // jsPDF AutoTable that can be used to modify the AutoTable options
               if (typeof teOptions.onBeforeAutotable === 'function')
-                teOptions.onBeforeAutotable($(this), headers, rows, atOptions);
+                teOptions.onBeforeAutotable($(this), teOptions.columns, teOptions.rows, atOptions);
 
-              teOptions.doc.autoTable(headers, rows, atOptions);
+              teOptions.doc.autoTable(teOptions.columns, teOptions.rows, atOptions);
 
               // onAfterAutotable: optional callback function after returning 
               // from jsPDF AutoTable that can be used to modify the AutoTable options
@@ -534,6 +567,8 @@ THE SOFTWARE.*/
           
           jsPdfOutput(teOptions.doc);
 
+          teOptions.columns.length = 0;
+          teOptions.rows.length = 0;
           delete teOptions.doc;
           teOptions.doc = null;
         }
