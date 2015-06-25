@@ -27,23 +27,33 @@ THE SOFTWARE.*/
       var defaults = {
         csvSeparator: ',',
         csvEnclosure: '"',
-        onCellData: null,
-        ignoreColumn: [],
-        displayTableName: false,
-        theadSelector: 'tr',
-        tbodySelector: 'tr',
-        tableName: 'myTableName',
-        worksheetName: 'xlsWorksheetName',
-        type: 'csv',
-        jspdf: { orientation: 'p', unit:'pt', format:'a4',
-                 margins: {left: 20, right: 10, top: 10, bottom: 10},
-                 autotable: {padding: 2, lineHeight: 12, fontSize: 8} },
-        escape: false,
-        htmlContent: false,
         consoleLog: false,
-        outputMode: 'file',  // file|string|base64
+        displayTableName: false,
+        escape: false,
+        excelstyles: [ 'border-bottom', 'border-top', 'border-left', 'border-right' ],
         fileName: 'tableExport',
-        excelstyles: [ 'border-bottom', 'border-top', 'border-left', 'border-right' ]
+        htmlContent: false,
+        ignoreColumn: [],
+        jspdf: { orientation: 'p', 
+                 unit:'pt', 
+                 format:'a4',
+                 margins: { left: 20, right: 10, top: 10, bottom: 10 },
+                 autotable: { padding: 2,
+                              lineHeight: 12,
+                              fontSize: 8,
+                              tableExport: { onAfterAutotable: null,
+                                             onBeforeAutotable: null,
+                                             onTable: null
+                                           }
+                            }
+               },
+        onCellData: null,
+        outputMode: 'file',  // file|string|base64
+        tbodySelector: 'tr',
+        theadSelector: 'tr',
+        tableName: 'myTableName',
+        type: 'csv',
+        worksheetName: 'xlsWorksheetName'
       };
 
       var options = $.extend(true, defaults, options);
@@ -397,8 +407,6 @@ THE SOFTWARE.*/
         });
 
       }else if(defaults.type == 'pdf'){
-        var doc = new jsPDF(defaults.jspdf.orientation, defaults.jspdf.unit, defaults.jspdf.format);
-
         if ( defaults.jspdf.autotable === false ) {
           var options = {
             dim:{
@@ -407,45 +415,127 @@ THE SOFTWARE.*/
             },
             pagesplit: false
           }
-          doc.addHTML($(el).first(),defaults.jspdf.margins.left,defaults.jspdf.margins.top,options,function() {
-            jsPdfOutput (doc);
-          });
+          
+          var doc = new jsPDF(defaults.jspdf.orientation, defaults.jspdf.unit, defaults.jspdf.format);
+          doc.addHTML( $(el).first(),
+                       defaults.jspdf.margins.left,
+                       defaults.jspdf.margins.top,
+                       options,
+                       function() {
+                         jsPdfOutput (doc); 
+                       });
+          delete doc;
         }
         else {
-          defaults.jspdf.autotable.margins = {};
-          $.extend(true, defaults.jspdf.autotable.margins, defaults.jspdf.margins);
+          // pdf output using jsPDF AutoTable plugin
+          // https://github.com/someatoms/jsPDF-AutoTable
+          
+          var teOptions = defaults.jspdf.autotable.tableExport;
+          
+          // When setting jspdf.format to 'bestfit' tableExport tries to choose
+          // the minimum required paper format and orientation in which the table
+          // (or tables in multitable mode) completely fit without column adjustment
+          if (typeof defaults.jspdf.format === 'string' && defaults.jspdf.format.toLowerCase() == 'bestfit') {
+            var pageFormats = { 'a0': [2383.94, 3370.39], 'a1': [1683.78, 2383.94], 
+                                'a2': [1190.55, 1683.78], 'a3': [ 841.89, 1190.55], 
+                                'a4': [ 595.28,  841.89] };
+            var rk = '', ro = '';
+            var mw = 0;
 
-          $(el).each(function() {
-            var headers = [];
-            var rows = [];
-            var rowIndex = 0;
+            $(el).filter(':visible').each(function() {
+              if ($(this).css('display') != 'none') {
+                var w = getPropertyUnitValue ($(this).get(0), 'width', 'pt');
 
-            $(this).find('thead').find(defaults.theadSelector).each(function() {
-
-              ForEachVisibleCell(this, 'th,td', rowIndex,
-                                 function(cell, row, col) {
-                                   headers.push(parseString(cell, row, col));
-                                 });
-              rowIndex++;
+                if ( w > mw ) {
+                  if ( w > pageFormats['a0'][0] ) {
+                    rk = 'a0';
+                    ro = 'l';
+                  }
+                  for (var key in pageFormats) {
+                    if (pageFormats[key][1] > w) {
+                      rk = key;
+                      ro = 'l';
+                      if (pageFormats[key][0] > w)
+                        ro = 'p';
+                    }
+                  }
+                  mw = w;
+                }
+              }
             });
+            defaults.jspdf.format = (rk == '' ? 'a4' : rk);
+            defaults.jspdf.orientation = (ro == '' ? 'w' : ro);
+          }
+          
+          // The jsPDF doc object is stored in defaults.jspdf.autotable.tableExport, 
+          // thus it can be accessed from any callback function from below
+          teOptions.doc = new jsPDF(defaults.jspdf.orientation, 
+                                    defaults.jspdf.unit, 
+                                    defaults.jspdf.format);
 
-            $(this).find('tbody').find(defaults.tbodySelector).each(function() {
-              var rowData = [];
+          $(el).filter(':visible').each(function() {
+            if ($(this).css('display') != 'none') {
+              var headers = [];
+              var rows = [];
+              var rowIndex = 0;
+              var atOptions = {};
 
-              ForEachVisibleCell(this, 'td', rowIndex,
-                                 function(cell, row, col) {
-                                   rowData.push(parseString(cell, row, col));
-                                 });
-              rowIndex++;
-              rows.push(rowData);
-            });
+              // onTable: optional callback function for every matching table that can be used 
+              // to modify the tableExport options or to skip the output of a particular table 
+              // when the  table selector targets multiple tables
+              if (typeof teOptions.onTable === 'function')
+                if (teOptions.onTable($(this), defaults) === false)
+                  return true; // continue to next iteration step (table)
 
-            doc.autoTable(headers, rows, defaults.jspdf.autotable);
+              // each table works with an own copy of AutoTable options
+              Object.keys(defaults.jspdf.autotable).forEach(function (key) {
+                  atOptions[key] = defaults.jspdf.autotable[key];
+              });
+              atOptions.margins = {};
+              $.extend(true, atOptions.margins, defaults.jspdf.margins);
 
-            defaults.jspdf.autotable.startY = doc.autoTableEndPosY() + defaults.jspdf.autotable.margins.top;
+              // collect header and data rows
+              $(this).find('thead').find(defaults.theadSelector).each(function() {
+
+                ForEachVisibleCell(this, 'th,td', rowIndex,
+                                   function(cell, row, col) {
+                                     headers.push(parseString(cell, row, col));
+                                   });
+                rowIndex++;
+              });
+
+              $(this).find('tbody').find(defaults.tbodySelector).each(function() {
+                var rowData = [];
+
+                ForEachVisibleCell(this, 'td', rowIndex,
+                                   function(cell, row, col) {
+                                     rowData.push(parseString(cell, row, col));
+                                   });
+                rowIndex++;
+                rows.push(rowData);
+              });
+
+              // onBeforeAutotable: optional callback function before calling 
+              // jsPDF AutoTable that can be used to modify the AutoTable options
+              if (typeof teOptions.onBeforeAutotable === 'function')
+                teOptions.onBeforeAutotable($(this), headers, rows, atOptions);
+
+              teOptions.doc.autoTable(headers, rows, atOptions);
+
+              // onAfterAutotable: optional callback function after returning 
+              // from jsPDF AutoTable that can be used to modify the AutoTable options
+              if (typeof teOptions.onAfterAutotable === 'function')
+                teOptions.onAfterAutotable($(this), atOptions);
+
+              // set the start position for the next table (in case there is one)
+              defaults.jspdf.autotable.startY = teOptions.doc.autoTableEndPosY() + atOptions.margins.top;
+            }
           });
+          
+          jsPdfOutput(teOptions.doc);
 
-          jsPdfOutput (doc);
+          delete teOptions.doc;
+          teOptions.doc = null;
         }
       }
 
@@ -683,6 +773,8 @@ THE SOFTWARE.*/
         }
         return output;
       }
+    
+      return this;
     }
   });
 })(jQuery);
