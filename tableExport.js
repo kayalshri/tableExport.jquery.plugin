@@ -501,7 +501,6 @@ THE SOFTWARE.*/
                 atOptions.renderCell = function (x, y, width, height, key, value, row, settings)
                 {
                   var doc = settings.tableExport.doc;
-                  var col = settings.tableExport.columns [key];
                   var xoffset = 0;
 
                   doc.setFillColor(row % 2 === 0 ? 245 : 255);
@@ -509,10 +508,14 @@ THE SOFTWARE.*/
                   doc.rect(x, y, width, height, 'F');
                   y += settings.lineHeight / 2 + doc.autoTableTextHeight() / 2 - 2.5;
 
-                  if (col.style.align == 'right')
-                    xoffset = width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize() - settings.padding;
-                  else if (col.style.align == 'center')
-                    xoffset = (width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize()) / 2;
+                  if (typeof settings.tableExport.columns [key] != 'undefined') {
+                    var col = settings.tableExport.columns [key];
+
+                    if (col.style.align == 'right')
+                      xoffset = width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize() - settings.padding;
+                    else if (col.style.align == 'center')
+                      xoffset = (width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize()) / 2;
+                  }
                   
                   if (xoffset < settings.padding)
                     xoffset = settings.padding;
