@@ -526,11 +526,12 @@ THE SOFTWARE.*/
 
               // collect header and data rows
               $(this).find('thead').find(defaults.theadSelector).each(function() {
+                var colKey=0;
               
                 ForEachVisibleCell(this, 'th,td', rowIndex,
                                    function(cell, row, col) {
                                      var obj = {title: parseString(cell, row, col), 
-                                                key: col,
+                                                key: colKey++,
                                                 style: {align: getStyle(cell, 'text-align'),
                                                         bcolor: getStyle(cell, 'background-color')
                                                        }
@@ -538,6 +539,7 @@ THE SOFTWARE.*/
                                      teOptions.columns.push (obj);
                                    });
                 rowIndex++;
+                colKey=0;
               });
 
               $(this).find('tbody').find(defaults.tbodySelector).each(function() {
