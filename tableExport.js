@@ -56,10 +56,11 @@ THE SOFTWARE.*/
         worksheetName: 'xlsWorksheetName'
       };
 
-      var options = $.extend(true, defaults, options);
       var el = this;
       var DownloadEvt = null;
       var rowspans = [];
+
+      $.extend(true, defaults, options);
 
       if(defaults.type == 'csv' || defaults.type == 'txt'){
 
@@ -169,22 +170,17 @@ THE SOFTWARE.*/
 
         var jsonHeaderArray = [];
         $(el).find('thead').first().find(defaults.theadSelector).each(function() {
-          var tdData ="";
           var jsonArrayTd = [];
-          var rowIndex = 0;
 
           ForEachVisibleCell(this, 'th,td', rowIndex,
                              function(cell, row, col) {
                                jsonArrayTd.push(parseString(cell, row, col));
                              });
           jsonHeaderArray.push(jsonArrayTd);
-
-          rowIndex++;
         });
 
         var jsonArray = [];
         $(el).find('tbody').first().find(defaults.tbodySelector).each(function() {
-          var tdData ="";
           var jsonArrayTd = [];
 
           ForEachVisibleCell(this, 'td', rowIndex,
@@ -256,7 +252,7 @@ THE SOFTWARE.*/
 
           rowIndex++;
         });
-        xml += '</data></tabledata>'
+        xml += '</data></tabledata>';
 
         //output
         if(defaults.consoleLog === true)
@@ -330,7 +326,7 @@ THE SOFTWARE.*/
         if(defaults.displayTableName)
           excel +="<tr><td></td></tr><tr><td></td></tr><tr><td>" + parseString($('<p>' + defaults.tableName + '</p>')) + "</td></tr>";
 
-        excel += '</table>'
+        excel += '</table>';
 
         if(defaults.consoleLog === true)
           console.log(excel);
@@ -406,57 +402,61 @@ THE SOFTWARE.*/
           }
         });
 
-      }else if(defaults.type == 'pdf'){
-        if ( defaults.jspdf.autotable === false ) {
-          var options = {
-            dim:{
-              w: getPropertyUnitValue ($(el).first().get(0), 'width', 'mm'),
-              h: getPropertyUnitValue ($(el).first().get(0), 'height', 'mm')
+      }else if(defaults.type == 'pdf') {
+        if (defaults.jspdf.autotable === false) {
+          var addHtmlOptions = {
+            dim: {
+              w: getPropertyUnitValue($(el).first().get(0), 'width', 'mm'),
+              h: getPropertyUnitValue($(el).first().get(0), 'height', 'mm')
             },
             pagesplit: false
-          }
-          
+          };
+
           var doc = new jsPDF(defaults.jspdf.orientation, defaults.jspdf.unit, defaults.jspdf.format);
-          doc.addHTML( $(el).first(),
-                       defaults.jspdf.margins.left,
-                       defaults.jspdf.margins.top,
-                       options,
-                       function() {
-                         jsPdfOutput (doc); 
-                       });
-          delete doc;
+          doc.addHTML($(el).first(),
+              defaults.jspdf.margins.left,
+              defaults.jspdf.margins.top,
+              addHtmlOptions,
+              function () {
+                jsPdfOutput(doc);
+              });
+          //delete doc;
         }
         else {
           // pdf output using jsPDF AutoTable plugin
           // https://github.com/someatoms/jsPDF-AutoTable
-          
+
           var teOptions = defaults.jspdf.autotable.tableExport;
-          
+
           // When setting jspdf.format to 'bestfit' tableExport tries to choose
           // the minimum required paper format and orientation in which the table
           // (or tables in multitable mode) completely fit without column adjustment
           if (typeof defaults.jspdf.format === 'string' && defaults.jspdf.format.toLowerCase() == 'bestfit') {
-            var pageFormats = { 'a0': [2383.94, 3370.39], 'a1': [1683.78, 2383.94], 
-                                'a2': [1190.55, 1683.78], 'a3': [ 841.89, 1190.55], 
-                                'a4': [ 595.28,  841.89] };
+            var pageFormats = {
+              'a0': [2383.94, 3370.39], 'a1': [1683.78, 2383.94],
+              'a2': [1190.55, 1683.78], 'a3': [841.89, 1190.55],
+              'a4': [595.28, 841.89]
+            };
             var rk = '', ro = '';
             var mw = 0;
 
-            $(el).filter(':visible').each(function() {
+            $(el).filter(':visible').each(function () {
               if ($(this).css('display') != 'none') {
-                var w = getPropertyUnitValue ($(this).get(0), 'width', 'pt');
+                var w = getPropertyUnitValue($(this).get(0), 'width', 'pt');
 
-                if ( w > mw ) {
-                  if ( w > pageFormats['a0'][0] ) {
+                if (w > mw) {
+                  if (w > pageFormats['a0'][0]) {
                     rk = 'a0';
                     ro = 'l';
                   }
                   for (var key in pageFormats) {
-                    if (pageFormats[key][1] > w) {
-                      rk = key;
-                      ro = 'l';
-                      if (pageFormats[key][0] > w)
-                        ro = 'p';
+                    if (pageFormats.hasOwnProperty(key)) {
+                      if (pageFormats[key][1] > w) {
+                        rk = key;
+                        ro = 'l';
+                        if (pageFormats[key][0] > w)
+                          ro = 'p';
+                      }
                     }
                   }
                   mw = w;
@@ -466,23 +466,23 @@ THE SOFTWARE.*/
             defaults.jspdf.format = (rk == '' ? 'a4' : rk);
             defaults.jspdf.orientation = (ro == '' ? 'w' : ro);
           }
-          
-          // The jsPDF doc object is stored in defaults.jspdf.autotable.tableExport, 
-          // thus it can be accessed from any callback function from below
-          teOptions.doc = new jsPDF(defaults.jspdf.orientation, 
-                                    defaults.jspdf.unit, 
-                                    defaults.jspdf.format);
 
-          $(el).filter(':visible').each(function() {
+          // The jsPDF doc object is stored in defaults.jspdf.autotable.tableExport,
+          // thus it can be accessed from any callback function from below
+          teOptions.doc = new jsPDF(defaults.jspdf.orientation,
+              defaults.jspdf.unit,
+              defaults.jspdf.format);
+
+          $(el).filter(':visible').each(function () {
             if ($(this).css('display') != 'none') {
               var rowIndex = 0;
               var atOptions = {};
-              
+
               teOptions.columns = [];
               teOptions.rows = [];
 
-              // onTable: optional callback function for every matching table that can be used 
-              // to modify the tableExport options or to skip the output of a particular table 
+              // onTable: optional callback function for every matching table that can be used
+              // to modify the tableExport options or to skip the output of a particular table
               // when the  table selector targets multiple tables
               if (typeof teOptions.onTable === 'function')
                 if (teOptions.onTable($(this), defaults) === false)
@@ -490,16 +490,15 @@ THE SOFTWARE.*/
 
               // each table works with an own copy of AutoTable options
               Object.keys(defaults.jspdf.autotable).forEach(function (key) {
-                  atOptions[key] = defaults.jspdf.autotable[key];
+                atOptions[key] = defaults.jspdf.autotable[key];
               });
               atOptions.margins = {};
               $.extend(true, atOptions.margins, defaults.jspdf.margins);
 
               if (typeof atOptions.renderCell !== 'function') {
-  
+
                 // draw cell text with original <td> alignment
-                atOptions.renderCell = function (x, y, width, height, key, value, row, settings)
-                {
+                atOptions.renderCell = function (x, y, width, height, key, value, row, settings) {
                   var doc = settings.tableExport.doc;
                   var xoffset = 0;
 
@@ -512,11 +511,11 @@ THE SOFTWARE.*/
                     var col = settings.tableExport.columns [key];
 
                     if (col.style.align == 'right')
-                      xoffset = width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize() - settings.padding;
+                      xoffset = width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize() - settings.padding;
                     else if (col.style.align == 'center')
-                      xoffset = (width - doc.getStringUnitWidth((''+value)) * doc.internal.getFontSize()) / 2;
+                      xoffset = (width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize()) / 2;
                   }
-                  
+
                   if (xoffset < settings.padding)
                     xoffset = settings.padding;
 
@@ -525,42 +524,44 @@ THE SOFTWARE.*/
               }
 
               // collect header and data rows
-              $(this).find('thead').find(defaults.theadSelector).each(function() {
-                var colKey=0;
-              
+              $(this).find('thead').find(defaults.theadSelector).each(function () {
+                var colKey = 0;
+
                 ForEachVisibleCell(this, 'th,td', rowIndex,
-                                   function(cell, row, col) {
-                                     var obj = {title: parseString(cell, row, col), 
-                                                key: colKey++,
-                                                style: {align: getStyle(cell, 'text-align'),
-                                                        bcolor: getStyle(cell, 'background-color')
-                                                       }
-                                               };
-                                     teOptions.columns.push (obj);
-                                   });
+                    function (cell, row, col) {
+                      var obj = {
+                        title: parseString(cell, row, col),
+                        key: colKey++,
+                        style: {
+                          align: getStyle(cell, 'text-align'),
+                          bcolor: getStyle(cell, 'background-color')
+                        }
+                      };
+                      teOptions.columns.push(obj);
+                    });
                 rowIndex++;
-                colKey=0;
+                colKey = 0;
               });
 
-              $(this).find('tbody').find(defaults.tbodySelector).each(function() {
+              $(this).find('tbody').find(defaults.tbodySelector).each(function () {
                 var rowData = [];
 
                 ForEachVisibleCell(this, 'td', rowIndex,
-                                   function(cell, row, col) {
-                                     rowData.push(parseString(cell, row, col));
-                                   });
+                    function (cell, row, col) {
+                      rowData.push(parseString(cell, row, col));
+                    });
                 rowIndex++;
                 teOptions.rows.push(rowData);
               });
 
-              // onBeforeAutotable: optional callback function before calling 
+              // onBeforeAutotable: optional callback function before calling
               // jsPDF AutoTable that can be used to modify the AutoTable options
               if (typeof teOptions.onBeforeAutotable === 'function')
                 teOptions.onBeforeAutotable($(this), teOptions.columns, teOptions.rows, atOptions);
 
               teOptions.doc.autoTable(teOptions.columns, teOptions.rows, atOptions);
 
-              // onAfterAutotable: optional callback function after returning 
+              // onAfterAutotable: optional callback function after returning
               // from jsPDF AutoTable that can be used to modify the AutoTable options
               if (typeof teOptions.onAfterAutotable === 'function')
                 teOptions.onAfterAutotable($(this), atOptions);
@@ -569,7 +570,7 @@ THE SOFTWARE.*/
               defaults.jspdf.autotable.startY = teOptions.doc.autoTableEndPosY() + atOptions.margins.top;
             }
           });
-          
+
           jsPdfOutput(teOptions.doc);
 
           teOptions.columns.length = 0;
