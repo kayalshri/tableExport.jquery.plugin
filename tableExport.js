@@ -1,54 +1,54 @@
 /*The MIT License (MIT)
 
-Original work Copyright (c) 2014 https://github.com/kayalshri/
-Modified work Copyright (c) 2015 https://github.com/hhurz/
+ Original work Copyright (c) 2014 https://github.com/kayalshri/
+ Modified work Copyright (c) 2015 https://github.com/hhurz/
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.*/
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.*/
 
-(function($){
+(function ($) {
   $.fn.extend({
-    tableExport: function(options) {
+    tableExport: function (options) {
       var defaults = {
         csvSeparator: ',',
         csvEnclosure: '"',
         consoleLog: false,
         displayTableName: false,
         escape: false,
-        excelstyles: [ 'border-bottom', 'border-top', 'border-left', 'border-right' ],
+        excelstyles: ['border-bottom', 'border-top', 'border-left', 'border-right'],
         fileName: 'tableExport',
         htmlContent: false,
         ignoreColumn: [],
-        jspdf: { orientation: 'p', 
-                 unit:'pt', 
-                 format:'a4',
-                 margins: { left: 20, right: 10, top: 10, bottom: 10 },
-                 autotable: { padding: 2,
-                              lineHeight: 12,
-                              fontSize: 8,
-                              tableExport: { onAfterAutotable: null,
-                                             onBeforeAutotable: null,
-                                             onTable: null
-                                           }
-                            }
-               },
+        jspdf: {orientation: 'p',
+          unit: 'pt',
+          format: 'a4',
+          margins: {left: 20, right: 10, top: 10, bottom: 10},
+          autotable: {padding: 2,
+            lineHeight: 12,
+            fontSize: 8,
+            tableExport: {onAfterAutotable: null,
+              onBeforeAutotable: null,
+              onTable: null
+            }
+          }
+        },
         onCellData: null,
-        outputMode: 'file',  // file|string|base64
+        outputMode: 'file', // file|string|base64
         tbodySelector: 'tr',
         theadSelector: 'tr',
         tableName: 'myTableName',
@@ -62,191 +62,191 @@ THE SOFTWARE.*/
 
       $.extend(true, defaults, options);
 
-      if(defaults.type == 'csv' || defaults.type == 'txt'){
+      if (defaults.type == 'csv' || defaults.type == 'txt') {
 
         // Header
-        var tdData ="";
+        var tdData = "";
         var rowIndex = 0;
-        $(el).find('thead').first().find(defaults.theadSelector).each(function() {
+        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
           tdData += "\n";
           ForEachVisibleCell(this, 'th,td', rowIndex,
-                             function(cell, row, col) {
-                               tdData += csvString(cell, row, col) + defaults.csvSeparator;
-                             });
+                  function (cell, row, col) {
+                    tdData += csvString(cell, row, col) + defaults.csvSeparator;
+                  });
           rowIndex++;
           tdData = $.trim(tdData);
-          tdData = $.trim(tdData).substring(0, tdData.length -1);
+          tdData = $.trim(tdData).substring(0, tdData.length - 1);
         });
 
         // Row vs Column
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function() {
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
           trData = "";
           ForEachVisibleCell(this, 'td', rowIndex,
-                             function(cell, row, col) {
-                               trData += csvString(cell, row, col) + defaults.csvSeparator;
-                             });
+                  function (cell, row, col) {
+                    trData += csvString(cell, row, col) + defaults.csvSeparator;
+                  });
           if (trData.length > defaults.csvSeparator.length)
             tdData += "\n" + trData;
           rowIndex++;
           //tdData = $.trim(tdData);
-          tdData = $.trim(tdData).substring(0, tdData.length -1);
+          tdData = $.trim(tdData).substring(0, tdData.length - 1);
         });
 
         tdData += "\n";
 
         //output
-        if(defaults.consoleLog === true)
+        if (defaults.consoleLog === true)
           console.log(tdData);
 
-        if(defaults.outputMode == 'string')
+        if (defaults.outputMode === 'string')
           return tdData;
 
-        if(defaults.outputMode == 'base64')
+        if (defaults.outputMode === 'base64')
           return base64encode(tdData);
 
         try {
-          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + tdData], {type: "text/"+(defaults.type == 'csv' ? 'csv' : 'plain')+";charset=utf-8"});
-          saveAs (blob, defaults.fileName + '.' + defaults.type);
+          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + tdData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
+          saveAs(blob, defaults.fileName + '.' + defaults.type);
         }
         catch (e) {
           downloadFile(defaults.fileName + '.' + defaults.type,
-                       'data:text/'+(defaults.type == 'csv' ? 'csv' : 'plain')+';charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
-                       encodeURIComponent(tdData));
+                  'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
+                  encodeURIComponent(tdData));
         }
 
-      }else if(defaults.type == 'sql'){
+      } else if (defaults.type == 'sql') {
 
         // Header
         var rowIndex = 0;
-        var tdData ="INSERT INTO `"+defaults.tableName+"` (";
-        $(el).find('thead').first().find(defaults.theadSelector).each(function() {
+        var tdData = "INSERT INTO `" + defaults.tableName + "` (";
+        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
 
           ForEachVisibleCell(this, 'th,td', rowIndex,
-                             function(cell, row, col) {
-                               tdData += "'" + parseString(cell, row, col) + "'," ;
-                             });
+                  function (cell, row, col) {
+                    tdData += "'" + parseString(cell, row, col) + "',";
+                  });
           rowIndex++;
           tdData = $.trim(tdData);
-          tdData = $.trim(tdData).substring(0, tdData.length -1);
+          tdData = $.trim(tdData).substring(0, tdData.length - 1);
         });
         tdData += ") VALUES ";
         // Row vs Column
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function() {
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
           trData = "";
           ForEachVisibleCell(this, 'td', rowIndex,
-                             function(cell, row, col) {
-                               trData += "'" + parseString(cell, row, col) + "'," ;
-                             });
-          if (trData.length > 3){
+                  function (cell, row, col) {
+                    trData += "'" + parseString(cell, row, col) + "',";
+                  });
+          if (trData.length > 3) {
             tdData += "(" + trData;
-            tdData = $.trim(tdData).substring(0, tdData.length -1);
+            tdData = $.trim(tdData).substring(0, tdData.length - 1);
             tdData += "),";
           }
           rowIndex++;
         });
 
-        tdData = $.trim(tdData).substring(0, tdData.length -1);
+        tdData = $.trim(tdData).substring(0, tdData.length - 1);
         tdData += ";";
 
         //output
-        if(defaults.consoleLog === true)
+        if (defaults.consoleLog === true)
           console.log(tdData);
 
-        if(defaults.outputMode == 'string')
+        if (defaults.outputMode == 'string')
           return tdData;
 
-        if(defaults.outputMode == 'base64')
+        if (defaults.outputMode == 'base64')
           return base64encode(tdData);
 
         try {
           var blob = new Blob([tdData], {type: "text/plain;charset=utf-8"});
-          saveAs (blob, defaults.fileName + '.sql');
+          saveAs(blob, defaults.fileName + '.sql');
         }
         catch (e) {
-          downloadFile(defaults.fileName+'.sql', 'data:application/sql;charset=utf-8,' + encodeURIComponent(tdData));
+          downloadFile(defaults.fileName + '.sql', 'data:application/sql;charset=utf-8,' + encodeURIComponent(tdData));
         }
 
-      }else if(defaults.type == 'json'){
+      } else if (defaults.type == 'json') {
 
         var jsonHeaderArray = [];
-        $(el).find('thead').first().find(defaults.theadSelector).each(function() {
+        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
           var jsonArrayTd = [];
 
           ForEachVisibleCell(this, 'th,td', rowIndex,
-                             function(cell, row, col) {
-                               jsonArrayTd.push(parseString(cell, row, col));
-                             });
+                  function (cell, row, col) {
+                    jsonArrayTd.push(parseString(cell, row, col));
+                  });
           jsonHeaderArray.push(jsonArrayTd);
         });
 
         var jsonArray = [];
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function() {
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
           var jsonArrayTd = [];
 
           ForEachVisibleCell(this, 'td', rowIndex,
-                             function(cell, row, col) {
-                               jsonArrayTd.push(parseString(cell, row, col));
-                             });
+                  function (cell, row, col) {
+                    jsonArrayTd.push(parseString(cell, row, col));
+                  });
 
-          if (jsonArrayTd.length > 0 && (jsonArrayTd.length != 1 || jsonArrayTd[0] != "") )
+          if (jsonArrayTd.length > 0 && (jsonArrayTd.length != 1 || jsonArrayTd[0] != ""))
             jsonArray.push(jsonArrayTd);
 
           rowIndex++;
         });
 
-        var jsonExportArray =[];
-        jsonExportArray.push({header:jsonHeaderArray,data:jsonArray});
+        var jsonExportArray = [];
+        jsonExportArray.push({header: jsonHeaderArray, data: jsonArray});
 
         var sdata = JSON.stringify(jsonExportArray);
 
-        if(defaults.consoleLog === true)
+        if (defaults.consoleLog === true)
           console.log(sdata);
 
-        if(defaults.outputMode == 'string')
+        if (defaults.outputMode == 'string')
           return sdata;
 
         var base64data = base64encode(sdata);
 
-        if(defaults.outputMode == 'base64')
+        if (defaults.outputMode == 'base64')
           return base64data;
 
         try {
           var blob = new Blob([sdata], {type: "application/json;charset=utf-8"});
-          saveAs (blob, defaults.fileName + '.json');
+          saveAs(blob, defaults.fileName + '.json');
         }
         catch (e) {
-          downloadFile(defaults.fileName+'.json', 'data:application/json;charset=utf-8;base64,' + base64data);
+          downloadFile(defaults.fileName + '.json', 'data:application/json;charset=utf-8;base64,' + base64data);
         }
 
-      }else if(defaults.type == 'xml'){
+      } else if (defaults.type === 'xml') {
 
         var rowIndex = 0;
         var xml = '<?xml version="1.0" encoding="utf-8"?>';
         xml += '<tabledata><fields>';
 
         // Header
-        $(el).find('thead').first().find(defaults.theadSelector).each(function() {
+        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
 
           ForEachVisibleCell(this, 'th,td', rowIndex,
-                             function(cell, row, col) {
-                               xml += "<field>" + parseString(cell, row, col) + "</field>";
-                             });
+                  function (cell, row, col) {
+                    xml += "<field>" + parseString(cell, row, col) + "</field>";
+                  });
           rowIndex++;
         });
         xml += '</fields><data>';
 
         // Row Vs Column
-        var rowCount=1;
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function() {
-          var colCount=1;
-          var rxml="";
+        var rowCount = 1;
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+          var colCount = 1;
+          var rxml = "";
           ForEachVisibleCell(this, 'td', rowIndex,
-                             function(cell, row, col) {
-                               rxml += "<column-"+colCount+">"+parseString(cell, row, col)+"</column-"+colCount+">";
-                               colCount++;
-                             });
-          if (rxml != "<column-1></column-1>"){
-            xml += '<row id="'+rowCount+'">' + rxml + '</row>';
+                  function (cell, row, col) {
+                    rxml += "<column-" + colCount + ">" + parseString(cell, row, col) + "</column-" + colCount + ">";
+                    colCount++;
+                  });
+          if (rxml != "<column-1></column-1>") {
+            xml += '<row id="' + rowCount + '">' + rxml + '</row>';
             rowCount++;
           }
 
@@ -255,89 +255,89 @@ THE SOFTWARE.*/
         xml += '</data></tabledata>';
 
         //output
-        if(defaults.consoleLog === true)
+        if (defaults.consoleLog === true)
           console.log(xml);
 
-        if(defaults.outputMode == 'string')
+        if (defaults.outputMode == 'string')
           return xml;
 
         var base64data = base64encode(xml);
 
-        if(defaults.outputMode == 'base64')
+        if (defaults.outputMode == 'base64')
           return base64data;
 
         try {
           var blob = new Blob([xml], {type: "application/xml;charset=utf-8"});
-          saveAs (blob, defaults.fileName + '.xml');
+          saveAs(blob, defaults.fileName + '.xml');
         }
         catch (e) {
-          downloadFile(defaults.fileName+'.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
+          downloadFile(defaults.fileName + '.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
         }
 
-      }else if(defaults.type == 'excel' || defaults.type == 'doc'){
+      } else if (defaults.type == 'excel' || defaults.type == 'doc') {
         //console.log($(this).html());
 
         var rowIndex = 0;
-        var excel="<table>";
+        var excel = "<table>";
         // Header
-        $(el).find('thead').first().find(defaults.theadSelector).each(function() {
+        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
           excel += "<tr>";
           ForEachVisibleCell(this, 'th,td', rowIndex,
-                             function(cell, row, col) {
-                               if (cell != null) {
-                                 excel += "<td style='";
-                                 for( var styles in defaults.excelstyles ) {
-                                   if( defaults.excelstyles.hasOwnProperty(styles) ) {
-                                     excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
-                                   }
-                                 }
-                                 excel += "'>" + parseString(cell, row, col)+ "</td>";
-                               }
-                             });
+                  function (cell, row, col) {
+                    if (cell != null) {
+                      excel += "<td style='";
+                      for (var styles in defaults.excelstyles) {
+                        if (defaults.excelstyles.hasOwnProperty(styles)) {
+                          excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
+                        }
+                      }
+                      excel += "'>" + parseString(cell, row, col) + "</td>";
+                    }
+                  });
           rowIndex++;
           excel += '</tr>';
         });
 
         // Row Vs Column
-        var rowCount=1;
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function() {
+        var rowCount = 1;
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
           excel += "<tr>";
           ForEachVisibleCell(this, 'td', rowIndex,
-                             function(cell, row, col) {
-                               if (cell != null) {
-                                 excel += "<td style='";
-                                 for( var styles in defaults.excelstyles ) {
-                                   if( defaults.excelstyles.hasOwnProperty(styles) ) {
-                                     excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
-                                   }
-                                 }
-                                 if ($(cell).is("[colspan]"))
-                                   excel += "' colspan='" + $(cell).attr('colspan');
-                                 if ($(cell).is("[rowspan]"))
-                                   excel += "' rowspan='" + $(cell).attr('rowspan');
-                                 excel += "'>" + parseString(cell, row, col) + "</td>";
-                               }
-                             });
+                  function (cell, row, col) {
+                    if (cell != null) {
+                      excel += "<td style='";
+                      for (var styles in defaults.excelstyles) {
+                        if (defaults.excelstyles.hasOwnProperty(styles)) {
+                          excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
+                        }
+                      }
+                      if ($(cell).is("[colspan]"))
+                        excel += "' colspan='" + $(cell).attr('colspan');
+                      if ($(cell).is("[rowspan]"))
+                        excel += "' rowspan='" + $(cell).attr('rowspan');
+                      excel += "'>" + parseString(cell, row, col) + "</td>";
+                    }
+                  });
           rowCount++;
           rowIndex++;
           excel += '</tr>';
         });
 
-        if(defaults.displayTableName)
-          excel +="<tr><td></td></tr><tr><td></td></tr><tr><td>" + parseString($('<p>' + defaults.tableName + '</p>')) + "</td></tr>";
+        if (defaults.displayTableName)
+          excel += "<tr><td></td></tr><tr><td></td></tr><tr><td>" + parseString($('<p>' + defaults.tableName + '</p>')) + "</td></tr>";
 
         excel += '</table>';
 
-        if(defaults.consoleLog === true)
+        if (defaults.consoleLog === true)
           console.log(excel);
 
-        var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
-        excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-'+defaults.type+'; charset=UTF-8">';
+        var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:" + defaults.type + "' xmlns='http://www.w3.org/TR/REC-html40'>";
+        excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-' + defaults.type + '; charset=UTF-8">';
         excelFile += '<meta http-equiv="content-type" content="application/';
-        excelFile += (defaults.type == 'excel')? 'vnd.ms-excel' : 'msword';
+        excelFile += (defaults.type === 'excel') ? 'vnd.ms-excel' : 'msword';
         excelFile += '; charset=UTF-8">';
         excelFile += "<head>";
-        if (defaults.type == 'excel') {
+        if (defaults.type === 'excel') {
           excelFile += "<!--[if gte mso 9]>";
           excelFile += "<xml>";
           excelFile += "<x:ExcelWorkbook>";
@@ -361,26 +361,26 @@ THE SOFTWARE.*/
         excelFile += "</body>";
         excelFile += "</html>";
 
-        if(defaults.outputMode == 'string')
+        if (defaults.outputMode == 'string')
           return excelFile;
 
         var base64data = base64encode(excelFile);
 
-        if(defaults.outputMode == 'base64')
+        if (defaults.outputMode === 'base64')
           return base64data;
 
-        var extension = (defaults.type == 'excel')? 'xls' : 'doc';
+        var extension = (defaults.type === 'excel') ? 'xls' : 'doc';
         try {
-          var blob = new Blob([excelFile], {type: 'application/vnd.ms-'+defaults.type});
-          saveAs (blob, defaults.fileName+'.'+extension);
+          var blob = new Blob([excelFile], {type: 'application/vnd.ms-' + defaults.type});
+          saveAs(blob, defaults.fileName + '.' + extension);
         }
         catch (e) {
-          downloadFile(defaults.fileName+'.'+extension, 'data:application/vnd.ms-'+defaults.type+';base64,' + base64data);
+          downloadFile(defaults.fileName + '.' + extension, 'data:application/vnd.ms-' + defaults.type + ';base64,' + base64data);
         }
 
-      }else if(defaults.type == 'png'){
+      } else if (defaults.type == 'png') {
         html2canvas($(el), {
-          onrendered: function(canvas) {
+          onrendered: function (canvas) {
 
             var image = canvas.toDataURL();
             image = image.substring(22); // remove data stuff
@@ -393,16 +393,16 @@ THE SOFTWARE.*/
               intArray[i] = byteString.charCodeAt(i);
 
             try {
-              var blob = new Blob([buffer], { type: "image/png" });
-              saveAs (blob, defaults.fileName + '.png');
+              var blob = new Blob([buffer], {type: "image/png"});
+              saveAs(blob, defaults.fileName + '.png');
             }
             catch (e) {
-              downloadFile(defaults.fileName+'.png', 'data:image/png;base64,' + image);
+              downloadFile(defaults.fileName + '.png', 'data:image/png;base64,' + image);
             }
           }
         });
 
-      }else if(defaults.type == 'pdf') {
+      } else if (defaults.type == 'pdf') {
         if (defaults.jspdf.autotable === false) {
           var addHtmlOptions = {
             dim: {
@@ -414,12 +414,12 @@ THE SOFTWARE.*/
 
           var doc = new jsPDF(defaults.jspdf.orientation, defaults.jspdf.unit, defaults.jspdf.format);
           doc.addHTML($(el).first(),
-              defaults.jspdf.margins.left,
-              defaults.jspdf.margins.top,
-              addHtmlOptions,
-              function () {
-                jsPdfOutput(doc);
-              });
+                  defaults.jspdf.margins.left,
+                  defaults.jspdf.margins.top,
+                  addHtmlOptions,
+                  function () {
+                    jsPdfOutput(doc);
+                  });
           //delete doc;
         }
         else {
@@ -431,7 +431,7 @@ THE SOFTWARE.*/
           // When setting jspdf.format to 'bestfit' tableExport tries to choose
           // the minimum required paper format and orientation in which the table
           // (or tables in multitable mode) completely fit without column adjustment
-          if (typeof defaults.jspdf.format === 'string' && defaults.jspdf.format.toLowerCase() == 'bestfit') {
+          if (typeof defaults.jspdf.format === 'string' && defaults.jspdf.format.toLowerCase() === 'bestfit') {
             var pageFormats = {
               'a0': [2383.94, 3370.39], 'a1': [1683.78, 2383.94],
               'a2': [1190.55, 1683.78], 'a3': [841.89, 1190.55],
@@ -470,16 +470,18 @@ THE SOFTWARE.*/
           // The jsPDF doc object is stored in defaults.jspdf.autotable.tableExport,
           // thus it can be accessed from any callback function from below
           teOptions.doc = new jsPDF(defaults.jspdf.orientation,
-              defaults.jspdf.unit,
-              defaults.jspdf.format);
+                  defaults.jspdf.unit,
+                  defaults.jspdf.format);
 
           $(el).filter(':visible').each(function () {
             if ($(this).css('display') != 'none') {
+              var colKey;
               var rowIndex = 0;
               var atOptions = {};
 
               teOptions.columns = [];
               teOptions.rows = [];
+              teOptions.rowoptions = {};
 
               // onTable: optional callback function for every matching table that can be used
               // to modify the tableExport options or to skip the output of a particular table
@@ -509,10 +511,15 @@ THE SOFTWARE.*/
 
                   if (typeof settings.tableExport.columns [key] != 'undefined') {
                     var col = settings.tableExport.columns [key];
+                    var alignment = col.style.align;
+                    var rowopt = settings.tableExport.rowoptions [(row+1) + ":" + key];
 
-                    if (col.style.align == 'right')
+                    if (rowopt !== undefined)
+                      alignment = rowopt.style.align;
+
+                    if (alignment == 'right')
                       xoffset = width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize() - settings.padding;
-                    else if (col.style.align == 'center')
+                    else if (alignment == 'center')
                       xoffset = (width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize()) / 2;
                   }
 
@@ -525,31 +532,39 @@ THE SOFTWARE.*/
 
               // collect header and data rows
               $(this).find('thead').find(defaults.theadSelector).each(function () {
-                var colKey = 0;
+                colKey = 0;
 
                 ForEachVisibleCell(this, 'th,td', rowIndex,
-                    function (cell, row, col) {
-                      var obj = {
-                        title: parseString(cell, row, col),
-                        key: colKey++,
-                        style: {
-                          align: getStyle(cell, 'text-align'),
-                          bcolor: getStyle(cell, 'background-color')
-                        }
-                      };
-                      teOptions.columns.push(obj);
-                    });
+                        function (cell, row, col) {
+                          var obj = {
+                            title: parseString(cell, row, col),
+                            key: colKey++,
+                            style: {
+                              align: getStyle(cell, 'text-align'),
+                              bcolor: getStyle(cell, 'background-color')
+                            }
+                          };
+                          teOptions.columns.push(obj);
+                        });
                 rowIndex++;
-                colKey = 0;
               });
 
               $(this).find('tbody').find(defaults.tbodySelector).each(function () {
                 var rowData = [];
+                colKey = 0;
 
                 ForEachVisibleCell(this, 'td', rowIndex,
-                    function (cell, row, col) {
-                      rowData.push(parseString(cell, row, col));
-                    });
+                        function (cell, row, col) {
+                          var obj = {
+                            style: {
+                              align: getStyle(cell, 'text-align'),
+                              bcolor: getStyle(cell, 'background-color')
+                            }
+                          };
+                          teOptions.rowoptions [rowIndex + ":" + colKey++] = obj;
+
+                          rowData.push(parseString(cell, row, col));
+                        });
                 rowIndex++;
                 teOptions.rows.push(rowData);
               });
@@ -582,11 +597,11 @@ THE SOFTWARE.*/
 
       function ForEachVisibleCell(tableRow, selector, rowIndex, cellcallback) {
 
-        $(tableRow).filter(':visible').find(selector).each(function(colIndex) {
+        $(tableRow).filter(':visible').find(selector).each(function (colIndex) {
           if ($(this).css('display') != 'none' &&
-              $(this).data("tableexport-display") != 'none') {
-            if(defaults.ignoreColumn.indexOf(colIndex) == -1) {
-              if (typeof(cellcallback) === "function") {
+                  $(this).data("tableexport-display") != 'none') {
+            if (defaults.ignoreColumn.indexOf(colIndex) == -1) {
+              if (typeof (cellcallback) === "function") {
                 var cs = 0; // colspan value
 
                 // handle previously detected rowspans
@@ -623,54 +638,53 @@ THE SOFTWARE.*/
                       rowspans[rowIndex + r][colIndex + c] = "";
                   }
                 }
-
               }
             }
           }
         });
       }
 
-      function jsPdfOutput(doc){
-        if(defaults.consoleLog === true)
+      function jsPdfOutput(doc) {
+        if (defaults.consoleLog === true)
           console.log(doc.output());
 
-        if(defaults.outputMode == 'string')
+        if (defaults.outputMode == 'string')
           return doc.output();
 
-        if(defaults.outputMode == 'base64')
+        if (defaults.outputMode == 'base64')
           return base64encode(doc.output());
 
         try {
           var blob = doc.output('blob');
-          saveAs (blob, defaults.fileName + '.pdf');
+          saveAs(blob, defaults.fileName + '.pdf');
         }
         catch (e) {
           downloadFile(defaults.fileName + '.pdf', 'data:application/pdf;base64,' + base64encode(doc.output()));
         }
       }
 
-      function escapeRegExp(string){
+      function escapeRegExp(string) {
         return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
       }
 
-      function replaceAll(string, find, replace){
+      function replaceAll(string, find, replace) {
         return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
       }
 
-      function csvString(cell, rowIndex, colIndex){
+      function csvString(cell, rowIndex, colIndex) {
         var result = '';
 
-        if (cell != null){
+        if (cell != null) {
           var dataString = parseString(cell, rowIndex, colIndex);
 
-          var csvValue = (dataString === null || dataString == '')? '' : dataString.toString();
+          var csvValue = (dataString === null || dataString == '') ? '' : dataString.toString();
 
-          if ( dataString instanceof Date )
+          if (dataString instanceof Date)
             result = defaults.csvEnclosure + dataString.toLocaleString() + defaults.csvEnclosure;
-          else{
-            result = replaceAll (csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
+          else {
+            result = replaceAll(csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
 
-            if ( result.indexOf (defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result) )
+            if (result.indexOf(defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result))
               result = defaults.csvEnclosure + result + defaults.csvEnclosure;
           }
         }
@@ -678,23 +692,23 @@ THE SOFTWARE.*/
         return result;
       }
 
-      function parseString(cell, rowIndex, colIndex){
+      function parseString(cell, rowIndex, colIndex) {
         var result = '';
 
-        if (cell != null){
+        if (cell != null) {
           var $cell = $(cell);
 
-          if(defaults.htmlContent === true){
+          if (defaults.htmlContent === true) {
             result = $cell.html().trim();
-          }else{
+          } else {
             result = $cell.text().trim().replace(/\u00AD/g, ""); // remove soft hyphens
           }
 
-          if(defaults.escape === true){
+          if (defaults.escape === true) {
             result = escape(result);
           }
 
-          if (typeof defaults.onCellData === 'function'){
+          if (typeof defaults.onCellData === 'function') {
             result = defaults.onCellData($cell, rowIndex, colIndex, result);
           }
         }
@@ -702,29 +716,34 @@ THE SOFTWARE.*/
         return result;
       }
 
-      function hyphenate (a, b, c){
+      function hyphenate(a, b, c) {
         return b + "-" + c.toLowerCase();
       }
 
       // get computed style property
-      function getStyle (target, prop){
-        if(window.getComputedStyle){ // gecko and webkit
-          prop = prop.replace(/([a-z])([A-Z])/, hyphenate);  // requires hyphenated, not camel
-          return window.getComputedStyle(target, null).getPropertyValue(prop);
+      function getStyle(target, prop) {
+        try {
+          if (window.getComputedStyle) { // gecko and webkit
+            prop = prop.replace(/([a-z])([A-Z])/, hyphenate);  // requires hyphenated, not camel
+            return window.getComputedStyle(target, null).getPropertyValue(prop);
+          }
+          if (target.currentStyle) { // ie
+            return target.currentStyle[prop];
+          }
+          return target.style[prop];
         }
-        if(target.currentStyle){ // ie
-          return target.currentStyle[prop];
+        catch (e) {
         }
-        return target.style[prop];
+        return "";
       }
 
-      function getPropertyUnitValue (target, prop, unit){
+      function getPropertyUnitValue(target, prop, unit) {
         var baseline = 100;  // any number serves
 
         var value = getStyle(target, prop);  // get the computed style value
 
         var numeric = value.match(/\d+/);  // get the numeric component
-        if(numeric !== null) {
+        if (numeric !== null) {
           numeric = numeric[0];  // get the string
 
           var temp = document.createElement("div");  // create temporary element
@@ -743,25 +762,25 @@ THE SOFTWARE.*/
         return 0;
       }
 
-      function downloadFile(filename, data){
+      function downloadFile(filename, data) {
         var DownloadLink = document.createElement('a');
 
-        if ( DownloadLink ){
+        if (DownloadLink) {
           document.body.appendChild(DownloadLink);
           DownloadLink.style = 'display: none';
           DownloadLink.download = filename;
           DownloadLink.href = data;
 
-          if ( document.createEvent ){
-            if ( DownloadEvt == null )
+          if (document.createEvent) {
+            if (DownloadEvt == null)
               DownloadEvt = document.createEvent('MouseEvents');
 
             DownloadEvt.initEvent('click', true, false);
             DownloadLink.dispatchEvent(DownloadEvt);
           }
-          else if ( document.createEventObject )
+          else if (document.createEventObject)
             DownloadLink.fireEvent('onclick');
-          else if (typeof DownloadLink.onclick == 'function' )
+          else if (typeof DownloadLink.onclick == 'function')
             DownloadLink.onclick();
 
           document.body.removeChild(DownloadLink);
@@ -776,7 +795,7 @@ THE SOFTWARE.*/
           if (c < 128) {
             utftext += String.fromCharCode(c);
           }
-          else if((c > 127) && (c < 2048)) {
+          else if ((c > 127) && (c < 2048)) {
             utftext += String.fromCharCode((c >> 6) | 192);
             utftext += String.fromCharCode((c & 63) | 128);
           }
@@ -809,12 +828,12 @@ THE SOFTWARE.*/
             enc4 = 64;
           }
           output = output +
-            keyStr.charAt(enc1) + keyStr.charAt(enc2) +
-            keyStr.charAt(enc3) + keyStr.charAt(enc4);
+                  keyStr.charAt(enc1) + keyStr.charAt(enc2) +
+                  keyStr.charAt(enc3) + keyStr.charAt(enc4);
         }
         return output;
       }
-    
+
       return this;
     }
   });
