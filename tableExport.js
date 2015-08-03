@@ -65,17 +65,23 @@
       if (defaults.type == 'csv' || defaults.type == 'txt') {
 
         // Header
-        var tdData = "";
+        var csvData = "";
         var rowIndex = 0;
         $(el).find('thead').first().find(defaults.theadSelector).each(function () {
-          tdData += "\n";
+          trData = "";
           ForEachVisibleCell(this, 'th,td', rowIndex,
                   function (cell, row, col) {
-                    tdData += csvString(cell, row, col) + defaults.csvSeparator;
+                    trData += csvString(cell, row, col) + defaults.csvSeparator;
                   });
+          trData = $.trim(trData).substring(0, trData.length - 1);
+          if (trData.length > 0) {
+
+            if (csvData.length > 0)
+              csvData += "\n";
+
+            csvData += trData;
+          }
           rowIndex++;
-          tdData = $.trim(tdData);
-          tdData = $.trim(tdData).substring(0, tdData.length - 1);
         });
 
         // Row vs Column
@@ -85,33 +91,37 @@
                   function (cell, row, col) {
                     trData += csvString(cell, row, col) + defaults.csvSeparator;
                   });
-          if (trData.length > defaults.csvSeparator.length)
-            tdData += "\n" + trData;
+          trData = $.trim(trData).substring(0, trData.length - 1);
+          if (trData.length > 0) {
+
+            if (csvData.length > 0)
+              csvData += "\n";
+
+            csvData += trData;
+          }
           rowIndex++;
-          //tdData = $.trim(tdData);
-          tdData = $.trim(tdData).substring(0, tdData.length - 1);
         });
 
-        tdData += "\n";
+        csvData += "\n";
 
         //output
         if (defaults.consoleLog === true)
-          console.log(tdData);
+          console.log(csvData);
 
         if (defaults.outputMode === 'string')
-          return tdData;
+          return csvData;
 
         if (defaults.outputMode === 'base64')
-          return base64encode(tdData);
+          return base64encode(csvData);
 
         try {
-          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + tdData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
+          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + csvData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
           saveAs(blob, defaults.fileName + '.' + defaults.type);
         }
         catch (e) {
           downloadFile(defaults.fileName + '.' + defaults.type,
                   'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
-                  encodeURIComponent(tdData));
+                  encodeURIComponent(csvData));
         }
 
       } else if (defaults.type == 'sql') {
