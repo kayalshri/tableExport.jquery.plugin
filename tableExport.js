@@ -608,8 +608,10 @@
       function ForEachVisibleCell(tableRow, selector, rowIndex, cellcallback) {
 
         $(tableRow).filter(':visible').find(selector).each(function (colIndex) {
-          if ($(this).css('display') != 'none' &&
-                  $(this).data("tableexport-display") != 'none') {
+          if ($(this).data("tableexport-display") == 'always' ||
+              ($(this).css('display') != 'none' &&
+               $(this).css('visibility') != 'hidden' &&
+               $(this).data("tableexport-display") != 'none')) {
             if (defaults.ignoreColumn.indexOf(colIndex) == -1) {
               if (typeof (cellcallback) === "function") {
                 var cs = 0; // colspan value

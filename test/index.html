@@ -11,6 +11,11 @@
   <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
     <!--
+    h3 {
+      font-size: 1em;
+      font-weight: normal;
+    }
+
     .table-striped {
       background-color: white;
     }
@@ -24,11 +29,16 @@
       background-color: #ccdf88;
     }
 
-    .table-numformat > tbody > tr > td {
+    .table-striped.numformat > tbody > tr > td {
       text-align: right;
       vertical-align: top;
     }
 
+    .table-striped th.hidden,
+    .table-striped td.hidden {
+      position: absolute;
+      visibility: hidden;
+    }
     -->
   </style>
   <script type="text/javaScript">
@@ -61,43 +71,29 @@
   </section>
   <section>
     <ul>
-      <li><a href="#" onClick="doExport('#countries', {type: 'csv'});"> <img src='icons/csv.png' width='24px'> CSV</a>
-      </li>
-      <li><a href="#" onClick="doExport('#rowspans', {type: 'csv'});"> <img src='icons/csv.png' width='24px'> CSV
-        (rowspan)</a></li>
-      <li><a href="#" onClick="doExport('#mixspans', {type: 'csv'});"> <img src='icons/csv.png' width='24px'> CSV
-        (colspan + rowspan)</a></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'txt'});"> <img src='icons/txt.png' width='24px'> TXT</a>
-      </li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV</a></li>
+      <li><a href="#" onClick="doExport('#rowspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#mixspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (colspan + rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#invisiblecols', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-display="always")</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT</a></li>
       <li class="divider"></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' width='24px'> JSON</a>
-      </li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: '[2,3]'});"> <img
-        src='icons/json.png' width='24px'> JSON (ignore column)</a></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'json', escape: 'true'});"> <img src='icons/json.png'
-                                                                                              width='24px'> JSON (with
-        escape)</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: '[2,3]'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'json', escape: 'true'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (with escape)</a></li>
       <li class="divider"></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'xml'});"> <img src='icons/xml.png' width='24px'> XML</a>
-      </li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' width='24px'> SQL</a>
-      </li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'xml'});"> <img src='icons/xml.png' alt="XML" style="width:24px"> XML</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
       <li class="divider"></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' width='24px'>
-        XLS</a></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' width='24px'>
-        Word</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <li class="divider"></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' width='24px'> PNG</a>
-      </li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
       <li><a href="#" onClick="doExport('#countries',
                       {type: 'pdf',
                         jspdf: {orientation: 'l',
                           margins: {right: 10, left: 10, top: 40, bottom: 40},
                           autotable: {extendWidth: true}}});">
-        <img src='icons/pdf.png' width='24px'> PDF (AutoTable)
-      </a>
-      </li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (AutoTable)</a></li>
       <li><a href="#" onClick="doExport('table',
                       {type: 'pdf',
                         jspdf: {orientation: 'p',
@@ -105,20 +101,21 @@
                           autotable: {extendWidth: false,
                             renderHeader: header,
                             renderFooter: footer}}});">
-        <img src='icons/pdf.png' width='24px'> PDF (AutoTable - multiple tables)
-      </a>
-      </li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (AutoTable - multiple tables)</a></li>
       <li><a href="#"
              onClick="doExport('#countries', {type: 'pdf', jspdf: {orientation: 'p', unit: 'mm', margins: {left: 20, top: 10}, autotable: false}});">
-        <img src='icons/pdf.png' width='24px'> PDF (html2canvas)</a></li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (html2canvas)</a></li>
       <li><a href="#" onClick="doExport('#hiddencols',
                       {type: 'pdf',
                         jspdf: {autotable: {extendWidth: false}}});">
-        <img src='icons/pdf.png' width='24px'> PDF (hidden columns)
-      </a>
-      </li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (data-tableexport-display="none")</a></li>
+      <li><a href="#" onClick="doExport('#invisiblecols',
+                      {type: 'pdf',
+                        jspdf: {autotable: {extendWidth: false}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (data-tableexport-display="always")</a></li>
     </ul>
-    <table id="rowspans" class="table-striped table-numformat">
+    <h3>Table with rowspan</h3>
+    <table id="rowspans" class="table-striped numformat">
       <thead>
       <tr>
         <th>C1</th>
@@ -150,7 +147,8 @@
       </tr>
       </tbody>
     </table>
-    <table id="mixspans" class="table-striped table-numformat">
+    <h3>Table with rowspan and colspan</h3>
+    <table id="mixspans" class="table-striped numformat">
       <thead>
       <tr>
         <th>C1</th>
@@ -181,7 +179,8 @@
       </tr>
       </tbody>
     </table>
-    <table id="hiddencols" class="table-striped table-numformat">
+    <h3>Table containing unexportable cells</h3>
+    <table id="hiddencols" class="table-striped numformat">
       <thead>
       <tr>
         <th data-tableexport-display="none">C1</th>
@@ -217,7 +216,50 @@
       </tr>
       </tbody>
     </table>
-      <!-- Countries and dependencies by population -->
+    <h3>Table with invisible but exportable cells</h3>
+    <table id="invisiblecols" class="table-striped numformat">
+      <thead>
+      <tr>
+        <th>C1</th>
+        <th style="display:none;" data-tableexport-display="always">C2</th>
+        <th>C3</th>
+        <th class="hidden" data-tableexport-display="always">C4</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>1</td>
+        <td style="display:none;" data-tableexport-display="always">2</td>
+        <td>3</td>
+        <td class="hidden" data-tableexport-display="always">4</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td style="display:none;" data-tableexport-display="always">2</td>
+        <td>3</td>
+        <td class="hidden" data-tableexport-display="always">4</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td style="display:none;" data-tableexport-display="always">2</td>
+        <td>3</td>
+        <td class="hidden" data-tableexport-display="always">4</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td style="display:none;" data-tableexport-display="always">2</td>
+        <td>3</td>
+        <td class="hidden" data-tableexport-display="always">4</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td style="display:none;" data-tableexport-display="always">2</td>
+        <td>3</td>
+        <td class="hidden" data-tableexport-display="always">4</td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">
       <thead>
@@ -396,18 +438,19 @@
       </tr>
       </tbody>
     </table>
+    <h3>Countries and dependencies by population (mass test)</h3>
     <table id="wikitable" class="table-striped">
       <thead>
       <tr>
-        <th data-sort-type="number" class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">
+        <th data-sort-type="number" class="headerSort" tabindex="0" role="columnheader" title="Sort ascending">
           Rank
         </th>
-        <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Country (or dependent
+        <th class="headerSort" tabindex="0" role="columnheader" title="Sort ascending">Country (or dependent
           territory)
         </th>
-        <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Population</th>
-        <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">Date</th>
-        <th class="headerSort" tabindex="0" role="columnheader button" title="Sort ascending">% of world<br>
+        <th class="headerSort" tabindex="0" role="columnheader" title="Sort ascending">Population</th>
+        <th class="headerSort" tabindex="0" role="columnheader" title="Sort ascending">Date</th>
+        <th class="headerSort" tabindex="0" role="columnheader" title="Sort ascending">% of world<br>
           population
         </th>
         <th class="unsortable">Source</th>
@@ -1336,7 +1379,7 @@
       </tr>
       <tr>
         <td>54</td>
-        <td align="left"><span style="display:inline-block;width:30px;" class="flagicon"><img height="15" width="23"
+        <td style="text-align:left;"><span style="display:inline-block;width:30px;" class="flagicon"><img height="15" width="23"
                                                                                               data-file-height="600"
                                                                                               data-file-width="900"
                                                                                               srcset="//upload.wikimedia.org/wikipedia/commons/thumb/5/53/Flag_of_Syria.svg/35px-Flag_of_Syria.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/5/53/Flag_of_Syria.svg/45px-Flag_of_Syria.svg.png 2x"

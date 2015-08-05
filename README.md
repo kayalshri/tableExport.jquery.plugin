@@ -115,5 +115,6 @@ Optional html data attributes
 (can be set while generating the table you want to export)
 
 ```html
+<td style="display:none;" data-tableexport-display="always">...</td> -> hidden cell will be exported
 <td data-tableexport-display="none">...</td> -> cell will not be exported
 ```
