@@ -45,6 +45,8 @@
 
     function doExport(selector, params) {
       var options = {
+        //ignoreRow: [0,11,12,100],
+        //ignoreColumn: [2,4],
         tableName: 'Countries',
         worksheetName: 'Countries by population'
       };
@@ -78,7 +80,7 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT</a></li>
       <li class="divider"></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON</a></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: '[2,3]'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: [2,3]});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', escape: 'true'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (with escape)</a></li>
       <li class="divider"></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'xml'});"> <img src='icons/xml.png' alt="XML" style="width:24px"> XML</a></li>
