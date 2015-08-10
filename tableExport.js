@@ -144,7 +144,7 @@
         });
         tdData += ") VALUES ";
         // Row vs Column
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function (index) {
           if (defaults.ignoreRow.indexOf(index) == -1) {
             trData = "";
             ForEachVisibleCell(this, 'td', rowIndex,
@@ -195,17 +195,18 @@
         });
 
         var jsonArray = [];
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
-          var jsonArrayTd = [];
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function (index) {
+          if (defaults.ignoreRow.indexOf(index) == -1) {
+            var jsonArrayTd = [];
 
-          ForEachVisibleCell(this, 'td', rowIndex,
-                  function (cell, row, col) {
-                    jsonArrayTd.push(parseString(cell, row, col));
-                  });
+            ForEachVisibleCell(this, 'td', rowIndex,
+                    function (cell, row, col) {
+                        jsonArrayTd.push(parseString(cell, row, col));
+                    });
 
-          if (jsonArrayTd.length > 0 && (jsonArrayTd.length != 1 || jsonArrayTd[0] != ""))
-            jsonArray.push(jsonArrayTd);
-
+            if (jsonArrayTd.length > 0 && (jsonArrayTd.length != 1 || jsonArrayTd[0] != ""))
+              jsonArray.push(jsonArrayTd);
+          }
           rowIndex++;
         });
 
@@ -252,7 +253,7 @@
 
         // Row Vs Column
         var rowCount = 1;
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function (index) {
           if (defaults.ignoreRow.indexOf(index) == -1) {
             var colCount = 1;
             var rxml = "";
@@ -316,7 +317,7 @@
 
         // Row Vs Column
         var rowCount = 1;
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function (index) {
           if (defaults.ignoreRow.indexOf(index) == -1) {
             excel += "<tr>";
             ForEachVisibleCell(this, 'td', rowIndex,
