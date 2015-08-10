@@ -34,6 +34,7 @@
         fileName: 'tableExport',
         htmlContent: false,
         ignoreColumn: [],
+        ignoreRow:[],
         jspdf: {orientation: 'p',
           unit: 'pt',
           format: 'a4',
@@ -85,19 +86,21 @@
         });
 
         // Row vs Column
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
-          trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex,
+        $(el).find('tbody').first().find(defaults.tbodySelector).each(function (index) {
+          if (defaults.ignoreRow.indexOf(index) == -1) {
+            trData = "";
+            ForEachVisibleCell(this, 'td', rowIndex,
                   function (cell, row, col) {
                     trData += csvString(cell, row, col) + defaults.csvSeparator;
                   });
-          trData = $.trim(trData).substring(0, trData.length - 1);
-          if (trData.length > 0) {
+            trData = $.trim(trData).substring(0, trData.length - 1);
+            if (trData.length > 0) {
 
-            if (csvData.length > 0)
-              csvData += "\n";
+              if (csvData.length > 0)
+                csvData += "\n";
 
-            csvData += trData;
+              csvData += trData;
+            }
           }
           rowIndex++;
         });
@@ -142,15 +145,17 @@
         tdData += ") VALUES ";
         // Row vs Column
         $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
-          trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex,
-                  function (cell, row, col) {
-                    trData += "'" + parseString(cell, row, col) + "',";
-                  });
-          if (trData.length > 3) {
-            tdData += "(" + trData;
-            tdData = $.trim(tdData).substring(0, tdData.length - 1);
-            tdData += "),";
+          if (defaults.ignoreRow.indexOf(index) == -1) {
+            trData = "";
+            ForEachVisibleCell(this, 'td', rowIndex,
+                    function (cell, row, col) {
+                      trData += "'" + parseString(cell, row, col) + "',";
+                    });
+            if (trData.length > 3) {
+              tdData += "(" + trData;
+              tdData = $.trim(tdData).substring(0, tdData.length - 1);
+              tdData += "),";
+            }
           }
           rowIndex++;
         });
@@ -248,18 +253,19 @@
         // Row Vs Column
         var rowCount = 1;
         $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
-          var colCount = 1;
-          var rxml = "";
-          ForEachVisibleCell(this, 'td', rowIndex,
-                  function (cell, row, col) {
-                    rxml += "<column-" + colCount + ">" + parseString(cell, row, col) + "</column-" + colCount + ">";
-                    colCount++;
-                  });
-          if (rxml != "<column-1></column-1>") {
-            xml += '<row id="' + rowCount + '">' + rxml + '</row>';
-            rowCount++;
+          if (defaults.ignoreRow.indexOf(index) == -1) {
+            var colCount = 1;
+            var rxml = "";
+            ForEachVisibleCell(this, 'td', rowIndex,
+                    function (cell, row, col) {
+                        rxml += "<column-" + colCount + ">" + parseString(cell, row, col) + "</column-" + colCount + ">";
+                        colCount++;
+                    });
+            if (rxml != "<column-1></column-1>") {
+              xml += '<row id="' + rowCount + '">' + rxml + '</row>';
+              rowCount++;
+            }
           }
-
           rowIndex++;
         });
         xml += '</data></tabledata>';
@@ -311,26 +317,28 @@
         // Row Vs Column
         var rowCount = 1;
         $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
-          excel += "<tr>";
-          ForEachVisibleCell(this, 'td', rowIndex,
-                  function (cell, row, col) {
-                    if (cell != null) {
-                      excel += "<td style='";
-                      for (var styles in defaults.excelstyles) {
-                        if (defaults.excelstyles.hasOwnProperty(styles)) {
-                          excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
+          if (defaults.ignoreRow.indexOf(index) == -1) {
+            excel += "<tr>";
+            ForEachVisibleCell(this, 'td', rowIndex,
+                    function (cell, row, col) {
+                        if (cell != null) {
+                          excel += "<td style='";
+                          for (var styles in defaults.excelstyles) {
+                            if (defaults.excelstyles.hasOwnProperty(styles)) {
+                              excel += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
+                            }
+                          }
+                          if ($(cell).is("[colspan]"))
+                            excel += "' colspan='" + $(cell).attr('colspan');
+                          if ($(cell).is("[rowspan]"))
+                            excel += "' rowspan='" + $(cell).attr('rowspan');
+                          excel += "'>" + parseString(cell, row, col) + "</td>";
                         }
-                      }
-                      if ($(cell).is("[colspan]"))
-                        excel += "' colspan='" + $(cell).attr('colspan');
-                      if ($(cell).is("[rowspan]"))
-                        excel += "' rowspan='" + $(cell).attr('rowspan');
-                      excel += "'>" + parseString(cell, row, col) + "</td>";
-                    }
-                  });
+                    });
+            excel += '</tr>';
+          }
           rowCount++;
           rowIndex++;
-          excel += '</tr>';
         });
 
         if (defaults.displayTableName)
