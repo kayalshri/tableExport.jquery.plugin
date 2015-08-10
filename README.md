@@ -89,6 +89,7 @@ excelstyles: ['css','properties','to','export','to','excel']
 fileName: 'tableExport'
 htmlContent: false
 ignoreColumn: []
+ignoreRow: []
 jspdf: orientation: 'p'
        unit:'pt'
        format: 'bestfit'
@@ -110,7 +111,7 @@ worksheetName: 'xlsWorksheetName'
 
 For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/someatoms/jsPDF-AutoTable) resp.
 
-Optional html data attributes 
+Optional html data attributes
 =============================
 (can be set while generating the table you want to export)
 
