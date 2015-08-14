@@ -80,9 +80,10 @@ Options
 =======
 
 ```javascript
-csvSeparator: ','
-csvEnclosure: '"'
 consoleLog: false
+csvEnclosure: '"'
+csvSeparator: ','
+csvUseBOM: true
 displayTableName: false
 escape: false
 excelstyles: ['css','properties','to','export','to','excel']

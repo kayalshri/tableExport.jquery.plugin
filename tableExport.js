@@ -25,9 +25,10 @@
   $.fn.extend({
     tableExport: function (options) {
       var defaults = {
-        csvSeparator: ',',
-        csvEnclosure: '"',
         consoleLog: false,
+        csvEnclosure: '"',
+        csvSeparator: ',',
+        csvUseBOM: true,
         displayTableName: false,
         escape: false,
         excelstyles: ['border-bottom', 'border-top', 'border-left', 'border-right'],
@@ -118,12 +119,12 @@
           return base64encode(csvData);
 
         try {
-          var blob = new Blob([(defaults.type == 'csv' ? '\ufeff' : '') + csvData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
+          var blob = new Blob([((defaults.type == 'csv' && defaults.csvUseBOM)? '\ufeff' : '') + csvData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
           saveAs(blob, defaults.fileName + '.' + defaults.type);
         }
         catch (e) {
           downloadFile(defaults.fileName + '.' + defaults.type,
-                  'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + (defaults.type == 'csv' ? '\ufeff' : '') +
+                  'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + ((defaults.type == 'csv' && defaults.csvUseBOM )? '\ufeff' : '') +
                   encodeURIComponent(csvData));
         }
 
