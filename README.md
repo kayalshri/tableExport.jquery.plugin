@@ -101,6 +101,10 @@ jspdf: orientation: 'p'
                   tableExport: onAfterAutotable: null
                                onBeforeAutotable: null
                                onTable: null
+numbers: html: decimalMark: '.'
+               thousandsSeparator: ','
+         output: decimalMark: '.',
+                 thousandsSeparator: ','
 onCellData: null
 outputMode: 'file'
 tbodySelector: 'tr'

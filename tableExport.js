@@ -37,18 +37,25 @@
         ignoreColumn: [],
         ignoreRow:[],
         jspdf: {orientation: 'p',
-          unit: 'pt',
-          format: 'a4',
-          margins: {left: 20, right: 10, top: 10, bottom: 10},
-          autotable: {padding: 2,
-            lineHeight: 12,
-            fontSize: 8,
-            tableExport: {onAfterAutotable: null,
-              onBeforeAutotable: null,
-              onTable: null
-            }
-          }
-        },
+                unit: 'pt',
+                format: 'a4',
+                margins: {left: 20, right: 10, top: 10, bottom: 10},
+                autotable: {padding: 2,
+                            lineHeight: 12,
+                            fontSize: 8,
+                            tableExport: {onAfterAutotable: null,
+                                          onBeforeAutotable: null,
+                                          onTable: null
+                                         }
+                           }
+               },
+        numbers: {html: {decimalMark: '.',
+                         thousandsSeparator: ','
+                        },
+                  output: {decimalMark: '.',
+                           thousandsSeparator: ','
+                          }
+                 },
         onCellData: null,
         outputMode: 'file', // file|string|base64
         tbodySelector: 'tr',
@@ -614,7 +621,7 @@
           teOptions.doc = null;
         }
       }
-      
+
       function ForEachVisibleCell(tableRow, selector, rowIndex, cellcallback) {
         if (defaults.ignoreRow.indexOf(rowIndex) == -1) {
           $(tableRow).filter(':visible').find(selector).each(function (colIndex) {
@@ -715,6 +722,15 @@
         return result;
       }
 
+      function parseNumber(value) {
+        value = value || "0";
+        value = replaceAll(value, defaults.numbers.html.decimalMark, '.');
+        value = replaceAll(value, defaults.numbers.html.thousandsSeparator, '');
+
+        return typeof value === "number" || jQuery.isNumeric(value) !== false ? value : false;
+      }
+
+
       function parseString(cell, rowIndex, colIndex) {
         var result = '';
 
@@ -723,8 +739,25 @@
 
           if (defaults.htmlContent === true) {
             result = $cell.html().trim();
-          } else {
+          }
+          else {
             result = $cell.text().trim().replace(/\u00AD/g, ""); // remove soft hyphens
+
+            if (defaults.numbers.html.decimalMark != defaults.numbers.output.decimalMark ||
+                defaults.numbers.html.thousandsSeparator != defaults.numbers.output.thousandsSeparator) {
+              var number = parseNumber (result);
+
+              if ( number !== false ) {
+                var frac = ("" + number).split('.');
+                if ( frac.length == 1 )
+                  frac[1] = "";
+                var mod = frac[0].length > 3 ? frac[0].length % 3 : 0;
+
+                result = (number < 0 ? "-" : "") +
+                         (defaults.numbers.output.thousandsSeparator ? ((mod ? frac[0].substr(0, mod) + defaults.numbers.output.thousandsSeparator : "") + frac[0].substr(mod).replace(/(\d{3})(?=\d)/g, "$1" + defaults.numbers.output.thousandsSeparator)) : frac[0]) +
+                         (frac[1].length ? defaults.numbers.output.decimalMark + frac[1] : "");
+              }
+            }
           }
 
           if (defaults.escape === true) {
