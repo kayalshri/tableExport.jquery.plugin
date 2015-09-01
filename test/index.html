@@ -20,6 +20,7 @@
       background-color: white;
     }
 
+    .table-striped > thead > tr > td,
     .table-striped > thead > tr > th {
       background-color: gray;
       color: white;
@@ -105,6 +106,10 @@
                             renderHeader: header,
                             renderFooter: footer}}});">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (AutoTable - multiple tables)</a></li>
+      <li><a href="#" onClick="doExport('#alignments',
+                      {type: 'pdf',
+                        jspdf: {autotable: {extendWidth: false}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (AutoTable - column alignment)</a></li>
       <li><a href="#"
              onClick="doExport('#countries', {type: 'pdf', jspdf: {orientation: 'p', unit: 'mm', margins: {left: 20, top: 10}, autotable: false}});">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (html2canvas)</a></li>
@@ -259,6 +264,43 @@
         <td style="display:none;" data-tableexport-display="always">2</td>
         <td>3</td>
         <td class="hidden" data-tableexport-display="always">4</td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Table for column alignment tests</h3>
+    <table id="alignments" class="table-striped">
+      <thead>
+      <tr>
+        <th style="width:15ex">C1</th>
+        <td style="width:15ex">C2</td>
+        <th style="width:15ex; text-align:right">C3</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>ABCDEFG</td>
+        <td>abcdef</td>
+        <td>XYZxyz123</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>E</td>
+        <td>F</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td style="text-align:right">1</td>
+        <td style="text-align:right">2</td>
+        <td style="text-align:right">3</td>
+      </tr>
+      <tr>
+        <td>G</td>
+        <td>H</td>
+        <td>I</td>
       </tr>
       </tbody>
     </table>

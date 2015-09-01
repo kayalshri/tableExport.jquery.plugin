@@ -518,6 +518,33 @@
               atOptions.margins = {};
               $.extend(true, atOptions.margins, defaults.jspdf.margins);
 
+              if (typeof atOptions.renderHeaderCell !== 'function') {
+                atOptions.renderHeaderCell = function (x, y, width, height, key, value, settings) {
+                  var doc = settings.tableExport.doc;
+                  var xoffset = 0;
+
+                  doc.setFillColor(52, 73, 94); // Asphalt
+                  doc.setTextColor(255, 255, 255);
+                  doc.setFontStyle('bold');
+                  doc.rect(x, y, width, height, 'F');
+                  y += settings.lineHeight / 2 + doc.autoTableTextHeight() / 2;
+
+                  if (typeof settings.tableExport.columns [key] != 'undefined') {
+                    var col = settings.tableExport.columns [key];
+                    if (typeof col.style != 'undefined') {
+                      if (col.style.align == 'right')
+                        xoffset = width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize() - settings.padding;
+                      else if (col.style.align == 'center')
+                        xoffset = (width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize()) / 2;
+                    }
+                  }
+
+                  if (xoffset < settings.padding)
+                    xoffset = settings.padding;
+                  doc.text(value, x + xoffset, y);
+                }
+              }
+
               if (typeof atOptions.renderCell !== 'function') {
 
                 // draw cell text with original <td> alignment
@@ -530,25 +557,17 @@
                   doc.rect(x, y, width, height, 'F');
                   y += settings.lineHeight / 2 + doc.autoTableTextHeight() / 2 - 2.5;
 
-                  if (typeof settings.tableExport.columns [key] != 'undefined') {
-                    var col = settings.tableExport.columns [key];
-                    if (typeof col.style != 'undefined') {
-                      var alignment = col.style.align;
-                      var rowopt = settings.tableExport.rowoptions [(row+1) + ":" + key];
+                  var rowopt = settings.tableExport.rowoptions [row + ":" + key];
 
-                      if (typeof rowopt != 'undefined')
-                        alignment = rowopt.style.align;
-
-                      if (alignment == 'right')
-                        xoffset = width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize() - settings.padding;
-                      else if (alignment == 'center')
-                        xoffset = (width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize()) / 2;
-                    }
+                  if (typeof rowopt != 'undefined') {
+                    if (rowopt.style.align == 'right')
+                      xoffset = width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize() - settings.padding;
+                    else if (rowopt.style.align == 'center')
+                      xoffset = (width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize()) / 2;
                   }
 
                   if (xoffset < settings.padding)
                     xoffset = settings.padding;
-
                   doc.text(value, x + xoffset, y);
                 }
               }
@@ -559,11 +578,14 @@
 
                 ForEachVisibleCell(this, 'th,td', rowIndex,
                         function (cell, row, col) {
+                          var a = getStyle(cell, 'text-align');
+                          if ( a == 'start' )
+                            a = getStyle(cell, 'direction') == 'rtl' ? 'right' : 'left';
                           var obj = {
                             title: parseString(cell, row, col),
                             key: colKey++,
                             style: {
-                              align: getStyle(cell, 'text-align'),
+                              align: a,
                               bcolor: getStyle(cell, 'background-color')
                             }
                           };
@@ -572,16 +594,19 @@
                 rowIndex++;
               });
 
+              var rowCount = 0;
               $(this).find('tbody').find(defaults.tbodySelector).each(function () {
                 var rowData = [];
-                var rowCount = 0;
                 colKey = 0;
 
                 ForEachVisibleCell(this, 'td', rowIndex,
                         function (cell, row, col) {
+                          var a = getStyle(cell, 'text-align');
+                          if (a == 'start')
+                            a = getStyle(cell, 'direction') == 'rtl' ? 'right' : 'left';
                           var obj = {
                             style: {
-                              align: getStyle(cell, 'text-align'),
+                              align: a,
                               bcolor: getStyle(cell, 'background-color')
                             }
                           };
