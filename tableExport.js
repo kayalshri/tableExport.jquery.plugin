@@ -649,7 +649,12 @@
 
       function ForEachVisibleCell(tableRow, selector, rowIndex, cellcallback) {
         if (defaults.ignoreRow.indexOf(rowIndex) == -1) {
-          $(tableRow).filter(':visible').find(selector).each(function (colIndex) {
+
+          $(tableRow).filter(function(index) {
+            return $(this).is(':visible') ||
+                   $(this).data("tableexport-display") == 'always' ||
+                   $(this).closest('table').data("tableexport-display") == 'always';
+          }).find(selector).each(function (colIndex) {
             if ($(this).data("tableexport-display") == 'always' ||
                 ($(this).css('display') != 'none' &&
                  $(this).css('visibility') != 'hidden' &&

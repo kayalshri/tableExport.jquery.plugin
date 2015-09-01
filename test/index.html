@@ -80,6 +80,7 @@
       <li><a href="#" onClick="doExport('#mixspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#invisiblecols', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-display="always")</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT</a></li>
+      <li><a href="#" onClick="doExport('#invisible', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (hidden table)</a></li>
       <li class="divider"></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: [2,3]});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
@@ -301,6 +302,28 @@
         <td>G</td>
         <td>H</td>
         <td>I</td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Hidden Table</h3>
+    <table id="invisible" style="display:none" data-tableexport-display="always">
+      <thead>
+      <tr>
+        <th>C1</th>
+        <td>C2</td>
+        <th>C3</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>A</td>
+        <td>B</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>E</td>
+        <td>F</td>
       </tr>
       </tbody>
     </table>
