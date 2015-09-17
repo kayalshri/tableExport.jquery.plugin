@@ -294,7 +294,7 @@ THE SOFTWARE.*/
 					
 					// Header
 					var startColPosition=defaults.pdfLeftMargin;
-					$(el).find('thead').find('tr').each(function() {
+					$(el).find('tr').each(function() {
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
