@@ -1,25 +1,11 @@
-/*The MIT License (MIT)
+/*
+ tableExport.jquery.plugin
 
- Original work Copyright (c) 2014 https://github.com/kayalshri/
- Modified work Copyright (c) 2015 https://github.com/hhurz/
+ Copyright (c) 2015 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.*/
+ Original work Copyright (c) 2014 Giri Raj, https://github.com/kayalshri/
+ Licensed under the MIT License, http://opensource.org/licenses/mit-license
+*/
 
 (function ($) {
   $.fn.extend({
@@ -38,11 +24,22 @@
         ignoreRow:[],
         jspdf: {orientation: 'p',
                 unit: 'pt',
-                format: 'a4',
+                format: 'a4', // jspdf page format or 'bestfit' for autmatic paper format selection
                 margins: {left: 20, right: 10, top: 10, bottom: 10},
-                autotable: {padding: 2,
-                            lineHeight: 12,
-                            fontSize: 8,
+                autotable: {styles: {cellPadding: 2,
+                                     rowHeight: 12,
+                                     fontSize: 8,
+                                     fillColor: 255, // color value or 'inherit' to use css background-color from html table
+                                     textColor: 50,  // color value or 'inherit' to use css color from html table
+                                     fontStyle: 'normal',
+                                     overflow: 'ellipsize'
+                                    },
+                            headerStyles: {fillColor: [52, 73, 94],
+                                           textColor: 255,
+                                           fontStyle: 'bold'
+                                          },
+                            alternateRowStyles: {fillColor: 245
+                                                },
                             tableExport: {onAfterAutotable: null,
                                           onBeforeAutotable: null,
                                           onTable: null
@@ -57,11 +54,11 @@
                           }
                  },
         onCellData: null,
-        outputMode: 'file', // file|string|base64
+        outputMode: 'file', // 'file', 'string' or 'base64'
         tbodySelector: 'tr',
         theadSelector: 'tr',
         tableName: 'myTableName',
-        type: 'csv',
+        type: 'csv', // 'csv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
         worksheetName: 'xlsWorksheetName'
       };
 
@@ -451,7 +448,7 @@
 
           // When setting jspdf.format to 'bestfit' tableExport tries to choose
           // the minimum required paper format and orientation in which the table
-          // (or tables in multitable mode) completely fit without column adjustment
+          // (or tables in multitable mode) completely fits without column adjustment
           if (typeof defaults.jspdf.format === 'string' && defaults.jspdf.format.toLowerCase() === 'bestfit') {
             var pageFormats = {
               'a0': [2383.94, 3370.39], 'a1': [1683.78, 2383.94],
@@ -489,7 +486,7 @@
           }
 
           // The jsPDF doc object is stored in defaults.jspdf.autotable.tableExport,
-          // thus it can be accessed from any callback function from below
+          // thus it can be accessed from any callback function
           teOptions.doc = new jsPDF(defaults.jspdf.orientation,
                   defaults.jspdf.unit,
                   defaults.jspdf.format);
@@ -506,7 +503,7 @@
 
               // onTable: optional callback function for every matching table that can be used
               // to modify the tableExport options or to skip the output of a particular table
-              // when the  table selector targets multiple tables
+              // if the table selector targets multiple tables
               if (typeof teOptions.onTable === 'function')
                 if (teOptions.onTable($(this), defaults) === false)
                   return true; // continue to next iteration step (table)
@@ -515,60 +512,35 @@
               Object.keys(defaults.jspdf.autotable).forEach(function (key) {
                 atOptions[key] = defaults.jspdf.autotable[key];
               });
-              atOptions.margins = {};
-              $.extend(true, atOptions.margins, defaults.jspdf.margins);
+              atOptions.margin = {};
+              $.extend(true, atOptions.margin, defaults.jspdf.margins);
 
-              if (typeof atOptions.renderHeaderCell !== 'function') {
-                atOptions.renderHeaderCell = function (x, y, width, height, key, value, settings) {
-                  var doc = settings.tableExport.doc;
-                  var xoffset = 0;
+              if (typeof atOptions.drawHeaderCell !== 'function') {
+                atOptions.createdHeaderCell = function (cell, data) {
 
-                  doc.setFillColor(52, 73, 94); // Asphalt
-                  doc.setTextColor(255, 255, 255);
-                  doc.setFontStyle('bold');
-                  doc.rect(x, y, width, height, 'F');
-                  y += settings.lineHeight / 2 + doc.autoTableTextHeight() / 2;
-
-                  if (typeof settings.tableExport.columns [key] != 'undefined') {
-                    var col = settings.tableExport.columns [key];
-                    if (typeof col.style != 'undefined') {
-                      if (col.style.align == 'right')
-                        xoffset = width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize() - settings.padding;
-                      else if (col.style.align == 'center')
-                        xoffset = (width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize()) / 2;
-                    }
+                  if (typeof teOptions.columns [data.column.dataKey] != 'undefined') {
+                    var col = teOptions.columns [data.column.dataKey];
+                    cell.styles.halign = col.style.align;
+                    if (atOptions.styles.fillColor === 'inherit')
+                      cell.styles.fillColor = col.style.bcolor;
+                    if (atOptions.styles.textColor === 'inherit')
+                      cell.styles.textColor = col.style.color;
                   }
-
-                  if (xoffset < settings.padding)
-                    xoffset = settings.padding;
-                  doc.text(value, x + xoffset, y);
                 }
               }
 
-              if (typeof atOptions.renderCell !== 'function') {
-
+              if (typeof atOptions.drawCell !== 'function') {
                 // draw cell text with original <td> alignment
-                atOptions.renderCell = function (x, y, width, height, key, value, row, settings) {
-                  var doc = settings.tableExport.doc;
-                  var xoffset = 0;
+                atOptions.createdCell = function (cell, data) {
+                  var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
 
-                  doc.setFillColor(row % 2 === 0 ? 245 : 255);
-                  doc.setTextColor(50);
-                  doc.rect(x, y, width, height, 'F');
-                  y += settings.lineHeight / 2 + doc.autoTableTextHeight() / 2 - 2.5;
-
-                  var rowopt = settings.tableExport.rowoptions [row + ":" + key];
-
-                  if (typeof rowopt != 'undefined') {
-                    if (rowopt.style.align == 'right')
-                      xoffset = width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize() - settings.padding;
-                    else if (rowopt.style.align == 'center')
-                      xoffset = (width - doc.getStringUnitWidth(('' + value)) * doc.internal.getFontSize()) / 2;
+                  if ( typeof rowopt != 'undefined' ) {
+                    cell.styles.halign = rowopt.style.align;
+                    if (atOptions.styles.fillColor === 'inherit')
+                      cell.styles.fillColor = rowopt.style.bcolor;
+                    if (atOptions.styles.textColor === 'inherit')
+                      cell.styles.textColor = rowopt.style.color;
                   }
-
-                  if (xoffset < settings.padding)
-                    xoffset = settings.padding;
-                  doc.text(value, x + xoffset, y);
                 }
               }
 
@@ -586,7 +558,8 @@
                             key: colKey++,
                             style: {
                               align: a,
-                              bcolor: getStyle(cell, 'background-color')
+                              bcolor: rgb2array(getStyle(cell, 'background-color'), [255,255,255]),
+                              color: rgb2array(getStyle(cell, 'color'), [0,0,0])
                             }
                           };
                           teOptions.columns.push(obj);
@@ -601,16 +574,23 @@
 
                 ForEachVisibleCell(this, 'td', rowIndex,
                         function (cell, row, col) {
-                          var a = getStyle(cell, 'text-align');
-                          if (a == 'start')
-                            a = getStyle(cell, 'direction') == 'rtl' ? 'right' : 'left';
-                          var obj = {
-                            style: {
-                              align: a,
-                              bcolor: getStyle(cell, 'background-color')
-                            }
-                          };
-                          teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
+                          if (cell !== null) {
+                            var a = getStyle(cell, 'text-align');
+                            if (a == 'start')
+                              a = getStyle(cell, 'direction') == 'rtl' ? 'right' : 'left';
+                            var obj = {
+                              style: {
+                                align: a,
+                                bcolor: rgb2array(getStyle(cell, 'background-color'), [255,255,255]),
+                                color: rgb2array(getStyle(cell, 'color'), [0,0,0])
+                              }
+                            };
+                            teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
+                          }
+                          else {
+                            var obj = teOptions.rowoptions [rowCount + ":" + (colKey-1)];
+                            teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
+                          }
 
                           rowData.push(parseString(cell, row, col));
                         });
@@ -634,7 +614,7 @@
                 teOptions.onAfterAutotable($(this), atOptions);
 
               // set the start position for the next table (in case there is one)
-              defaults.jspdf.autotable.startY = teOptions.doc.autoTableEndPosY() + atOptions.margins.top;
+              defaults.jspdf.autotable.startY = teOptions.doc.autoTableEndPosY() + atOptions.margin.top;
             }
           });
 
@@ -650,10 +630,11 @@
       function ForEachVisibleCell(tableRow, selector, rowIndex, cellcallback) {
         if (defaults.ignoreRow.indexOf(rowIndex) == -1) {
 
-          $(tableRow).filter(function(index) {
-            return $(this).is(':visible') ||
-                   $(this).data("tableexport-display") == 'always' ||
-                   $(this).closest('table').data("tableexport-display") == 'always';
+          $(tableRow).filter(function() {
+            return $(this).data("tableexport-display") != 'none' &&
+                   ($(this).is(':visible') ||
+                    $(this).data("tableexport-display") == 'always' ||
+                    $(this).closest('table').data("tableexport-display") == 'always');
           }).find(selector).each(function (colIndex) {
             if ($(this).data("tableexport-display") == 'always' ||
                 ($(this).css('display') != 'none' &&
@@ -804,6 +785,15 @@
 
       function hyphenate(a, b, c) {
         return b + "-" + c.toLowerCase();
+      }
+
+      function rgb2array(rgb_string, default_result) {
+        var re = /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/;
+        var bits = re.exec(rgb_string);
+        var result = default_result;
+        if (bits)
+          result = [ parseInt(bits[1]), parseInt(bits[2]), parseInt(bits[3]) ];
+        return result;
       }
 
       // get computed style property

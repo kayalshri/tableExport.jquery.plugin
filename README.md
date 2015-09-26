@@ -57,7 +57,9 @@ $('#tableID').tableExport({type:'pdf',
                            jspdf: {orientation: 'l',
                                    format: 'a3',
                                    margins: {left:10, right:10, top:20, bottom:20},
-                                   autotable: {extendWidth: true}
+                                   autotable: {styles: {fillColor: 'inherit', 
+                                                        textColor: 'inherit'},
+                                               tableWidth: 'auto'}
                           });
 ```
 
@@ -67,12 +69,12 @@ function DoBeforeAutotable(table, headers, rows, AutotableSettings) {}
 
 $('table').tableExport({fileName: sFileName,
                         type: 'pdf',
-                        jspdf: { format: 'bestfit',
-                                 margins: {left:20, right:10, top:20, bottom:20},
-                                 autotable: {extendWidth: false,
-                                             overflow: 'linebreak',
-                                             tableExport: {onBeforeAutotable: DoBeforeAutotable,
-                                                           onCellData: DoCellData}}}
+                        jspdf: {format: 'bestfit',
+                                margins: {left:20, right:10, top:20, bottom:20},
+                                autotable: {styles: {overflow: 'linebreak'},
+                                            tableWidth: 'wrap',
+                                            tableExport: {onBeforeAutotable: DoBeforeAutotable,
+                                                          onCellData: DoCellData}}}
                        });
 ```
 
@@ -86,18 +88,29 @@ csvSeparator: ','
 csvUseBOM: true
 displayTableName: false
 escape: false
-excelstyles: ['css','properties','to','export','to','excel']
+excelstyles: [ 'css','properties','to','export','to','excel' ]
 fileName: 'tableExport'
 htmlContent: false
 ignoreColumn: []
 ignoreRow: []
 jspdf: orientation: 'p'
        unit:'pt'
-       format: 'bestfit'
-       margins: { left: 20, right: 10, top: 10, bottom: 10 }
-       autotable: padding: 2
-                  lineHeight: 12
-                  fontSize: 8
+       format: 'a4'
+       margins: left: 20
+                right: 10
+                top: 10
+                bottom: 10
+       autotable: styles: cellPadding: 2
+                          rowHeight: 12
+                          fontSize: 8
+                          fillColor: 255
+                          textColor: 50
+                          fontStyle: 'normal'
+                          overflow: 'ellipsize'
+                  headerStyles: fillColor: [52, 73, 94]
+                                textColor: 255
+                                fontStyle: 'bold'
+                  alternateRowStyles: fillColor: 245
                   tableExport: onAfterAutotable: null
                                onBeforeAutotable: null
                                onTable: null
@@ -114,7 +127,12 @@ type: 'csv'
 worksheetName: 'xlsWorksheetName'
 ```
 
-For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/someatoms/jsPDF-AutoTable) resp.
+For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
+
+There is an extended setting for ```javascript jsPDF option 'format' ```. Setting the option value to ```javascript 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
+
+Also there is an extended setting for the ```javascript jsPDF-AutoTable options 'fillColor' and 'textColor' ```. When setting these option values to ```javascript 'inherit' ``` the original css background and text color will be used as fill and text color while exporting to pdf.
+
 
 Optional html data attributes
 =============================
