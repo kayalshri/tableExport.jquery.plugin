@@ -129,9 +129,9 @@ worksheetName: 'xlsWorksheetName'
 
 For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
 
-There is an extended setting for ```javascript jsPDF option 'format' ```. Setting the option value to ```javascript 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
+There is an extended setting for ``` jsPDF option 'format' ```. Setting the option value to ``` 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
 
-Also there is an extended setting for the ```javascript jsPDF-AutoTable options 'fillColor' and 'textColor' ```. When setting these option values to ```javascript 'inherit' ``` the original css background and text color will be used as fill and text color while exporting to pdf.
+Also there is an extended setting for the ``` jsPDF-AutoTable options 'fillColor' and 'textColor' ```. When setting these option values to ``` 'inherit' ``` the original css background and text color will be used as fill and text color while exporting to pdf.
 
 
 Optional html data attributes
