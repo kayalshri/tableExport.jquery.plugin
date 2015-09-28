@@ -20,8 +20,8 @@
       background-color: white;
     }
 
-    .table-striped > thead > tr > td,
-    .table-striped > thead > tr > th {
+    table > thead > tr > td,
+    table > thead > tr > th {
       background-color: gray;
       color: white;
     }
@@ -83,6 +83,7 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
+      <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -306,7 +307,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Hidden Table</h3>
+    <h3>Export hidden table</h3>
+    <p>Before table...</p>
     <table id="invisible" style="display:none" data-tableexport-display="always">
       <thead>
       <tr>
@@ -325,6 +327,34 @@
         <td>D</td>
         <td>E</td>
         <td>F</td>
+      </tr>
+      </tbody>
+    </table>
+    <p>...behind table</p>
+    <h3>Test option 'excelstyles'</h3>
+    <table id="excelstyles">
+      <thead>
+      <tr>
+        <th>C1</th>
+        <td>C2</td>
+        <th>C3</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td style="background-color:red">A</td>
+        <td style="background-color:green">B</td>
+        <td style="background-color:blue">C</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>E</td>
+        <td>F</td>
+      </tr>
+      <tr>
+        <td style="background-color:green">G</td>
+        <td style="background-color:blue">H</td>
+        <td style="background-color:red">I</td>
       </tr>
       </tbody>
     </table>
