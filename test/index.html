@@ -120,6 +120,10 @@
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
         <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: data-tableexport-display="always")</a></li>
+      <li><a href="#" onClick="doExport('#headless',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: table without header)</a></li>
       <br>
       <li><a href="#"
              onClick="doExport('#countries', {type: 'pdf', jspdf: {orientation: 'p', unit: 'mm', margins: {left: 20, top: 10}, autotable: false}});">
@@ -355,6 +359,26 @@
         <td style="background-color:green">G</td>
         <td style="background-color:blue">H</td>
         <td style="background-color:red">I</td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Table without header</h3>
+    <table id="headless" class="table-striped">
+      <tbody>
+      <tr>
+        <td>A</td>
+        <td>B</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>E</td>
+        <td>F</td>
+      </tr>
+      <tr>
+        <td>G</td>
+        <td>H</td>
+        <td>I</td>
       </tr>
       </tbody>
     </table>

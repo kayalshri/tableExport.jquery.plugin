@@ -515,7 +515,8 @@
               atOptions.margin = {};
               $.extend(true, atOptions.margin, defaults.jspdf.margins);
 
-              if (typeof atOptions.drawHeaderCell !== 'function') {
+              if (typeof atOptions.createdHeaderCell !== 'function') {
+                // apply some original css styles to pdf header cells
                 atOptions.createdHeaderCell = function (cell, data) {
 
                   if (typeof teOptions.columns [data.column.dataKey] != 'undefined') {
@@ -529,8 +530,8 @@
                 }
               }
 
-              if (typeof atOptions.drawCell !== 'function') {
-                // draw cell text with original <td> alignment
+              if (typeof atOptions.createdCell !== 'function') {
+                // apply some original css styles to pdf table cells
                 atOptions.createdCell = function (cell, data) {
                   var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
 
@@ -541,6 +542,13 @@
                     if (atOptions.styles.textColor === 'inherit')
                       cell.styles.textColor = rowopt.style.color;
                   }
+                }
+              }
+
+              if (typeof atOptions.drawHeaderCell !== 'function') {
+                atOptions.drawHeaderCell = function (cell, data) {
+                  var col = teOptions.columns [data.column.dataKey];
+                  return col.style.hasOwnProperty("hidden") != true || col.style.hidden !== true;
                 }
               }
 
@@ -574,6 +582,17 @@
 
                 ForEachVisibleCell(this, 'td', rowIndex,
                         function (cell, row, col) {
+                          if (typeof teOptions.columns[colKey] === 'undefined') {
+                            // jsPDF-Autotable needs columns. Thus define hidden ones for tables without thead
+                            var obj = {
+                              title: '',
+                              key: colKey,
+                              style: {
+                                hidden: true
+                              }
+                            };
+                            teOptions.columns.push(obj);
+                          }
                           if (cell !== null) {
                             var a = getStyle(cell, 'text-align');
                             if (a == 'start')
