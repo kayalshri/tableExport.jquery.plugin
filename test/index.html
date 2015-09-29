@@ -83,7 +83,13 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
-      <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
+      <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color', 'color', 
+                                                                                      'border-bottom-color', 'border-bottom-style', 'border-bottom-width', 
+                                                                                      'border-top-color', 'border-top-style', 'border-top-width', 
+                                                                                      'border-left-color', 'border-left-style', 'border-left-width',
+                                                                                      'border-right-color', 'border-right-style', 'border-right-width',
+                                                                                      'font-family', 'font-size', 'font-weight']
+                                                        });"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -279,7 +285,7 @@
       <thead>
       <tr>
         <th style="width:15ex">C1</th>
-        <td style="width:15ex">C2</td>
+        <th style="width:15ex">C2</th>
         <th style="width:15ex; text-align:right">C3</th>
       </tr>
       </thead>
@@ -317,7 +323,7 @@
       <thead>
       <tr>
         <th>C1</th>
-        <td>C2</td>
+        <th>C2</th>
         <th>C3</th>
       </tr>
       </thead>
@@ -339,9 +345,9 @@
     <table id="excelstyles">
       <thead>
       <tr>
-        <th>C1</th>
-        <td>C2</td>
-        <th>C3</th>
+        <th style="border: 2px solid #b60000; font-family: arial; font-size: 18px; font-weight: bold">C1</th>
+        <th style="border: 2px solid #b60000; font-family: arial; font-size: 18px; font-weight: bold">C2</th>
+        <th style="border: 2px solid #b60000; font-family: arial; font-size: 18px; font-weight: bold">C3</th>
       </tr>
       </thead>
       <tbody>
@@ -351,9 +357,9 @@
         <td style="background-color:blue">C</td>
       </tr>
       <tr>
-        <td>D</td>
-        <td>E</td>
-        <td>F</td>
+        <td style="border: 1px solid #000000;">D</td>
+        <td style="border: 1px solid #000000;">E</td>
+        <td style="border: 1px solid #000000;">F</td>
       </tr>
       <tr>
         <td style="background-color:green">G</td>
