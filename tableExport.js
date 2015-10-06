@@ -397,7 +397,9 @@
         }
 
       } else if (defaults.type == 'png') {
-        html2canvas($(el), {
+        html2canvas($(el)[0], {
+          allowTaint: true,
+          background: '#fff',
           onrendered: function (canvas) {
 
             var image = canvas.toDataURL();
