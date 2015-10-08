@@ -121,7 +121,11 @@
       <li><a href="#" onClick="doExport('#hiddencols',
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
-            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: data-tableexport-display="none")</a></li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: cells with data-tableexport-display="none")</a></li>
+      <li><a href="#" onClick="doExport('#hiddenrows',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: rows with data-tableexport-display="none")</a></li>
       <li><a href="#" onClick="doExport('#invisiblecols',
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
@@ -234,6 +238,34 @@
         <td data-tableexport-display="none">1</td>
         <td>2</td>
         <td data-tableexport-display="none">3</td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Table containing unexportable rows</h3>
+    <p>Before table...</p>
+    <table id="hiddenrows" class="table-striped">
+      <thead>
+      <tr>
+        <th>C1</th>
+        <th>C2</th>
+        <th>C3</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr data-tableexport-display="none">
+        <td>A</td>
+        <td>B</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>E</td>
+        <td>F</td>
+      </tr>
+      <tr data-tableexport-display="none">
+        <td>G</td>
+        <td>H</td>
+        <td>I</td>
       </tr>
       </tbody>
     </table>

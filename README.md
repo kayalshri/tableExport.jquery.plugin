@@ -154,4 +154,6 @@ Optional html data attributes
 <td style="display:none;" data-tableexport-display="always">...</td> -> hidden cell will be exported
 
 <td data-tableexport-display="none">...</td> -> cell will not be exported
+
+<tr data-tableexport-display="none">...</tr> -> all cells of this row will not be exported
 ```
