@@ -649,7 +649,7 @@
       }
 
       function ForEachVisibleCell(tableRow, selector, rowIndex, cellcallback) {
-        if (defaults.ignoreRow.indexOf(rowIndex) == -1) {
+        if ($.inArray(rowIndex, defaults.ignoreRow) == -1) {
 
           $(tableRow).filter(function() {
             return $(this).data("tableexport-display") != 'none' &&
@@ -661,7 +661,7 @@
                 ($(this).css('display') != 'none' &&
                  $(this).css('visibility') != 'hidden' &&
                  $(this).data("tableexport-display") != 'none')) {
-              if (defaults.ignoreColumn.indexOf(colIndex) == -1) {
+              if ($.inArray(colIndex, defaults.ignoreColumn) == -1) {
                 if (typeof (cellcallback) === "function") {
                   var cs = 0; // colspan value
 
@@ -746,7 +746,7 @@
           else {
             result = replaceAll(csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
 
-            if (result.indexOf(defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result))
+            if ($.inArray(defaults.csvSeparator, result) >= 0 || /[\r\n ]/g.test(result))
               result = defaults.csvEnclosure + result + defaults.csvEnclosure;
           }
         }
@@ -770,10 +770,10 @@
           var $cell = $(cell);
 
           if (defaults.htmlContent === true) {
-            result = $cell.html().trim();
+            result = $.trim($cell.html());
           }
           else {
-            result = $cell.text().trim().replace(/\u00AD/g, ""); // remove soft hyphens
+            result = $.trim($cell.text()).replace(/\u00AD/g, ""); // remove soft hyphens
 
             if (defaults.numbers.html.decimalMark != defaults.numbers.output.decimalMark ||
                 defaults.numbers.html.thousandsSeparator != defaults.numbers.output.thousandsSeparator) {
