@@ -123,13 +123,12 @@
           return base64encode(csvData);
 
         try {
-          var blob = new Blob([((defaults.type == 'csv' && defaults.csvUseBOM)? '\ufeff' : '') + csvData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
-          saveAs(blob, defaults.fileName + '.' + defaults.type);
+          var blob = new Blob([csvData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
+          saveAs(blob, defaults.fileName + '.' + defaults.type, (defaults.type != 'csv' || defaults.csvUseBOM === false));
         }
         catch (e) {
           downloadFile(defaults.fileName + '.' + defaults.type,
-                  'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + ((defaults.type == 'csv' && defaults.csvUseBOM )? '\ufeff' : '') +
-                  encodeURIComponent(csvData));
+                  'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + encodeURIComponent(csvData));
         }
 
       } else if (defaults.type == 'sql') {
@@ -746,7 +745,7 @@
           else {
             result = replaceAll(csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
 
-            if ($.inArray(defaults.csvSeparator, result) >= 0 || /[\r\n ]/g.test(result))
+            if (result.indexOf(defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result))
               result = defaults.csvEnclosure + result + defaults.csvEnclosure;
           }
         }
@@ -863,10 +862,11 @@
         var DownloadLink = document.createElement('a');
 
         if (DownloadLink) {
-          document.body.appendChild(DownloadLink);
-          DownloadLink.style = 'display: none';
+          DownloadLink.style.display = 'none';
           DownloadLink.download = filename;
           DownloadLink.href = data;
+
+          document.body.appendChild(DownloadLink);
 
           if (document.createEvent) {
             if (DownloadEvt == null)
