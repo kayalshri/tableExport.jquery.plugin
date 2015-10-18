@@ -291,28 +291,31 @@
           downloadFile(defaults.fileName + '.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
         }
 
-      } else if (defaults.type == 'excel' || defaults.type == 'doc') {
-        //console.log($(this).html());
+      } else if (defaults.type == 'excel' || defaults.type == 'xls' || defaults.type == 'word' || defaults.type == 'doc') {
+
+        var MSDocType = (defaults.type == 'excel' || defaults.type == 'xls') ? 'excel' : 'word';
+        var MSDocExt = (MSDocType == 'excel') ? 'xls' : 'doc';
+        var MSDocSchema = (MSDocExt == 'xls') ? 'xmlns:x="urn:schemas-microsoft-com:office:excel"' : 'xmlns:w="urn:schemas-microsoft-com:office:word"';
 
         rowIndex = 0;
-        var excelData = "<table>";
+        var docData = '<table>';
         // Header
         $(el).find('thead').first().find(defaults.theadSelector).each(function () {
           trData = "";
           ForEachVisibleCell(this, 'th,td', rowIndex,
                   function (cell, row, col) {
                     if (cell != null) {
-                      trData += "<td style='";
+                      trData += '<td style="';
                       for (var styles in defaults.excelstyles) {
                         if (defaults.excelstyles.hasOwnProperty(styles)) {
-                          trData += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
+                          trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
                         }
                       }
-                      trData += "'>" + parseString(cell, row, col) + "</td>";
+                      trData += '">' + parseString(cell, row, col) + '</td>';
                     }
                   });
           if (trData.length > 0)
-            excelData += "<tr>" + trData + '</tr>';
+            docData += '<tr>' + trData + '</tr>';
           rowIndex++;
         });
 
@@ -322,77 +325,73 @@
           ForEachVisibleCell(this, 'td', rowIndex,
                   function (cell, row, col) {
                     if (cell != null) {
-                      trData += "<td style='";
+                      trData += '<td style="';
                       for (var styles in defaults.excelstyles) {
                         if (defaults.excelstyles.hasOwnProperty(styles)) {
-                          trData += defaults.excelstyles[styles] + ": " + $(cell).css(defaults.excelstyles[styles]) + ";";
+                          trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
                         }
                       }
                       if ($(cell).is("[colspan]"))
-                        trData += "' colspan='" + $(cell).attr('colspan');
+                        trData += '" colspan="' + $(cell).attr('colspan');
                       if ($(cell).is("[rowspan]"))
-                        trData += "' rowspan='" + $(cell).attr('rowspan');
-                      trData += "'>" + parseString(cell, row, col) + "</td>";
+                        trData += '" rowspan="' + $(cell).attr('rowspan');
+                      trData += '">' + parseString(cell, row, col) + '</td>';
                     }
                   });
           if (trData.length > 0)
-            excelData += "<tr>" + trData + '</tr>';
+            docData += '<tr>' + trData + '</tr>';
           rowIndex++;
         });
 
         if (defaults.displayTableName)
-          excelData += "<tr><td></td></tr><tr><td></td></tr><tr><td>" + parseString($('<p>' + defaults.tableName + '</p>')) + "</td></tr>";
+          docData += '<tr><td></td></tr><tr><td></td></tr><tr><td>' + parseString($('<p>' + defaults.tableName + '</p>')) + '</td></tr>';
 
-        excelData += '</table>';
+        docData += '</table>';
 
         if (defaults.consoleLog === true)
-          console.log(excelData);
+          console.log(docData);
 
-        var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:" + defaults.type + "' xmlns='http://www.w3.org/TR/REC-html40'>";
-        excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-' + defaults.type + '; charset=UTF-8">';
-        excelFile += '<meta http-equiv="content-type" content="application/';
-        excelFile += (defaults.type === 'excel') ? 'vnd.ms-excel' : 'msword';
-        excelFile += '; charset=UTF-8">';
-        excelFile += "<head>";
-        if (defaults.type === 'excel') {
-          excelFile += "<!--[if gte mso 9]>";
-          excelFile += "<xml>";
-          excelFile += "<x:ExcelWorkbook>";
-          excelFile += "<x:ExcelWorksheets>";
-          excelFile += "<x:ExcelWorksheet>";
-          excelFile += "<x:Name>";
-          excelFile += defaults.worksheetName;
-          excelFile += "</x:Name>";
-          excelFile += "<x:WorksheetOptions>";
-          excelFile += "<x:DisplayGridlines/>";
-          excelFile += "</x:WorksheetOptions>";
-          excelFile += "</x:ExcelWorksheet>";
-          excelFile += "</x:ExcelWorksheets>";
-          excelFile += "</x:ExcelWorkbook>";
-          excelFile += "</xml>";
-          excelFile += "<![endif]-->";
+        var docFile = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' + MSDocSchema + ' xmlns="http://www.w3.org/TR/REC-html40">';
+        docFile += '<meta http-equiv="content-type" content="application/vnd.ms-' + MSDocType + '; charset=UTF-8">';
+        docFile += "<head>";
+        if (MSDocType === 'excel') {
+          docFile += "<!--[if gte mso 9]>";
+          docFile += "<xml>";
+          docFile += "<x:ExcelWorkbook>";
+          docFile += "<x:ExcelWorksheets>";
+          docFile += "<x:ExcelWorksheet>";
+          docFile += "<x:Name>";
+          docFile += defaults.worksheetName;
+          docFile += "</x:Name>";
+          docFile += "<x:WorksheetOptions>";
+          docFile += "<x:DisplayGridlines/>";
+          docFile += "</x:WorksheetOptions>";
+          docFile += "</x:ExcelWorksheet>";
+          docFile += "</x:ExcelWorksheets>";
+          docFile += "</x:ExcelWorkbook>";
+          docFile += "</xml>";
+          docFile += "<![endif]-->";
         }
-        excelFile += "</head>";
-        excelFile += "<body>";
-        excelFile += excelData;
-        excelFile += "</body>";
-        excelFile += "</html>";
+        docFile += "</head>";
+        docFile += "<body>";
+        docFile += docData;
+        docFile += "</body>";
+        docFile += "</html>";
 
         if (defaults.outputMode == 'string')
-          return excelFile;
+          return docFile;
 
-        var base64data = base64encode(excelFile);
+        var base64data = base64encode(docFile);
 
         if (defaults.outputMode === 'base64')
           return base64data;
 
-        var extension = (defaults.type === 'excel') ? 'xls' : 'doc';
         try {
-          var blob = new Blob([excelFile], {type: 'application/vnd.ms-' + defaults.type});
-          saveAs(blob, defaults.fileName + '.' + extension);
+          var blob = new Blob([docFile], {type: 'application/vnd.ms-' + defaults.type});
+          saveAs(blob, defaults.fileName + '.' + MSDocExt);
         }
         catch (e) {
-          downloadFile(defaults.fileName + '.' + extension, 'data:application/vnd.ms-' + defaults.type + ';base64,' + base64data);
+          downloadFile(defaults.fileName + '.' + MSDocExt, 'data:application/vnd.ms-' + MSDocType + ';base64,' + base64data);
         }
 
       } else if (defaults.type == 'png') {
