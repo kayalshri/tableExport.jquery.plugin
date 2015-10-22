@@ -64,6 +64,8 @@
 
       var el = this;
       var DownloadEvt = null;
+      var $hrows = [];
+      var $rows = [];
       var rowIndex = 0;
       var rowspans = [];
       var trData = '';
@@ -75,9 +77,10 @@
         // Header
         var csvData = "";
         rowIndex = 0;
-        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
+        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
+        $hrows.each(function () {
           trData = "";
-          ForEachVisibleCell(this, 'th,td', rowIndex,
+          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     trData += csvString(cell, row, col) + defaults.csvSeparator;
                   });
@@ -93,9 +96,10 @@
         });
 
         // Row vs Column
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $rows.each(function () {
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex,
+          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     trData += csvString(cell, row, col) + defaults.csvSeparator;
                   });
@@ -136,9 +140,9 @@
         // Header
         rowIndex = 0;
         var tdData = "INSERT INTO `" + defaults.tableName + "` (";
-        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
-
-          ForEachVisibleCell(this, 'th,td', rowIndex,
+        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
+        $hrows.each(function () {
+          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     tdData += "'" + parseString(cell, row, col) + "',";
                   });
@@ -148,9 +152,10 @@
         });
         tdData += ") VALUES ";
         // Row vs Column
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $rows.each(function () {
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex,
+          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     trData += "'" + parseString(cell, row, col) + "',";
                   });
@@ -186,10 +191,11 @@
       } else if (defaults.type == 'json') {
 
         var jsonHeaderArray = [];
-        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
+        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
+        $hrows.each(function () {
           var jsonArrayTd = [];
 
-          ForEachVisibleCell(this, 'th,td', rowIndex,
+          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     jsonArrayTd.push(parseString(cell, row, col));
                   });
@@ -197,10 +203,11 @@
         });
 
         var jsonArray = [];
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $rows.each(function () {
           var jsonArrayTd = [];
 
-          ForEachVisibleCell(this, 'td', rowIndex,
+          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     jsonArrayTd.push(parseString(cell, row, col));
                   });
@@ -242,9 +249,10 @@
         xml += '<tabledata><fields>';
 
         // Header
-        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
+        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
+        $hrows.each(function () {
 
-          ForEachVisibleCell(this, 'th,td', rowIndex,
+          ForEachVisibleCell(this, 'th,td', rowIndex, $rows.length,
                   function (cell, row, col) {
                     xml += "<field>" + parseString(cell, row, col) + "</field>";
                   });
@@ -254,10 +262,11 @@
 
         // Row Vs Column
         var rowCount = 1;
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $rows.each(function () {
           var colCount = 1;
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex,
+          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     trData += "<column-" + colCount + ">" + parseString(cell, row, col) + "</column-" + colCount + ">";
                     colCount++;
@@ -300,9 +309,10 @@
         rowIndex = 0;
         var docData = '<table>';
         // Header
-        $(el).find('thead').first().find(defaults.theadSelector).each(function () {
+        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
+        $hrows.each(function () {
           trData = "";
-          ForEachVisibleCell(this, 'th,td', rowIndex,
+          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     if (cell != null) {
                       trData += '<td style="';
@@ -320,9 +330,10 @@
         });
 
         // Row Vs Column
-        $(el).find('tbody').first().find(defaults.tbodySelector).each(function () {
+        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $rows.each(function () {
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex,
+          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     if (cell != null) {
                       trData += '<td style="';
@@ -553,10 +564,11 @@
               }
 
               // collect header and data rows
-              $(this).find('thead').find(defaults.theadSelector).each(function () {
+              $hrows = $(this).find('thead').find(defaults.theadSelector);
+              $hrows.each(function () {
                 colKey = 0;
 
-                ForEachVisibleCell(this, 'th,td', rowIndex,
+                ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                         function (cell, row, col) {
                           var a = getStyle(cell, 'text-align');
                           if ( a == 'start' )
@@ -576,11 +588,12 @@
               });
 
               var rowCount = 0;
-              $(this).find('tbody').find(defaults.tbodySelector).each(function () {
+              $rows = $(this).find('tbody').find(defaults.tbodySelector);
+              $rows.each(function () {
                 var rowData = [];
                 colKey = 0;
 
-                ForEachVisibleCell(this, 'td', rowIndex,
+                ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                         function (cell, row, col) {
                           if (typeof teOptions.columns[colKey] === 'undefined') {
                             // jsPDF-Autotable needs columns. Thus define hidden ones for tables without thead
@@ -646,20 +659,24 @@
         }
       }
 
-      function ForEachVisibleCell(tableRow, selector, rowIndex, cellcallback) {
-        if ($.inArray(rowIndex, defaults.ignoreRow) == -1) {
+      function ForEachVisibleCell(tableRow, selector, rowIndex, rowCount, cellcallback) {
+        if ($.inArray(rowIndex, defaults.ignoreRow) == -1 &&
+            $.inArray(rowIndex-rowCount, defaults.ignoreRow) == -1) {
 
-          $(tableRow).filter(function() {
+          var $row = $(tableRow).filter(function() {
             return $(this).data("tableexport-display") != 'none' &&
                    ($(this).is(':visible') ||
                     $(this).data("tableexport-display") == 'always' ||
                     $(this).closest('table').data("tableexport-display") == 'always');
-          }).find(selector).each(function (colIndex) {
+          }).find(selector);
+
+          $row.each(function (colIndex) {
             if ($(this).data("tableexport-display") == 'always' ||
                 ($(this).css('display') != 'none' &&
                  $(this).css('visibility') != 'hidden' &&
                  $(this).data("tableexport-display") != 'none')) {
-              if ($.inArray(colIndex, defaults.ignoreColumn) == -1) {
+              if ($.inArray(colIndex, defaults.ignoreColumn) == -1 &&
+                  $.inArray(colIndex-$row.length, defaults.ignoreColumn) == -1) {
                 if (typeof (cellcallback) === "function") {
                   var cs = 0; // colspan value
 

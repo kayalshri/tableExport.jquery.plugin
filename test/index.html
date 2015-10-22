@@ -46,8 +46,8 @@
 
     function doExport(selector, params) {
       var options = {
-        //ignoreRow: [0,11,12,100],
-        //ignoreColumn: [2,4],
+        //ignoreRow: [1,11,12,-2],
+        //ignoreColumn: [0,-1],
         tableName: 'Countries',
         worksheetName: 'Countries by population'
       };
@@ -67,7 +67,11 @@
   </section>
   <section>
     <ul>
-      <li><a href="#" onClick="doExport('#countries', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'csv',numbers: {html: {decimalMark: '.',
+                                                                                    thousandsSeparator: ','},
+                                                                             output: {decimalMark: ',',
+                                                                                      thousandsSeparator: ''}}
+                                                      });"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV</a></li>
       <li><a href="#" onClick="doExport('#countries', {csvUseBOM: false, type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (without BOM)</a></li>
       <li><a href="#" onClick="doExport('#rowspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (rowspan)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (colspan + rowspan)</a></li>
