@@ -142,6 +142,19 @@
       <li><a href="#"
              onClick="doExport('#countries', {type: 'pdf', jspdf: {orientation: 'p', unit: 'mm', margins: {left: 20, top: 10}, autotable: false}});">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (html2canvas)</a></li>
+      <li><a href="#"
+             onClick="doExport('#issue40', {type: 'pdf',
+                                                  jspdf: {
+                                                      autotable: {
+                                                          styles: {overflow: 'linebreak',
+                                                               fontSize: 26,
+                                                               rowHeight: 36},
+                                                          headerStyles: {rowHeight: 28,
+                                                               fontSize: 38},
+                                                          bodyStyles: {rowHeight: 20}
+                                                      }
+                                                  }});">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #40)</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
@@ -424,6 +437,28 @@
       </tr>
       </tbody>
     </table>
+    <h3>Issue 40</h3>
+    <table id="issue40">
+      <thead>
+          <tr>
+              <th>
+                  Table title<br/>
+                  <span style="font-weight:normal;font-size:smaller;">Note message</span>
+              </th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td>
+                  <p>
+                      Very long long long long long long long long long long long long long
+                      multiline message
+                      <i>with internal element</i>.
+                  </p>
+              </td>
+          </tr>
+      </tbody>
+    </table>    
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">

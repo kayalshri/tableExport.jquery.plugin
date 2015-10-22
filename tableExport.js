@@ -790,7 +790,20 @@
             result = $.trim($cell.html());
           }
           else {
-            result = $.trim($cell.text()).replace(/\u00AD/g, ""); // remove soft hyphens
+            var text = $cell.html().replace(/\n/g,'\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
+            var obj = $('<div/>').html(text).contents();
+            text = '';
+            $.each(obj.text().split("\u2028"), function(i, v) {
+              if (i > 0)
+                text += " ";
+              text += $.trim(v);
+            });
+
+            $.each(text.split("\u2060"), function(i, v) {
+              if (i > 0)
+                result += "\n";
+              result += $.trim(v).replace(/\u00AD/g, ""); // remove soft hyphens
+            });
 
             if (defaults.numbers.html.decimalMark != defaults.numbers.output.decimalMark ||
                 defaults.numbers.html.thousandsSeparator != defaults.numbers.output.thousandsSeparator) {
