@@ -142,6 +142,7 @@
       <li><a href="#"
              onClick="doExport('#countries', {type: 'pdf', jspdf: {orientation: 'p', unit: 'mm', margins: {left: 20, top: 10}, autotable: false}});">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (html2canvas)</a></li>
+      <br>
       <li><a href="#"
              onClick="doExport('#issue40', {type: 'pdf',
                                                   jspdf: {
@@ -154,7 +155,51 @@
                                                           bodyStyles: {rowHeight: 20}
                                                       }
                                                   }});">
-            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #40)</a></li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #40): Formatted HTML export problems</a></li>
+      <li><a href="#"
+             onClick="doExport('#issue41', {type:'pdf',
+                                            jspdf: {
+                                                autotable: {
+                                                    styles: {overflow: 'linebreak',
+                                                         fontSize: 26,
+                                                         rowHeight: 36},
+                                                    headerStyles: {rowHeight: 28,
+                                                         fontSize: 38},
+                                                    bodyStyles: {rowHeight: 20}
+                                                }
+                                            }
+                                        });">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #41): Colspan attribute is ignored for some formats</a></li>
+      <li><a href="#"
+             onClick="doExport('#issue42', {type:'pdf',
+                                            jspdf: {
+                                              autotable: {
+                                                styles: {overflow: 'linebreak',
+                                                  fontSize: 26,
+                                                  rowHeight: 36,
+                                                  fillColor: 155},
+                                                headerStyles: {rowHeight: 28,
+                                                  fontSize: 38}
+                                             }
+                                            }
+                                          });">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #42): Incorrect size of cell with multiline text</a></li>
+      <li><a href="#"
+             onClick="doExport('#issue43', {type:'pdf',
+                                            jspdf: {
+                                              autotable: {
+                                                styles: {overflow: 'linebreak',
+                                                  fontSize: 26,
+                                                  rowHeight: 36,
+                                                  fillColor: 155,
+                                                  overflow: 'linebreak'},
+                                                headerStyles: {rowHeight: 28,
+                                                  fontSize: 38},
+                                                pageBreak: 'avoid'
+                                             }
+                                            }
+                                          });">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #43): Configuration of PDF page breaks</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
@@ -437,7 +482,7 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 40</h3>
+    <h3>Issue 40: Formatted HTML export problems</h3>
     <table id="issue40">
       <thead>
           <tr>
@@ -458,7 +503,76 @@
               </td>
           </tr>
       </tbody>
+    </table>
+    <h3>Issue 41: Colspan attribute is ignored for some formats</h3>
+    <table id="issue41">
+        <thead>
+            <tr>
+                <th>Col 1</th><th>Col 2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan=2 style="text-align:center">Colspan</td>
+            </tr>
+            <tr>
+                <td>
+                    Value 1
+                </td>
+                <td>
+                    Value 2
+                </td>
+            </tr>
+        </tbody>
     </table>    
+    <h3>Issue 42: Incorrect size of cell with multiline text</h3>
+    <table id="issue42">
+        <thead>
+            <tr>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Very long long long long long long long long long long long long long
+                    long long long long long long long long long long long long long long
+                    long long long long long long long long long long long long long Message
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Second row
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <h3>Issue 43: Configuration of PDF page breaks</h3>
+    <table id="issue43">
+        <thead>
+            <tr>
+                <th>Title</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr><td>row 1<td/><tr/> <tr><td>row 2<td/><tr/> <tr><td>row 3<td/><tr/> <tr><td>row 4<td/><tr/> <tr><td>row 5<td/><tr/>
+        <tr><td>row 6<td/><tr/> <tr><td>row 7<td/><tr/> <tr><td>row 8<td/><tr/> <tr><td>row 9<td/><tr/> <tr><td>row 10<td/><tr/>
+        <tr><td>row 11<td/><tr/> <tr><td>row 12<td/><tr/> <tr><td>row 13<td/><tr/> <tr><td>row 14<td/><tr/> <tr><td>row 15<td/><tr/>
+        <tr><td>row 16<td/><tr/> <tr><td>row 17<td/><tr/> <tr><td>row 18<td/><tr/> <tr><td>row 19<td/><tr/> <tr><td>row 20<td/><tr/>
+            <tr>
+                <td style="margin: 5px">
+                    Very long long long long long long long long long long long long long
+                    long long long long long long long long long long long long long long
+                    long long long long long long long long long long long long long Message
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Last row
+                </td>
+            </tr>
+        </tbody>
+    </table>
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">
