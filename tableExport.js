@@ -75,7 +75,7 @@ THE SOFTWARE.*/
 						console.log(tdData);
 					}
 					var base64data = "base64," + $.base64.encode(tdData);
-					window.open('data:application/'+defaults.type+';filename=exportData;' + base64data);
+					window.open('data:text/'+defaults.type+';filename=exportData;' + base64data);
 				}else if(defaults.type == 'sql'){
 				
 					// Header
