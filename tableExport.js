@@ -559,10 +559,28 @@
               }
             }
 
+            if (typeof atOptions.drawHeaderRow !== 'function') {
+              atOptions.drawHeaderRow = function (row, data) {
+
+                if ( data.pageCount == 1 )
+                  row.height += (row.styles.rowHeight * 0.5);
+                return true;
+              }
+            }
+
             if (typeof atOptions.drawHeaderCell !== 'function') {
               atOptions.drawHeaderCell = function (cell, data) {
                 var col = teOptions.columns [data.column.dataKey];
+
                 return col.style.hasOwnProperty("hidden") != true || col.style.hidden !== true;
+              }
+            }
+
+            if (typeof atOptions.drawRow !== 'function') {
+              atOptions.drawRow = function (row, data) {
+
+                row.height += (row.styles.rowHeight * 0.5);
+                return true;
               }
             }
 
