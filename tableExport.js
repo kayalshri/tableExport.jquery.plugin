@@ -549,7 +549,7 @@
               atOptions.createdCell = function (cell, data) {
                 var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
 
-                if ( typeof rowopt != 'undefined' ) {
+                if ( typeof rowopt != 'undefined' && typeof rowopt.style != 'undefined' ) {
                   cell.styles.halign = rowopt.style.align;
                   if (atOptions.styles.fillColor === 'inherit')
                     cell.styles.fillColor = rowopt.style.bcolor;
@@ -562,11 +562,11 @@
             if (typeof atOptions.drawHeaderCell !== 'function') {
               atOptions.drawHeaderCell = function (cell, data) {
                 var col = teOptions.columns [data.column.dataKey];
-                
+
                 if (col.style.hasOwnProperty("hidden") != true || col.style.hidden !== true) {
                   teOptions.doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
-                  TEautoTableText (teOptions.doc, cell.text, 
-                                   cell.textPos.x, cell.textPos.y, 
+                  TEautoTableText (teOptions.doc, cell.text,
+                                   cell.textPos.x, cell.textPos.y,
                                    {halign: cell.styles.halign, valign: cell.styles.valign});
                 }
                 return false;
@@ -575,10 +575,36 @@
 
             if (typeof atOptions.drawCell !== 'function') {
               atOptions.drawCell = function (cell, data) {
-                teOptions.doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
-                TEautoTableText (teOptions.doc, cell.text, 
-                                 cell.textPos.x, cell.textPos.y, 
-                                 {halign: cell.styles.halign, valign: cell.styles.valign});
+
+                var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
+                var cs = 0;
+
+                if ( typeof rowopt != 'undefined' )
+                  cs = rowopt.colspan;
+
+                if ( cs >= 0 ) {
+                  var cellWidth = cell.width;
+                  var textPosX = cell.textPos.x;
+                  var i = data.table.columns.indexOf(data.column);
+
+                  for (var c = 1; c < cs; c++) {
+                    var column = data.table.columns[i+c];
+                    cellWidth += column.width;
+                  }
+
+                  teOptions.doc.rect(cell.x, cell.y, cellWidth, cell.height, cell.styles.fillStyle);
+
+                  if ( cs > 1 ) {
+                    if ( cell.styles.halign === 'right' )
+                      textPosX = cell.textPos.x + cellWidth - cell.width;
+                    else if ( cell.styles.halign === 'center' )
+                      textPosX = cell.textPos.x + (cellWidth - cell.width) / 2;
+                  }
+
+                  TEautoTableText (teOptions.doc, cell.text,
+                                   textPosX, cell.textPos.y,
+                                   {halign: cell.styles.halign, valign: cell.styles.valign});
+                }
                 return false;
               }
             }
@@ -635,12 +661,14 @@
                               align: a,
                               bcolor: rgb2array(getStyle(cell, 'background-color'), [255,255,255]),
                               color: rgb2array(getStyle(cell, 'color'), [0,0,0])
-                            }
+                            },
+                            colspan: (parseInt($(cell).attr('colspan')) || 0)
                           };
                           teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
                         }
                         else {
-                          var obj = teOptions.rowoptions [rowCount + ":" + (colKey-1)];
+                          var obj = $.extend(true, {}, teOptions.rowoptions [rowCount + ":" + (colKey-1)]);
+                          obj.colspan = -1;
                           teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
                         }
 
@@ -763,8 +791,8 @@
 
                   // handle colspan of current cell
                   if ($(this).is("[colspan]")) {
-                    cs = $(this).attr('colspan');
-                    for (c = 0; c < cs - 1; c++)
+                    cs = parseInt($(this).attr('colspan'));
+                    for (c = 0; c < cs-1; c++)
                       cellcallback(null, rowIndex, colIndex + c);
                   }
 
