@@ -509,7 +509,6 @@
           }).each(function () {
             var colKey;
             var rowIndex = 0;
-            var atOptions = {};
 
             teOptions.columns = [];
             teOptions.rows = [];
@@ -523,9 +522,10 @@
                 return true; // continue to next iteration step (table)
 
             // each table works with an own copy of AutoTable options
-            Object.keys(defaults.jspdf.autotable).forEach(function (key) {
-              atOptions[key] = defaults.jspdf.autotable[key];
-            });
+            defaults.jspdf.autotable.tableExport = null;  // avoid deep recursion error
+            var atOptions = $.extend(true, {}, defaults.jspdf.autotable); 
+            defaults.jspdf.autotable.tableExport = teOptions;
+            
             atOptions.margin = {};
             $.extend(true, atOptions.margin, defaults.jspdf.margins);
 
@@ -540,6 +540,8 @@
                     cell.styles.fillColor = col.style.bcolor;
                   if (atOptions.styles.textColor === 'inherit')
                     cell.styles.textColor = col.style.color;
+                  if (atOptions.styles.fontStyle === 'inherit')
+                    cell.styles.fontStyle = col.style.fstyle;
                 }
               }
             }
@@ -555,6 +557,8 @@
                     cell.styles.fillColor = rowopt.style.bcolor;
                   if (atOptions.styles.textColor === 'inherit')
                     cell.styles.textColor = rowopt.style.color;
+                  if (atOptions.styles.fontStyle === 'inherit')
+                    cell.styles.fontStyle = rowopt.style.fstyle;
                 }
               }
             }
@@ -616,18 +620,9 @@
 
               ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                       function (cell, row, col) {
-                        var a = getStyle(cell, 'text-align');
-                        if ( a == 'start' )
-                          a = getStyle(cell, 'direction') == 'rtl' ? 'right' : 'left';
-                        var obj = {
-                          title: parseString(cell, row, col),
-                          key: colKey++,
-                          style: {
-                            align: a,
-                            bcolor: rgb2array(getStyle(cell, 'background-color'), [255,255,255]),
-                            color: rgb2array(getStyle(cell, 'color'), [0,0,0])
-                          }
-                        };
+                        var obj = getCellStyles (cell);
+                        obj.title = parseString(cell, row, col);
+                        obj.key = colKey++;
                         teOptions.columns.push(obj);
                       });
               rowIndex++;
@@ -653,18 +648,7 @@
                           teOptions.columns.push(obj);
                         }
                         if (cell !== null) {
-                          var a = getStyle(cell, 'text-align');
-                          if (a == 'start')
-                            a = getStyle(cell, 'direction') == 'rtl' ? 'right' : 'left';
-                          var obj = {
-                            style: {
-                              align: a,
-                              bcolor: rgb2array(getStyle(cell, 'background-color'), [255,255,255]),
-                              color: rgb2array(getStyle(cell, 'color'), [0,0,0])
-                            },
-                            colspan: (parseInt($(cell).attr('colspan')) || 0)
-                          };
-                          teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
+                          teOptions.rowoptions [rowCount + ":" + colKey++] = getCellStyles (cell);
                         }
                         else {
                           var obj = $.extend(true, {}, teOptions.rowoptions [rowCount + ":" + (colKey-1)]);
@@ -938,6 +922,32 @@
         if (bits)
           result = [ parseInt(bits[1]), parseInt(bits[2]), parseInt(bits[3]) ];
         return result;
+      }
+
+      function getCellStyles (cell) {
+        var a = getStyle(cell, 'text-align');
+        var fw = getStyle(cell, 'font-weight');
+        var fs = getStyle(cell, 'font-style');
+        var f = '';
+        if (a == 'start')
+          a = getStyle(cell, 'direction') == 'rtl' ? 'right' : 'left';
+        if (fw >= 700)
+          f = 'bold';
+        if (fs == 'italic')
+          f += fs;
+        if (f == '')
+          f = 'normal';
+        var obj = {
+          style: {
+            align: a,
+            bcolor: rgb2array(getStyle(cell, 'background-color'), [255,255,255]),
+            color: rgb2array(getStyle(cell, 'color'), [0,0,0]),
+            fstyle: f
+          },
+          colspan: (parseInt($(cell).attr('colspan')) || 0)
+        };
+        
+        return obj;
       }
 
       // get computed style property
