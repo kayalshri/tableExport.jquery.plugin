@@ -129,6 +129,7 @@ numbers: html: decimalMark: '.'
          output: decimalMark: '.',
                  thousandsSeparator: ','
 onCellData: null
+onCellHtmlData: null
 outputMode: 'file'
 tbodySelector: 'tr'
 theadSelector: 'tr'
