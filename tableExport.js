@@ -54,6 +54,7 @@
                           }
                  },
         onCellData: null,
+        onCellHtmlData: null,
         outputMode: 'file', // 'file', 'string' or 'base64'
         tbodySelector: 'tr',
         theadSelector: 'tr',
@@ -523,9 +524,9 @@
 
             // each table works with an own copy of AutoTable options
             defaults.jspdf.autotable.tableExport = null;  // avoid deep recursion error
-            var atOptions = $.extend(true, {}, defaults.jspdf.autotable); 
+            var atOptions = $.extend(true, {}, defaults.jspdf.autotable);
             defaults.jspdf.autotable.tableExport = teOptions;
-            
+
             atOptions.margin = {};
             $.extend(true, atOptions.margin, defaults.jspdf.margins);
 
@@ -862,12 +863,16 @@
 
         if (cell != null) {
           var $cell = $(cell);
+          var htmlData = $cell.html();
+
+          if (typeof defaults.onCellHtmlData === 'function')
+            htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
 
           if (defaults.htmlContent === true) {
-            result = $.trim($cell.html());
+            result = $.trim(htmlData);
           }
           else {
-            var text = $cell.html().replace(/\n/g,'\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
+            var text = htmlData.replace(/\n/g,'\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
             var obj = $('<div/>').html(text).contents();
             text = '';
             $.each(obj.text().split("\u2028"), function(i, v) {
@@ -946,7 +951,7 @@
           },
           colspan: (parseInt($(cell).attr('colspan')) || 0)
         };
-        
+
         return obj;
       }
 
