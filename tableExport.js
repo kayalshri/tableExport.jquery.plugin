@@ -29,14 +29,17 @@
                 autotable: {styles: {cellPadding: 2,
                                      rowHeight: 12,
                                      fontSize: 8,
-                                     fillColor: 255, // color value or 'inherit' to use css background-color from html table
-                                     textColor: 50,  // color value or 'inherit' to use css color from html table
-                                     fontStyle: 'normal',
-                                     overflow: 'ellipsize'
+                                     fillColor: 255,        // color value or 'inherit' to use css background-color from html table
+                                     textColor: 50,         // color value or 'inherit' to use css color from html table
+                                     fontStyle: 'normal',   // normal, bold, italic, bolditalic or 'inherit' to use css font-weight and fonst-style from html table
+                                     overflow: 'ellipsize', // visible, hidden, ellipsize or linebreak
+                                     halign: 'left',        // left, center, right
+                                     valign: 'middle'       // top, middle, bottom
                                     },
                             headerStyles: {fillColor: [52, 73, 94],
                                            textColor: 255,
-                                           fontStyle: 'bold'
+                                           fontStyle: 'bold',
+                                           halign: 'center'
                                           },
                             alternateRowStyles: {fillColor: 245
                                                 },
@@ -530,6 +533,22 @@
             atOptions.margin = {};
             $.extend(true, atOptions.margin, defaults.jspdf.margins);
 
+            // Fix jsPDF Autotable's row height calculation
+            if (typeof atOptions.beforePageContent !== 'function') {
+              atOptions.beforePageContent = function (data) {
+                if (data.pageCount == 1) {
+                  var FONT_ROW_RATIO = 1.15;
+                  var all = data.table.rows.concat(data.table.headerRow);
+                  all.forEach(function (row) {
+                    if ( row.height > 0 ) {
+                      row.height += (2 - FONT_ROW_RATIO) / 2 * row.styles.fontSize;
+                      data.table.height += (2 - FONT_ROW_RATIO) / 2 * row.styles.fontSize;
+                    }
+                  });
+                }
+              }
+            }
+
             if (typeof atOptions.createdHeaderCell !== 'function') {
               // apply some original css styles to pdf header cells
               atOptions.createdHeaderCell = function (cell, data) {
@@ -564,20 +583,6 @@
               }
             }
 
-            if (typeof atOptions.drawHeaderCell !== 'function') {
-              atOptions.drawHeaderCell = function (cell, data) {
-                var col = teOptions.columns [data.column.dataKey];
-
-                if (col.style.hasOwnProperty("hidden") != true || col.style.hidden !== true) {
-                  teOptions.doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
-                  TEautoTableText (teOptions.doc, cell.text,
-                                   cell.textPos.x, cell.textPos.y,
-                                   {halign: cell.styles.halign, valign: cell.styles.valign});
-                }
-                return false;
-              }
-            }
-
             if (typeof atOptions.drawCell !== 'function') {
               atOptions.drawCell = function (cell, data) {
 
@@ -597,7 +602,7 @@
                     cellWidth += column.width;
                   }
 
-                  teOptions.doc.rect(cell.x, cell.y, cellWidth, cell.height, cell.styles.fillStyle);
+                  cell.width = cellWidth;
 
                   if ( cs > 1 ) {
                     if ( cell.styles.halign === 'right' )
@@ -606,11 +611,8 @@
                       textPosX = cell.textPos.x + (cellWidth - cell.width) / 2;
                   }
 
-                  TEautoTableText (teOptions.doc, cell.text,
-                                   textPosX, cell.textPos.y,
-                                   {halign: cell.styles.halign, valign: cell.styles.valign});
+                  cell.textPos.x = textPosX;
                 }
-                return false;
               }
             }
 
@@ -689,54 +691,6 @@
           delete teOptions.doc;
           teOptions.doc = null;
         }
-      }
-
-      // Patched version of jsPDF-Autotable's autoTableText function for "better" valign support
-      function TEautoTableText(doc, text, x, y, styles) {
-        var fontSize = doc.internal.getFontSize() / doc.internal.scaleFactor;
-
-        // As defined in jsPDF source code
-        var lineHeightProportion = 1.15;
-
-        var splitRegex = /\r\n|\r|\n/g;
-        var splittedText = null;
-        var lineCount = 1;
-        if (styles.valign === 'middle' || styles.valign === 'bottom' || styles.halign === 'center' || styles.halign === 'right') {
-            splittedText = typeof text === 'string' ? text.split(splitRegex) : text;
-
-            lineCount = splittedText.length || 1;
-        }
-
-        // Align the top
-        y += fontSize * (2 - lineHeightProportion);
-
-        if (styles.valign === 'middle') {
-          y -= lineCount / 1.85 * fontSize;
-        }
-        else if (styles.valign === 'bottom') {
-          if (lineCount > 1)
-            y -= lineCount * 1.125 * fontSize;
-          else
-            y -= lineCount * fontSize;
-        }
-        else
-          y -= 0.1 * fontSize;
-
-        if (styles.halign === 'center' || styles.halign === 'right') {
-            var alignSize = fontSize;
-            if (styles.halign === 'center') alignSize *= 0.5;
-
-            if (lineCount >= 1) {
-                for (var iLine = 0; iLine < splittedText.length; iLine++) {
-                    doc.text(splittedText[iLine], x - doc.getStringUnitWidth(splittedText[iLine]) * alignSize, y);
-                    y += fontSize;
-                }
-                return doc;
-            }
-            x -= doc.getStringUnitWidth(text) * alignSize;
-        }
-
-        doc.text(text, x, y);
       }
 
       function ForEachVisibleCell(tableRow, selector, rowIndex, rowCount, cellcallback) {

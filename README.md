@@ -117,9 +117,12 @@ jspdf: orientation: 'p'
                           textColor: 50
                           fontStyle: 'normal'
                           overflow: 'ellipsize'
+                          halign: 'left'
+                          valign: 'middle'
                   headerStyles: fillColor: [52, 73, 94]
                                 textColor: 255
                                 fontStyle: 'bold'
+                                halign: 'center'
                   alternateRowStyles: fillColor: 245
                   tableExport: onAfterAutotable: null
                                onBeforeAutotable: null
