@@ -583,9 +583,18 @@
               }
             }
 
+            if (typeof atOptions.drawHeaderCell !== 'function') {
+              atOptions.drawHeaderCell = function (cell, data) {
+                var col = teOptions.columns [data.column.dataKey];
+
+                // return false, when cell is hidden (colspan)
+                return (col.style.hasOwnProperty("hidden") != true || col.style.hidden !== true);
+              }
+            }
+
             if (typeof atOptions.drawCell !== 'function') {
               atOptions.drawCell = function (cell, data) {
-
+                // colspan handling
                 var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
                 var cs = 0;
 
@@ -602,8 +611,6 @@
                     cellWidth += column.width;
                   }
 
-                  cell.width = cellWidth;
-
                   if ( cs > 1 ) {
                     if ( cell.styles.halign === 'right' )
                       textPosX = cell.textPos.x + cellWidth - cell.width;
@@ -611,8 +618,11 @@
                       textPosX = cell.textPos.x + (cellWidth - cell.width) / 2;
                   }
 
+                  cell.width = cellWidth;
                   cell.textPos.x = textPosX;
                 }
+                else
+                  return false; // cell is hidden (colspan = -1)
               }
             }
 

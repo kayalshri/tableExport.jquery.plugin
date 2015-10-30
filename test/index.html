@@ -186,7 +186,7 @@
                                         });">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #41): Colspan attribute is ignored for some formats</a></li>
       <li><a href="#"
-             onClick="doExport('#issue42', {type:'pdf',
+             onClick="doExport('#issue42_1', {type:'pdf',
                                             jspdf: {
                                               autotable: {
                                                 styles: {overflow: 'linebreak',
@@ -198,7 +198,22 @@
                                              }
                                             }
                                           });">
-            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #42): Incorrect size of cell with multiline text</a></li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #42 I): Incorrect size of cell with multiline text</a></li>
+      <li><a href="#"
+             onClick="doExport('#issue42_2', {type:'pdf',
+                                            jspdf: {
+                                              autotable: {
+                                                styles: {overflow: 'linebreak',
+                                                  fontSize: 26,
+                                                  rowHeight: 36,
+                                                  fillColor: 155,
+                                                  valign: 'bottom'},
+                                                headerStyles: {rowHeight: 28,
+                                                  fontSize: 38}
+                                             }
+                                            }
+                                          });">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #42 II): Incorrect size of cell with multiline text</a></li>
       <li><a href="#"
              onClick="doExport('#issue43', {type:'pdf',
                                             jspdf: {
@@ -565,8 +580,8 @@
             </tr>
         </tbody>
     </table>    
-    <h3>Issue 42: Incorrect size of cell with multiline text</h3>
-    <table id="issue42">
+    <h3>Issue 42 I: Incorrect size of cell with multiline text</h3>
+    <table id="issue42_1">
         <thead>
             <tr>
                 <th>Title</th>
@@ -587,17 +602,39 @@
             </tr>
         </tbody>
     </table>
+    <h3>Issue 42 II: Incorrect size of cell with multiline text</h3>
+    <table id="issue42_2">
+        <thead>
+            <tr>
+                <th>Long value</th>
+                <th>Short value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Very long long long long long long long long long long long long Message
+                </td>
+                <td>Aligned cell</td>
+            </tr>
+            <tr>
+                <td>Second row cell 1</td>
+                <td>Second row cell 2</td>
+            </tr>
+        </tbody>
+    </table>    
     <h3>Issue 43: Configuration of PDF page breaks</h3>
     <table id="issue43">
         <thead>
             <tr>
-                <th>Title Message</th>
+                <th>Title</th>
             </tr>
         </thead>
         <tbody>
         <tr><td>row 1<td/><tr/> <tr><td>row 2<td/><tr/> <tr><td>row 3<td/><tr/> <tr><td>row 4<td/><tr/> <tr><td>row 5<td/><tr/>
         <tr><td>row 6<td/><tr/> <tr><td>row 7<td/><tr/> <tr><td>row 8<td/><tr/> <tr><td>row 9<td/><tr/> <tr><td>row 10<td/><tr/>
         <tr><td>row 11<td/><tr/> <tr><td>row 12<td/><tr/> <tr><td>row 13<td/><tr/> <tr><td>row 14<td/><tr/> <tr><td>row 15<td/><tr/> 
+        <tr><td>row 16<td/><tr/> 
             <tr>
                 <td style="margin: 5px">
                     Very long long long long long long long long long long long long long
