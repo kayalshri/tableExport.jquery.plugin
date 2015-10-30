@@ -64,6 +64,8 @@
       $.each( html, function() {
         if ( typeof $(this).html() === 'undefined' )
           result += $(this).text();
+        else if ( $(this).is("input") )
+          result += $('#'+$(this).attr('id')).val();
         else if ( ! $(this).hasClass('no_export') )
           result += $(this).html();
       });
@@ -92,7 +94,7 @@
       <li><a href="#" onClick="doExport('#invisiblecols', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-display="always")</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT</a></li>
       <li><a href="#" onClick="doExport('#invisible', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (hidden table)</a></li>
-      <li><a href="#" onClick="doExport('#oncelldata', {type: 'txt', onCellHtmlData: DoOnCellHtmlData});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (onCellData)</a></li>
+      <li><a href="#" onClick="doExport('#issue45', {type: 'txt', onCellHtmlData: DoOnCellHtmlData});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (onCellHtmlData)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: [2,3]});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
@@ -510,33 +512,6 @@
       </tr>
       </tbody>
     </table>
-    <h3>Table for testing onCellData option</h3>
-    <table id="oncelldata" class="table-striped">
-      <thead>
-      <tr>
-        <th>C1</th>
-        <th>C2</th>
-        <th>C3</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>A</td>
-        <td>B</td>
-        <td>C</td>
-      </tr>
-      <tr>
-        <td><div>D</div><div class="no_export">you shouldn't see this</div></td>
-        <td><b>E</b></td>
-        <td><div>F</div></td>
-      </tr>
-      <tr>
-        <td>G</td>
-        <td>H</td>
-        <td>I</td>
-      </tr>
-      </tbody>
-    </table>
     <h3>Issue 40: Formatted HTML export problems</h3>
     <table id="issue40">
       <thead>
@@ -648,6 +623,33 @@
                 </td>
             </tr>
         </tbody>
+    </table>
+    <h3>Table for testing onCellHtmlData option</h3>
+    <table id="issue45" class="table-striped">
+      <thead>
+      <tr>
+        <th>C1</th>
+        <th>C2</th>
+        <th>C3</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><input type="number" id="r1c0"></td>
+        <td>B</td>
+        <td>C</td>
+      </tr>
+      <tr>
+        <td><div class="no_export">when exporting you<br>should only see a </div><div>D</div></td>
+        <td><b>E</b></td>
+        <td><div>F</div></td>
+      </tr>
+      <tr>
+        <td>G</td>
+        <td>H</td>
+        <td>I</td>
+      </tr>
+      </tbody>
     </table>
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
