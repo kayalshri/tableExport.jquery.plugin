@@ -66,6 +66,7 @@
         worksheetName: 'xlsWorksheetName'
       };
 
+      var FONT_ROW_RATIO = 1.15;
       var el = this;
       var DownloadEvt = null;
       var $hrows = [];
@@ -537,7 +538,6 @@
             if (typeof atOptions.beforePageContent !== 'function') {
               atOptions.beforePageContent = function (data) {
                 if (data.pageCount == 1) {
-                  var FONT_ROW_RATIO = 1.15;
                   var all = data.table.rows.concat(data.table.headerRow);
                   all.forEach(function (row) {
                     if ( row.height > 0 ) {
@@ -585,44 +585,19 @@
 
             if (typeof atOptions.drawHeaderCell !== 'function') {
               atOptions.drawHeaderCell = function (cell, data) {
-                var col = teOptions.columns [data.column.dataKey];
+                var colopt = teOptions.columns [data.column.dataKey];
 
-                // return false, when cell is hidden (colspan)
-                return (col.style.hasOwnProperty("hidden") != true || col.style.hidden !== true);
+                if (colopt.style.hasOwnProperty("hidden") != true || colopt.style.hidden !== true)
+                  return prepareAutoTableText (cell, data, colopt);
+                else
+                  return false; // cell is hidden
               }
             }
 
             if (typeof atOptions.drawCell !== 'function') {
               atOptions.drawCell = function (cell, data) {
-                // colspan handling
                 var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
-                var cs = 0;
-
-                if ( typeof rowopt != 'undefined' )
-                  cs = rowopt.colspan;
-
-                if ( cs >= 0 ) {
-                  var cellWidth = cell.width;
-                  var textPosX = cell.textPos.x;
-                  var i = data.table.columns.indexOf(data.column);
-
-                  for (var c = 1; c < cs; c++) {
-                    var column = data.table.columns[i+c];
-                    cellWidth += column.width;
-                  }
-
-                  if ( cs > 1 ) {
-                    if ( cell.styles.halign === 'right' )
-                      textPosX = cell.textPos.x + cellWidth - cell.width;
-                    else if ( cell.styles.halign === 'center' )
-                      textPosX = cell.textPos.x + (cellWidth - cell.width) / 2;
-                  }
-
-                  cell.width = cellWidth;
-                  cell.textPos.x = textPosX;
-                }
-                else
-                  return false; // cell is hidden (colspan = -1)
+                return prepareAutoTableText (cell, data, rowopt);
               }
             }
 
@@ -722,7 +697,7 @@
               if ($.inArray(colIndex, defaults.ignoreColumn) == -1 &&
                   $.inArray(colIndex-$row.length, defaults.ignoreColumn) == -1) {
                 if (typeof (cellcallback) === "function") {
-                  var cs = 0; // colspan value
+                  var c, cs = 0; // colspan value
 
                   // handle previously detected rowspans
                   if (typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0) {
@@ -747,7 +722,7 @@
 
                   // store rowspan for following rows
                   if ($(this).is("[rowspan]")) {
-                    var rs = parseInt($(this).attr('rowspan'));
+                    var r, rs = parseInt($(this).attr('rowspan'));
 
                     for (r = 1; r < rs; r++) {
                       if (typeof rowspans[rowIndex + r] == 'undefined')
@@ -782,6 +757,45 @@
         catch (e) {
           downloadFile(defaults.fileName + '.pdf', 'data:application/pdf;base64,' + base64encode(doc.output()));
         }
+      }
+
+      function prepareAutoTableText (cell, data, cellopt) {
+        var cs = 0;
+        if ( typeof cellopt != 'undefined' )
+          cs = cellopt.colspan;
+
+        if ( cs >= 0 ) {
+          // colspan handling
+          var cellWidth = cell.width;
+          var textPosX = cell.textPos.x;
+          var i = data.table.columns.indexOf(data.column);
+
+          for (var c = 1; c < cs; c++) {
+            var column = data.table.columns[i+c];
+            cellWidth += column.width;
+          }
+
+          if ( cs > 1 ) {
+            if ( cell.styles.halign === 'right' )
+              textPosX = cell.textPos.x + cellWidth - cell.width;
+            else if ( cell.styles.halign === 'center' )
+              textPosX = cell.textPos.x + (cellWidth - cell.width) / 2;
+          }
+
+          cell.width = cellWidth;
+          cell.textPos.x = textPosX;
+
+          // fix jsPDF's calculation of text position
+          if ( cell.styles.valign === 'middle' || cell.styles.valign === 'bottom' ) {
+            var splittedText = typeof cell.text === 'string' ? cell.text.split(/\r\n|\r|\n/g) : cell.text;
+            var lineCount = splittedText.length || 1;
+            if (lineCount > 2)
+              cell.textPos.y -= ((2 - FONT_ROW_RATIO) / 2 * data.row.styles.fontSize) * (lineCount-2) / 3 ;
+          }
+          return true;
+        }
+        else
+          return false; // cell is hidden (colspan = -1), don't draw it
       }
 
       function escapeRegExp(string) {
@@ -906,17 +920,15 @@
           f += fs;
         if (f == '')
           f = 'normal';
-        var obj = {
+        return {
           style: {
             align: a,
-            bcolor: rgb2array(getStyle(cell, 'background-color'), [255,255,255]),
-            color: rgb2array(getStyle(cell, 'color'), [0,0,0]),
+            bcolor: rgb2array(getStyle(cell, 'background-color'), [255, 255, 255]),
+            color: rgb2array(getStyle(cell, 'color'), [0, 0, 0]),
             fstyle: f
           },
           colspan: (parseInt($(cell).attr('colspan')) || 0)
         };
-
-        return obj;
       }
 
       // get computed style property
