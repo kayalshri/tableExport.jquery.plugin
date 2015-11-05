@@ -59,17 +59,18 @@
     
     function DoOnCellHtmlData(cell, row, col, data) {
       var result = "";
-      var html = $.parseHTML( data )
+      if (data != "") {
+        var html = $.parseHTML( data )
 
-      $.each( html, function() {
-        if ( typeof $(this).html() === 'undefined' )
-          result += $(this).text();
-        else if ( $(this).is("input") )
-          result += $('#'+$(this).attr('id')).val();
-        else if ( ! $(this).hasClass('no_export') )
-          result += $(this).html();
-      });
-      
+        $.each( html, function() {
+          if ( typeof $(this).html() === 'undefined' )
+            result += $(this).text();
+          else if ( $(this).is("input") )
+            result += $('#'+$(this).attr('id')).val();
+          else if ( ! $(this).hasClass('no_export') )
+            result += $(this).html();
+        });
+      }
       return result;
     }
 
