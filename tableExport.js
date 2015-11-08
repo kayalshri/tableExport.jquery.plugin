@@ -785,6 +785,16 @@
           cell.width = cellWidth;
           cell.textPos.x = textPosX;
 
+          if ( cellopt.rowspan > 1 )
+          {
+            if ( cell.styles.valign === 'middle' )
+              cell.textPos.y = cell.textPos.y + (cell.height * (cellopt.rowspan - 1)) / 2;
+            else if ( cell.styles.valign === 'bottom' )
+              cell.textPos.y += (cellopt.rowspan - 1) * cell.height;
+
+            cell.height = cell.height * cellopt.rowspan;
+          }
+
           // fix jsPDF's calculation of text position
           if ( cell.styles.valign === 'middle' || cell.styles.valign === 'bottom' ) {
             var splittedText = typeof cell.text === 'string' ? cell.text.split(/\r\n|\r|\n/g) : cell.text;
@@ -927,7 +937,8 @@
             color: rgb2array(getStyle(cell, 'color'), [0, 0, 0]),
             fstyle: f
           },
-          colspan: (parseInt($(cell).attr('colspan')) || 0)
+          colspan: (parseInt($(cell).attr('colspan')) || 0),
+          rowspan: (parseInt($(cell).attr('rowspan')) || 0)
         };
       }
 

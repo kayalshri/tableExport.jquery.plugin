@@ -32,7 +32,6 @@
 
     .table-striped.numformat > tbody > tr > td {
       text-align: right;
-      vertical-align: top;
     }
 
     .table-striped th.hidden,
@@ -231,6 +230,20 @@
                                             }
                                           });">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue #43): Configuration of PDF page breaks</a></li>
+      <li><a href="#"
+             onClick="doExport('#rowspans', {type:'pdf',
+                                            jspdf: {
+                                              autotable: {
+                                                styles: {overflow: 'linebreak',
+                                                  fontSize: 26,
+                                                  rowHeight: 36,
+                                                  fillColor: 155},
+                                                headerStyles: {rowHeight: 28,
+                                                  fontSize: 38}
+                                             }
+                                            }
+                                          });">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px">Testing Rowspan</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
