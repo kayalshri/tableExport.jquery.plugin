@@ -458,7 +458,7 @@
         }
         else {
           // pdf output using jsPDF AutoTable plugin
-          // https://github.com/someatoms/jsPDF-AutoTable
+          // https://github.com/simonbengtsson/jsPDF-AutoTable
 
           var teOptions = defaults.jspdf.autotable.tableExport;
 
@@ -533,6 +533,7 @@
 
             atOptions.margin = {};
             $.extend(true, atOptions.margin, defaults.jspdf.margins);
+            atOptions.tableExport = teOptions;
 
             // Fix jsPDF Autotable's row height calculation
             if (typeof atOptions.beforePageContent !== 'function') {
