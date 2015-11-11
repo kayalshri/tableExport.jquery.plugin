@@ -79,45 +79,36 @@
 
       if (defaults.type == 'csv' || defaults.type == 'txt') {
 
-        // Header
         var csvData = "";
+        var rowlength = 0;
         rowIndex = 0;
-        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
-        $hrows.each(function () {
-          trData = "";
-          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
-                  function (cell, row, col) {
-                    trData += csvString(cell, row, col) + defaults.csvSeparator;
-                  });
-          trData = $.trim(trData).substring(0, trData.length - 1);
-          if (trData.length > 0) {
 
-            if (csvData.length > 0)
-              csvData += "\n";
+        function CollectCsvData (tgroup, tselector, rowselector, length) {
 
-            csvData += trData;
-          }
-          rowIndex++;
-        });
+          $rows = $(el).find(tgroup).first().find(tselector);
+          $rows.each(function () {
+            trData = "";
+            ForEachVisibleCell(this, rowselector, rowIndex, length + $rows.length,
+                    function (cell, row, col) {
+                      trData += csvString(cell, row, col) + defaults.csvSeparator;
+                    });
+            trData = $.trim(trData).substring(0, trData.length - 1);
+            if (trData.length > 0) {
 
-        // Row vs Column
-        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
-        $rows.each(function () {
-          trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
-                  function (cell, row, col) {
-                    trData += csvString(cell, row, col) + defaults.csvSeparator;
-                  });
-          trData = $.trim(trData).substring(0, trData.length - 1);
-          if (trData.length > 0) {
+              if (csvData.length > 0)
+                csvData += "\n";
 
-            if (csvData.length > 0)
-              csvData += "\n";
+              csvData += trData;
+            }
+            rowIndex++;
+          });
 
-            csvData += trData;
-          }
-          rowIndex++;
-        });
+          return $rows.length;
+        }
+
+        rowlength += CollectCsvData ('thead', defaults.theadSelector, 'th,td', rowlength);
+        rowlength += CollectCsvData ('tbody', defaults.tbodySelector, 'td', rowlength);
+        CollectCsvData ('tfoot', defaults.tbodySelector, 'td', rowlength);
 
         csvData += "\n";
 
@@ -690,6 +681,8 @@
                     $(this).closest('table').data("tableexport-display") == 'always');
           }).find(selector);
 
+          var rowColspan = 0;
+
           $row.each(function (colIndex) {
             if ($(this).data("tableexport-display") == 'always' ||
                 ($(this).css('display') != 'none' &&
@@ -698,9 +691,10 @@
               if ($.inArray(colIndex, defaults.ignoreColumn) == -1 &&
                   $.inArray(colIndex-$row.length, defaults.ignoreColumn) == -1) {
                 if (typeof (cellcallback) === "function") {
-                  var c, cs = 0; // colspan value
+                  var c, Colspan = 0;
+                  var r, Rowspan = 0;
 
-                  // handle previously detected rowspans
+                  // handle rowspans from previous rows
                   if (typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0) {
                     for (c = 0; c <= colIndex; c++) {
                       if (typeof rowspans[rowIndex][c] != 'undefined') {
@@ -711,27 +705,31 @@
                     }
                   }
 
+                  if ($(this).is("[colspan]")) {
+                    Colspan = parseInt($(this).attr('colspan'));
+                    rowColspan += Colspan > 0 ? Colspan - 1 : 0;
+                  }
+
+                  if ($(this).is("[rowspan]"))
+                    Rowspan = parseInt($(this).attr('rowspan'));
+
                   // output content of current cell
                   cellcallback(this, rowIndex, colIndex);
 
                   // handle colspan of current cell
-                  if ($(this).is("[colspan]")) {
-                    cs = parseInt($(this).attr('colspan'));
-                    for (c = 0; c < cs-1; c++)
-                      cellcallback(null, rowIndex, colIndex + c);
-                  }
+                  for (c = 0; c < Colspan - 1; c++)
+                    cellcallback(null, rowIndex, colIndex + c);
 
                   // store rowspan for following rows
-                  if ($(this).is("[rowspan]")) {
-                    var r, rs = parseInt($(this).attr('rowspan'));
-
-                    for (r = 1; r < rs; r++) {
+                  if (Rowspan) {
+                    for (r = 1; r < Rowspan; r++) {
                       if (typeof rowspans[rowIndex + r] == 'undefined')
                         rowspans[rowIndex + r] = [];
-                      rowspans[rowIndex + r][colIndex] = "";
 
-                      for (c = 1; c < cs; c++)
-                        rowspans[rowIndex + r][colIndex + c] = "";
+                      rowspans[rowIndex + r][colIndex + rowColspan] = "";
+
+                      for (c = 1; c < Colspan; c++)
+                        rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
                     }
                   }
                 }
@@ -817,6 +815,8 @@
         return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
       }
 
+      // Takes a string and encapsulates it (by default in double-quotes) if it
+      // contains the csv field separator, spaces, or linebreaks.
       function csvString(cell, rowIndex, colIndex) {
         var result = '';
 
