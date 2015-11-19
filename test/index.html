@@ -113,6 +113,7 @@
                                                                                       'border-right-color', 'border-right-style', 'border-right-width',
                                                                                       'font-family', 'font-size', 'font-weight']
                                                         });"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
+      <li><a href="#" onClick="doExport('#issue53', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53: complex table thead rowspan colspan)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -714,6 +715,34 @@
       </tr>
       </tbody>
     </table>
+    <h3>Issue 53: complex table thead rowspan colspan</h3>
+    <table id="issue53">
+      <thead>
+        <tr>
+          <th rowspan="2">Name</th><th colspan="2">detail1</th>
+          <th colspan="4">detail2</th><th colspan="4">detail3</th>
+        </tr>
+        <tr>
+          <th>d11</th><th>d12</th>
+          <th>d21</th><th>d22</th><th>d23</th><th>d24</th>
+          <th>d31</th><th>d32</th><th>d33</th><th>d34</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>张三</td>
+          <td>11</td><td>12</td>
+          <td>21</td><td>22</td><td>23</td><td>24</td>
+          <td>31</td><td>32</td><td>33</td><td>34</td>
+        </tr>
+        <tr>
+          <td>Joe Smith</td>
+          <td>41</td><td>42</td>
+          <td>51</td><td>52</td><td>53</td><td>54</td>
+          <td>61</td><td>62</td><td>63</td><td>64</td>
+        </tr>
+      </tbody>
+    </table>    
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">

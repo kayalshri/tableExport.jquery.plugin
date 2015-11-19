@@ -303,7 +303,7 @@
         var MSDocSchema = (MSDocExt == 'xls') ? 'xmlns:x="urn:schemas-microsoft-com:office:excel"' : 'xmlns:w="urn:schemas-microsoft-com:office:word"';
 
         rowIndex = 0;
-        var docData = '<table>';
+        var docData = '<table><thead>';
         // Header
         $hrows = $(el).find('thead').first().find(defaults.theadSelector);
         $hrows.each(function () {
@@ -311,19 +311,25 @@
           ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     if (cell != null) {
-                      trData += '<td style="';
+                      trData += '<th style="';
                       for (var styles in defaults.excelstyles) {
                         if (defaults.excelstyles.hasOwnProperty(styles)) {
                           trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
                         }
                       }
-                      trData += '">' + parseString(cell, row, col) + '</td>';
+                      if ($(cell).is("[colspan]"))
+                        trData += '" colspan="' + $(cell).attr('colspan');
+                      if ($(cell).is("[rowspan]"))
+                        trData += '" rowspan="' + $(cell).attr('rowspan');
+                      trData += '">' + parseString(cell, row, col) + '</th>';
                     }
                   });
           if (trData.length > 0)
             docData += '<tr>' + trData + '</tr>';
           rowIndex++;
         });
+
+        docData += '</thead><tbody>';
 
         // Row Vs Column
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
@@ -353,7 +359,7 @@
         if (defaults.displayTableName)
           docData += '<tr><td></td></tr><tr><td></td></tr><tr><td>' + parseString($('<p>' + defaults.tableName + '</p>')) + '</td></tr>';
 
-        docData += '</table>';
+        docData += '</tbody></table>';
 
         if (defaults.consoleLog === true)
           console.log(docData);
