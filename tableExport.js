@@ -790,7 +790,7 @@
           cell.width = cellWidth;
           cell.textPos.x = textPosX;
 
-          if ( cellopt.rowspan > 1 )
+          if ( typeof cellopt != 'undefined' && cellopt.rowspan > 1 )
           {
             if ( cell.styles.valign === 'middle' )
               cell.textPos.y = cell.textPos.y + (cell.height * (cellopt.rowspan - 1)) / 2;
