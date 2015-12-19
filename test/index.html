@@ -247,6 +247,12 @@
                                             }
                                           });">
             <img src='icons/pdf.png' alt="PDF" style="width:24px">Testing Rowspan</a></li>
+      <li><a href="#" 
+             onClick="doExport('#issue53',
+                      {type: 'pdf',
+                       jspdf: {format: 'bestfit',
+                               autotable: {tableWidth: 'wrap'}}});">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (issue53: complex table thead rowspan colspan)</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
@@ -749,6 +755,7 @@
       <thead>
       <tr>
         <th>Rank</th>
+        <th>Flag</th>
         <th>Country</th>
         <th>Population</th>
         <th>Date</th>
@@ -759,6 +766,7 @@
       <tbody>
       <tr>
         <td>1</td>
+        <td></td>
         <td>China</td>
         <td>1,368,710,000</td>
         <td>March 14, 2015</td>
@@ -767,6 +775,7 @@
       </tr>
       <tr>
         <td>2</td>
+        <td></td>
         <td>India</td>
         <td>1,268,220,000</td>
         <td>March 14, 2015</td>
@@ -775,6 +784,7 @@
       </tr>
       <tr>
         <td>3</td>
+        <td></td>
         <td>United States</td>
         <td>320,583,000</td>
         <td>March 14, 2015</td>
@@ -783,6 +793,7 @@
       </tr>
       <tr>
         <td>4</td>
+        <td></td>
         <td>Indonesia</td>
         <td>255,461,700</td>
         <td>July 1, 2015</td>
@@ -791,6 +802,7 @@
       </tr>
       <tr>
         <td>5</td>
+        <td></td>
         <td>Brazil</td>
         <td>204,014,000</td>
         <td>March 14, 2015</td>
@@ -799,6 +811,7 @@
       </tr>
       <tr>
         <td>6</td>
+        <td></td>
         <td>Pakistan</td>
         <td>189,223,000</td>
         <td>March 14, 2015</td>
@@ -807,6 +820,7 @@
       </tr>
       <tr>
         <td>7</td>
+        <td></td>
         <td>Nigeria</td>
         <td>183,523,000</td>
         <td>July 1, 2015</td>
@@ -815,6 +829,7 @@
       </tr>
       <tr>
         <td>8</td>
+        <td></td>
         <td>Bangladesh</td>
         <td>157,986,000</td>
         <td>March 14, 2015</td>
@@ -823,6 +838,7 @@
       </tr>
       <tr>
         <td>9</td>
+        <td></td>
         <td>Russia</td>
         <td>146,270,033</td>
         <td>January 1, 2015</td>
@@ -831,6 +847,7 @@
       </tr>
       <tr>
         <td>10</td>
+        <td></td>
         <td>Japan</td>
         <td>126,970,000</td>
         <td>February 1, 2015</td>
@@ -842,6 +859,7 @@
       </tr>
       <tr>
         <td>11</td>
+        <td></td>
         <td>Mexico</td>
         <td>121,005,815</td>
         <td>July 1, 2015</td>
@@ -850,6 +868,7 @@
       </tr>
       <tr>
         <td>12</td>
+        <td></td>
         <td>Philippines</td>
         <td>101,137,900</td>
         <td>March 14, 2015</td>
@@ -858,6 +877,7 @@
       </tr>
       <tr>
         <td>13</td>
+        <td></td>
         <td>Vietnam</td>
         <td>90,730,000</td>
         <td>July 1, 2014</td>
@@ -866,6 +886,7 @@
       </tr>
       <tr>
         <td>14</td>
+        <td></td>
         <td>Ethiopia</td>
         <td>90,076,012</td>
         <td>July 1, 2015</td>
@@ -874,6 +895,7 @@
       </tr>
       <tr>
         <td>15</td>
+        <td></td>
         <td>Egypt</td>
         <td>88,168,200</td>
         <td>March 14, 2015</td>
@@ -882,6 +904,7 @@
       </tr>
       <tr>
         <td>16</td>
+        <td><img width="23" height="14" alt="" src="//upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/23px-Flag_of_Germany.svg.png"></td>
         <td>Germany</td>
         <td>80,925,000</td>
         <td>June 30, 2014</td>
@@ -890,6 +913,7 @@
       </tr>
       <tr>
         <td>17</td>
+        <td></td>
         <td>Iran</td>
         <td>78,184,800</td>
         <td>March 14, 2015</td>
@@ -898,6 +922,7 @@
       </tr>
       <tr>
         <td>18</td>
+        <td></td>
         <td>Turkey</td>
         <td>77,695,904</td>
         <td>December 31, 2014</td>
@@ -906,6 +931,7 @@
       </tr>
       <tr>
         <td>19</td>
+        <td></td>
         <td>Democratic Republic of the Congo</td>
         <td>71,246,000</td>
         <td>July 1, 2015</td>
@@ -914,6 +940,7 @@
       </tr>
       <tr>
         <td>20</td>
+        <td></td>
         <td>France</td>
         <td>66,104,000</td>
         <td>February 1, 2015</td>

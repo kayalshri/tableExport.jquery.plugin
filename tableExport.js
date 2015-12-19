@@ -128,7 +128,8 @@
         }
         catch (e) {
           downloadFile(defaults.fileName + '.' + defaults.type,
-                  'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + encodeURIComponent(csvData));
+                       'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + ((defaults.type == 'csv' && defaults.csvUseBOM)? '\ufeff' : ''),
+                       csvData);
         }
 
       } else if (defaults.type == 'sql') {
@@ -170,10 +171,10 @@
         if (defaults.consoleLog === true)
           console.log(tdData);
 
-        if (defaults.outputMode == 'string')
+        if (defaults.outputMode === 'string')
           return tdData;
 
-        if (defaults.outputMode == 'base64')
+        if (defaults.outputMode === 'base64')
           return base64encode(tdData);
 
         try {
@@ -181,7 +182,9 @@
           saveAs(blob, defaults.fileName + '.sql');
         }
         catch (e) {
-          downloadFile(defaults.fileName + '.sql', 'data:application/sql;charset=utf-8,' + encodeURIComponent(tdData));
+          downloadFile(defaults.fileName + '.sql',
+                       'data:application/sql;charset=utf-8,',
+                       tdData);
         }
 
       } else if (defaults.type == 'json') {
@@ -222,20 +225,20 @@
         if (defaults.consoleLog === true)
           console.log(sdata);
 
-        if (defaults.outputMode == 'string')
+        if (defaults.outputMode === 'string')
           return sdata;
 
-        var base64data = base64encode(sdata);
-
-        if (defaults.outputMode == 'base64')
-          return base64data;
+        if (defaults.outputMode === 'base64')
+          return base64encode(sdata);
 
         try {
           var blob = new Blob([sdata], {type: "application/json;charset=utf-8"});
           saveAs(blob, defaults.fileName + '.json');
         }
         catch (e) {
-          downloadFile(defaults.fileName + '.json', 'data:application/json;charset=utf-8;base64,' + base64data);
+          downloadFile(defaults.fileName + '.json',
+                       'data:application/json;charset=utf-8;base64,',
+                       sdata);
         }
 
       } else if (defaults.type === 'xml') {
@@ -280,20 +283,20 @@
         if (defaults.consoleLog === true)
           console.log(xml);
 
-        if (defaults.outputMode == 'string')
+        if (defaults.outputMode === 'string')
           return xml;
 
-        var base64data = base64encode(xml);
-
-        if (defaults.outputMode == 'base64')
-          return base64data;
+        if (defaults.outputMode === 'base64')
+          return base64encode(xml);
 
         try {
           var blob = new Blob([xml], {type: "application/xml;charset=utf-8"});
           saveAs(blob, defaults.fileName + '.xml');
         }
         catch (e) {
-          downloadFile(defaults.fileName + '.xml', 'data:application/xml;charset=utf-8;base64,' + base64data);
+          downloadFile(defaults.fileName + '.xml',
+                       'data:application/xml;charset=utf-8;base64,',
+                       xml);
         }
 
       } else if (defaults.type == 'excel' || defaults.type == 'xls' || defaults.type == 'word' || defaults.type == 'doc') {
@@ -391,20 +394,23 @@
         docFile += "</body>";
         docFile += "</html>";
 
-        if (defaults.outputMode == 'string')
+        if (defaults.consoleLog === true)
+          console.log(docFile);
+
+        if (defaults.outputMode === 'string')
           return docFile;
 
-        var base64data = base64encode(docFile);
-
         if (defaults.outputMode === 'base64')
-          return base64data;
+          return base64encode(docFile);
 
         try {
           var blob = new Blob([docFile], {type: 'application/vnd.ms-' + defaults.type});
           saveAs(blob, defaults.fileName + '.' + MSDocExt);
         }
         catch (e) {
-          downloadFile(defaults.fileName + '.' + MSDocExt, 'data:application/vnd.ms-' + MSDocType + ';base64,' + base64data);
+          downloadFile(defaults.fileName + '.' + MSDocExt,
+                       'data:application/vnd.ms-' + MSDocType + ';base64,',
+                       docFile);
         }
 
       } else if (defaults.type == 'png') {
@@ -423,12 +429,23 @@
             for (var i = 0; i < byteString.length; i++)
               intArray[i] = byteString.charCodeAt(i);
 
+            if (defaults.consoleLog === true)
+              console.log(byteString);
+
+            if (defaults.outputMode === 'string')
+              return byteString;
+
+            if (defaults.outputMode === 'base64')
+              return base64encode(image);
+
             try {
               var blob = new Blob([buffer], {type: "image/png"});
               saveAs(blob, defaults.fileName + '.png');
             }
             catch (e) {
-              downloadFile(defaults.fileName + '.png', 'data:image/png;base64,' + image);
+              downloadFile(defaults.fileName + '.png',
+                           'data:image/png;base64,',
+                           image);
             }
           }
         });
@@ -749,10 +766,10 @@
         if (defaults.consoleLog === true)
           console.log(doc.output());
 
-        if (defaults.outputMode == 'string')
+        if (defaults.outputMode === 'string')
           return doc.output();
 
-        if (defaults.outputMode == 'base64')
+        if (defaults.outputMode === 'base64')
           return base64encode(doc.output());
 
         try {
@@ -760,7 +777,9 @@
           saveAs(blob, defaults.fileName + '.pdf');
         }
         catch (e) {
-          downloadFile(defaults.fileName + '.pdf', 'data:application/pdf;base64,' + base64encode(doc.output()));
+          downloadFile(defaults.fileName + '.pdf',
+                       'data:application/pdf;base64,',
+                       doc.output());
         }
       }
 
@@ -991,29 +1010,55 @@
         return 0;
       }
 
-      function downloadFile(filename, data) {
-        var DownloadLink = document.createElement('a');
+      function downloadFile(filename, header, data) {
 
-        if (DownloadLink) {
-          DownloadLink.style.display = 'none';
-          DownloadLink.download = filename;
-          DownloadLink.href = data;
+        var ua = window.navigator.userAgent;
+        if (ua.indexOf("MSIE ") > 0 || !!ua.match(/Trident.*rv\:11\./)) {
+          // Internet Explorer (<= 9) workaround by Darryl (https://github.com/dawiong/tableExport.jquery.plugin)
+          // based on sampopes answer on http://stackoverflow.com/questions/22317951
+          // ! Not working for json and pdf format !
+          var frame = document.createElement("iframe");
 
-          document.body.appendChild(DownloadLink);
+          if (frame) {
+            document.body.appendChild(frame);
+            frame.setAttribute("style", "display:none");
+            frame.contentDocument.open("txt/html", "replace");
+            frame.contentDocument.write(data);
+            frame.contentDocument.close();
+            frame.focus();
 
-          if (document.createEvent) {
-            if (DownloadEvt == null)
-              DownloadEvt = document.createEvent('MouseEvents');
-
-            DownloadEvt.initEvent('click', true, false);
-            DownloadLink.dispatchEvent(DownloadEvt);
+            frame.contentDocument.execCommand("SaveAs", true, filename);
+            document.body.removeChild(frame);
           }
-          else if (document.createEventObject)
-            DownloadLink.fireEvent('onclick');
-          else if (typeof DownloadLink.onclick == 'function')
-            DownloadLink.onclick();
+        }
+        else {
+          var DownloadLink = document.createElement('a');
 
-          document.body.removeChild(DownloadLink);
+          if (DownloadLink) {
+            DownloadLink.style.display = 'none';
+            DownloadLink.download = filename;
+
+            if (header.toLowerCase().indexOf("base64,") >= 0)
+              DownloadLink.href = header + base64encode(data);
+            else
+              DownloadLink.href = encodeURIComponent(header + data);
+
+            document.body.appendChild(DownloadLink);
+
+            if (document.createEvent) {
+              if (DownloadEvt == null)
+                DownloadEvt = document.createEvent('MouseEvents');
+
+              DownloadEvt.initEvent('click', true, false);
+              DownloadLink.dispatchEvent(DownloadEvt);
+            }
+            else if (document.createEventObject)
+              DownloadLink.fireEvent('onclick');
+            else if (typeof DownloadLink.onclick == 'function')
+              DownloadLink.onclick();
+
+            document.body.removeChild(DownloadLink);
+          }
         }
       }
 
