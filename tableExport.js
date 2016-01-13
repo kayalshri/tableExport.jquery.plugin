@@ -1041,7 +1041,7 @@
             if (header.toLowerCase().indexOf("base64,") >= 0)
               DownloadLink.href = header + base64encode(data);
             else
-              DownloadLink.href = encodeURIComponent(header + data);
+              DownloadLink.href = header + encodeURIComponent(data);
 
             document.body.appendChild(DownloadLink);
 
