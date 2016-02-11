@@ -304,68 +304,71 @@
         var MSDocType = (defaults.type == 'excel' || defaults.type == 'xls') ? 'excel' : 'word';
         var MSDocExt = (MSDocType == 'excel') ? 'xls' : 'doc';
         var MSDocSchema = (MSDocExt == 'xls') ? 'xmlns:x="urn:schemas-microsoft-com:office:excel"' : 'xmlns:w="urn:schemas-microsoft-com:office:word"';
+        var $tables = $('table');
+        var docData = '';
 
-        rowIndex = 0;
-        var docData = '<table><thead>';
-        // Header
-        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
-        $hrows.each(function () {
-          trData = "";
-          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
-                  function (cell, row, col) {
-                    if (cell != null) {
-                      trData += '<th style="';
-                      for (var styles in defaults.excelstyles) {
-                        if (defaults.excelstyles.hasOwnProperty(styles)) {
-                          trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
-                        }
-                      }
-                      if ($(cell).is("[colspan]"))
-                        trData += '" colspan="' + $(cell).attr('colspan');
-                      if ($(cell).is("[rowspan]"))
-                        trData += '" rowspan="' + $(cell).attr('rowspan');
-                      trData += '">' + parseString(cell, row, col) + '</th>';
+        $tables.each(function(){
+          rowIndex = 0;
+          docData += '<table><thead>';
+          // Header
+          $hrows = $(this).find('thead').first().find(defaults.theadSelector);
+          $hrows.each(function() {
+            trData = "";
+            ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
+              function(cell, row, col) {
+                if (cell != null) {
+                  trData += '<th style="';
+                  for (var styles in defaults.excelstyles) {
+                    if (defaults.excelstyles.hasOwnProperty(styles)) {
+                      trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
                     }
-                  });
-          if (trData.length > 0)
-            docData += '<tr>' + trData + '</tr>';
-          rowIndex++;
-        });
+                  }
+                  if ($(cell).is("[colspan]"))
+                    trData += '" colspan="' + $(cell).attr('colspan');
+                  if ($(cell).is("[rowspan]"))
+                    trData += '" rowspan="' + $(cell).attr('rowspan');
+                  trData += '">' + parseString(cell, row, col) + '</th>';
+                }
+              });
+            if (trData.length > 0)
+              docData += '<tr>' + trData + '</tr>';
+            rowIndex++;
+          });
 
-        docData += '</thead><tbody>';
-
-        // Row Vs Column
-        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
-        $rows.each(function () {
-          trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
-                  function (cell, row, col) {
-                    if (cell != null) {
-                      trData += '<td style="';
-                      for (var styles in defaults.excelstyles) {
-                        if (defaults.excelstyles.hasOwnProperty(styles)) {
-                          trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
-                        }
-                      }
-                      if ($(cell).is("[colspan]"))
-                        trData += '" colspan="' + $(cell).attr('colspan');
-                      if ($(cell).is("[rowspan]"))
-                        trData += '" rowspan="' + $(cell).attr('rowspan');
-                      trData += '">' + parseString(cell, row, col) + '</td>';
+          docData += '</thead><tbody>';
+          // Row Vs Column
+          $rows = $(this).find('tbody').first().find(defaults.tbodySelector);
+          $rows.each(function() {
+            trData = "";
+            ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+              function(cell, row, col) {
+                if (cell != null) {
+                  trData += '<td style="';
+                  for (var styles in defaults.excelstyles) {
+                    if (defaults.excelstyles.hasOwnProperty(styles)) {
+                      trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
                     }
-                  });
-          if (trData.length > 0)
-            docData += '<tr>' + trData + '</tr>';
-          rowIndex++;
+                  }
+                  if ($(cell).is("[colspan]"))
+                    trData += '" colspan="' + $(cell).attr('colspan');
+                  if ($(cell).is("[rowspan]"))
+                    trData += '" rowspan="' + $(cell).attr('rowspan');
+                  trData += '">' + parseString(cell, row, col) + '</td>';
+                }
+              });
+            if (trData.length > 0)
+              docData += '<tr>' + trData + '</tr>';
+            rowIndex++;
+          });
+
+          if (defaults.displayTableName)
+            docData += '<tr><td></td></tr><tr><td></td></tr><tr><td>' + parseString($('<p>' + defaults.tableName + '</p>')) + '</td></tr>';
+
+          docData += '</tbody></table>';
+
+          if (defaults.consoleLog === true)
+            console.log(docData);
         });
-
-        if (defaults.displayTableName)
-          docData += '<tr><td></td></tr><tr><td></td></tr><tr><td>' + parseString($('<p>' + defaults.tableName + '</p>')) + '</td></tr>';
-
-        docData += '</tbody></table>';
-
-        if (defaults.consoleLog === true)
-          console.log(docData);
 
         var docFile = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' + MSDocSchema + ' xmlns="http://www.w3.org/TR/REC-html40">';
         docFile += '<meta http-equiv="content-type" content="application/vnd.ms-' + MSDocType + '; charset=UTF-8">';
