@@ -304,7 +304,11 @@
         var MSDocType = (defaults.type == 'excel' || defaults.type == 'xls') ? 'excel' : 'word';
         var MSDocExt = (MSDocType == 'excel') ? 'xls' : 'doc';
         var MSDocSchema = (MSDocExt == 'xls') ? 'xmlns:x="urn:schemas-microsoft-com:office:excel"' : 'xmlns:w="urn:schemas-microsoft-com:office:word"';
-        var $tables = $('table');
+        var $tables = $(el).filter(function() {
+            return $(this).data("tableexport-display") != 'none' &&
+                   ($(this).is(':visible') ||
+                    $(this).data("tableexport-display") == 'always');
+          });
         var docData = '';
 
         $tables.each(function(){
