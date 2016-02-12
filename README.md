@@ -17,7 +17,6 @@ tableExport.jquery.plugin
 Installation
 ============
 
-
 To save the generatetd export files on client side include 
 
 ```javascript
@@ -152,6 +151,7 @@ Optional html data attributes
 =============================
 (can be set while generating the table you want to export)
 
+<h3>data-tableexport-display</h3>
 ```html
 <table style="display:none;" data-tableexport-display="always">...</table> -> hidden table will be exported
 
@@ -160,4 +160,11 @@ Optional html data attributes
 <td data-tableexport-display="none">...</td> -> cell will not be exported
 
 <tr data-tableexport-display="none">...</tr> -> all cells of this row will not be exported
+```
+
+<h3>data-tableexport-value</h3>
+```html
+<th data-tableexport-value="export title">title</th> -> "export title" instead of "title" will be exported
+
+<td data-tableexport-value="export content">content</td> -> "export content" instead of "content" will be exported
 ```

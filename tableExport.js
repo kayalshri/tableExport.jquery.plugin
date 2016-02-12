@@ -884,7 +884,12 @@
 
         if (cell != null) {
           var $cell = $(cell);
-          var htmlData = $cell.html();
+          var htmlData;
+          
+          if ($cell[0].hasAttribute("data-tableexport-value"))
+            htmlData = $cell.data("tableexport-value");
+          else
+            htmlData = $cell.html();
 
           if (typeof defaults.onCellHtmlData === 'function')
             htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
