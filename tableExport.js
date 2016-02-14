@@ -171,7 +171,7 @@ THE SOFTWARE.*/
 					window.open('data:application/json;filename=exportData;' + base64data);
 				}else if(defaults.type == 'xml'){
 				
-					var xml = '<?xml version="1.0" encoding="utf-8"?>';
+					var xml = '<?xml version="1.0" encoding="iso-8859-1"?>'; //Accept accents (Example: João)
 					xml += '<tabledata><fields>';
 
 					// Header
@@ -276,7 +276,11 @@ THE SOFTWARE.*/
 					excelFile += "</html>";
 
 					var base64data = "base64," + $.base64.encode(excelFile);
-					window.open('data:application/vnd.ms-'+defaults.type+';filename=exportData.doc;' + base64data);
+					var anchor = document.createElement('a');//Create an anchor element
+					document.body.appendChild(anchor); //Add it to document
+					anchor.href = 'data:application/vnd.ms' + (defaults.type === 'doc' ? 'word' : '-' + defaults.type) + ';filename=exportData.doc;' + base64data; //Create content and mime type
+					anchor.download = 'exportData.' + (defaults.type === 'excel' ? 'xls' : (defaults.type === 'powerpoint' ? 'ppt' : defaults.type)); //Custom filename+ext (ext fix)                  
+					anchor.click();//Launch
 					
 				}else if(defaults.type == 'png'){
 					html2canvas($(el), {
