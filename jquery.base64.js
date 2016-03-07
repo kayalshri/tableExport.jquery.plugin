@@ -65,6 +65,59 @@ jQuery.base64 = ( function( $ ) {
     _VERSION = "1.0";
 
 
+  // add by nathanielwen
+  function _utf16ToUtf8( s ) {
+    var code,
+        x = [];
+    for (var i = 0; i < s.length; i++) {
+      code = s.charCodeAt(i);
+      if(code > 0x0 && code <= 0x7f){
+        x.push(s.charAt(i));  
+      }else if(code >= 0x80 && code <= 0x7ff){
+        x.push(  
+          String.fromCharCode(0xc0 | ((code >>  6) & 0x1f)),
+          String.fromCharCode(0x80 | ((code >>  0) & 0x3f))  
+        );
+      }else{
+        x.push(
+          String.fromCharCode(0xe0 | ((code >> 12) & 0x0f)),  
+          String.fromCharCode(0x80 | ((code >>  6) & 0x3f)),  
+          String.fromCharCode(0x80 | ((code >>  0) & 0x3f))  
+        ); 
+      }
+    }
+    return x.join( "" );  
+  }
+
+  // add by nathanielwen
+  function _utf8ToUtf16( s ) {
+    var c, c2, c3,
+        x = [];
+    for (var i = 0; i < s.length; i++) {
+      c = s.charCodeAt(i);
+      switch(c >> 4){
+        case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+          x.push(s.charAt(i));
+          break;
+        case 12: case 13:
+          c2 = s.charCodeAt(++i);
+          x.push(
+            String.fromCharCode(((c & 0x1F) << 6) | (c2 & 0x3F))
+          )
+          break;
+        case 14:
+          c2 = s.charCodeAt(++i);
+          c3 = s.charCodeAt(++i);
+          x.push(
+            String.fromCharCode(((c & 0x0F) << 12) | ((c2 & 0x3F) << 6) | ((c3 & 0x3F) << 0))
+          )
+          break;
+      }
+    }
+    return x.join( "" );
+  }
+
+
   function _getbyte64( s, i ) {
     // This is oddly fast, except on Chrome/V8.
     // Minimal or no improvement in performance by using a
@@ -125,7 +178,9 @@ jQuery.base64 = ( function( $ ) {
         break;
     }
 
-    return x.join( "" );
+    // add by nathanielwen
+    var _t =  x.join( "" );
+    return _utf8ToUtf16( t );
   }
   
   
@@ -144,7 +199,9 @@ jQuery.base64 = ( function( $ ) {
     if ( arguments.length !== 1 ) {
       throw "SyntaxError: exactly one argument required";
     }
-
+    
+    // add by nathanielwen
+    s = _utf16ToUtf8( s )
     s = String( s );
 
     var i,
