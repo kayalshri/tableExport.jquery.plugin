@@ -252,6 +252,8 @@ THE SOFTWARE.*/
 					}
 					
 					var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
+                    // add by nathanielwen
+                    excelFile += '<meta http-equiv="content-type" content="application/vnd.ms-' + defaults.type + '; charset=UTF-8">';
 					excelFile += "<head>";
 					excelFile += "<!--[if gte mso 9]>";
 					excelFile += "<xml>";
