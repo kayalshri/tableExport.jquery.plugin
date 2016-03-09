@@ -15,7 +15,7 @@
     "file-saver.js": "*",
     "html2canvas": "*",
     "jspdf": "1.0.272 || 1.1.239",
-    "jspdf-autotable": "2.0.9"
+    "jspdf-autotable": "2.0.9 || 2.0.14"
   },
   "keywords": [
     "html5",
