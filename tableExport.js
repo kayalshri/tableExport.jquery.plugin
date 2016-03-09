@@ -575,15 +575,40 @@
               // apply some original css styles to pdf header cells
               atOptions.createdHeaderCell = function (cell, data) {
 
+                // jsPDF AutoTable plugin v2.0.14 fix: each cell needs its own styles object
+                cell.styles = Object.assign({}, data.row.styles);
+                
                 if (typeof teOptions.columns [data.column.dataKey] != 'undefined') {
                   var col = teOptions.columns [data.column.dataKey];
-                  cell.styles.halign = col.style.align;
-                  if (atOptions.styles.fillColor === 'inherit')
-                    cell.styles.fillColor = col.style.bcolor;
-                  if (atOptions.styles.textColor === 'inherit')
-                    cell.styles.textColor = col.style.color;
-                  if (atOptions.styles.fontStyle === 'inherit')
-                    cell.styles.fontStyle = col.style.fstyle;
+
+                  if (typeof col.rect != 'undefined') {
+                    var rh;
+
+                    cell.contentWidth = col.rect.width;
+
+                    if (typeof teOptions.heightRatio == 'undefined' || teOptions.heightRatio == 0) {
+                      if (data.row.raw [data.column.dataKey].rowspan)
+                        rh = data.row.raw [data.column.dataKey].rect.height / data.row.raw [data.column.dataKey].rowspan;
+                      else
+                        rh = data.row.raw [data.column.dataKey].rect.height;
+
+                      teOptions.heightRatio = cell.styles.rowHeight / rh;
+                    }
+
+                    rh = data.row.raw [data.column.dataKey].rect.height * teOptions.heightRatio;
+                    if (rh > cell.styles.rowHeight)
+                      cell.styles.rowHeight = rh;
+                  }
+
+                  if (typeof col.style != 'undefined' && col.style.hidden !== true) {
+                    cell.styles.halign = col.style.align;
+                    if (atOptions.styles.fillColor === 'inherit')
+                      cell.styles.fillColor = col.style.bcolor;
+                    if (atOptions.styles.textColor === 'inherit')
+                      cell.styles.textColor = col.style.color;
+                    if (atOptions.styles.fontStyle === 'inherit')
+                      cell.styles.fontStyle = col.style.fstyle;
+                  }
                 }
               }
             }
@@ -593,7 +618,9 @@
               atOptions.createdCell = function (cell, data) {
                 var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
 
-                if ( typeof rowopt != 'undefined' && typeof rowopt.style != 'undefined' ) {
+                if (typeof rowopt != 'undefined' && 
+                    typeof rowopt.style != 'undefined' &&
+                    rowopt.style.hidden !== true) {
                   cell.styles.halign = rowopt.style.align;
                   if (atOptions.styles.fillColor === 'inherit')
                     cell.styles.fillColor = rowopt.style.bcolor;
@@ -609,7 +636,8 @@
               atOptions.drawHeaderCell = function (cell, data) {
                 var colopt = teOptions.columns [data.column.dataKey];
 
-                if (colopt.style.hasOwnProperty("hidden") != true || colopt.style.hidden !== true)
+                if ((colopt.style.hasOwnProperty("hidden") != true || colopt.style.hidden !== true) &&
+                    colopt.rowIndex >= 0 )
                   return prepareAutoTableText (cell, data, colopt);
                 else
                   return false; // cell is hidden
@@ -619,11 +647,30 @@
             if (typeof atOptions.drawCell !== 'function') {
               atOptions.drawCell = function (cell, data) {
                 var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
-                return prepareAutoTableText (cell, data, rowopt);
+                if ( prepareAutoTableText (cell, data, rowopt) ) {
+
+                  teOptions.doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
+
+                  if (typeof rowopt != 'undefined' && typeof rowopt.kids != 'undefined' && rowopt.kids.length > 0) {
+
+                    var dh = cell.height / rowopt.rect.height;
+                    if ( dh > teOptions.dh || typeof teOptions.dh == 'undefined' )
+                      teOptions.dh = dh;
+                    teOptions.dw = cell.width / rowopt.rect.width;
+
+                    drawCellElements (cell, rowopt.kids, teOptions);
+                  }
+                  teOptions.doc.autoTableText(cell.text, cell.textPos.x, cell.textPos.y, {
+                      halign: cell.styles.halign,
+                      valign: cell.styles.valign
+                  });
+                }
+                return false;
               }
             }
 
             // collect header and data rows
+            var hcols = [];
             $hrows = $(this).find('thead').find(defaults.theadSelector);
             $hrows.each(function () {
               colKey = 0;
@@ -633,10 +680,26 @@
                         var obj = getCellStyles (cell);
                         obj.title = parseString(cell, row, col);
                         obj.key = colKey++;
-                        teOptions.columns.push(obj);
+                        obj.rowIndex = rowIndex;
+                        hcols.push(obj);
                       });
               rowIndex++;
             });
+
+            if (rowIndex > 0) {
+              // iterate through last row
+              $.each(hcols, function () {
+                if (this.rowIndex == rowIndex-1) {
+                  if (rowIndex > 1 && this.rect == null)
+                    obj = FindColObject (hcols, this.key, rowIndex-2);
+                  else
+                    obj = this;
+
+                  if (obj != null)
+                    teOptions.columns.push(obj);
+                }
+              });
+            }
 
             var rowCount = 0;
             $rows = $(this).find('tbody').find(defaults.tbodySelector);
@@ -657,8 +720,10 @@
                           };
                           teOptions.columns.push(obj);
                         }
-                        if (cell !== null) {
-                          teOptions.rowoptions [rowCount + ":" + colKey++] = getCellStyles (cell);
+                        if (typeof cell !== 'undefined' && cell != null) {
+                          var obj = getCellStyles (cell);
+                          obj.kids = $(cell).children();
+                          teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
                         }
                         else {
                           var obj = $.extend(true, {}, teOptions.rowoptions [rowCount + ":" + (colKey-1)]);
@@ -700,6 +765,17 @@
         }
       }
 
+      function FindColObject (objects, colIndex, rowIndex) {
+        var result = null;
+        $.each(objects, function () {
+          if (this.rowIndex == rowIndex && this.key == colIndex) {
+            result = this;
+            return false;
+          }
+        });
+        return result;
+      }
+
       function ForEachVisibleCell(tableRow, selector, rowIndex, rowCount, cellcallback) {
         if ($.inArray(rowIndex, defaults.ignoreRow) == -1 &&
             $.inArray(rowIndex-rowCount, defaults.ignoreRow) == -1) {
@@ -712,6 +788,7 @@
           }).find(selector);
 
           var rowColspan = 0;
+          var rowColIndex = 0;
 
           $row.each(function (colIndex) {
             if ($(this).data("tableexport-display") == 'always' ||
@@ -734,6 +811,7 @@
                       }
                     }
                   }
+                  rowColIndex = colIndex;
 
                   if ($(this).is("[colspan]")) {
                     Colspan = parseInt($(this).attr('colspan'));
@@ -766,6 +844,15 @@
               }
             }
           });
+          // handle rowspans from previous rows
+          if (typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0) {
+            for (c = 0; c <= rowspans[rowIndex].length; c++) {
+              if (typeof rowspans[rowIndex][c] != 'undefined') {
+                cellcallback(null, rowIndex, c);
+                delete rowspans[rowIndex][c];
+              }
+            }
+          }
         }
       }
 
@@ -817,14 +904,7 @@
           cell.textPos.x = textPosX;
 
           if ( typeof cellopt != 'undefined' && cellopt.rowspan > 1 )
-          {
-            if ( cell.styles.valign === 'middle' )
-              cell.textPos.y = cell.textPos.y + (cell.height * (cellopt.rowspan - 1)) / 2;
-            else if ( cell.styles.valign === 'bottom' )
-              cell.textPos.y += (cellopt.rowspan - 1) * cell.height;
-
             cell.height = cell.height * cellopt.rowspan;
-          }
 
           // fix jsPDF's calculation of text position
           if ( cell.styles.valign === 'middle' || cell.styles.valign === 'bottom' ) {
@@ -837,6 +917,32 @@
         }
         else
           return false; // cell is hidden (colspan = -1), don't draw it
+      }
+
+      function drawCellElements (cell, elements, teOptions) {
+        elements.each(function () {
+          var kids = $(this).children();
+
+          if ( $(this).is("div") ) {
+            var bcolor = rgb2array(getStyle(this, 'background-color'), [255, 255, 255]);
+            var lcolor = rgb2array(getStyle(this, 'border-top-color'), [0, 0, 0]);
+            var lwidth = getPropertyUnitValue(this, 'border-top-width', defaults.jspdf.unit);
+
+            var r = this.getBoundingClientRect();
+            var ux = this.offsetLeft * teOptions.dw;
+            var uy = this.offsetTop * teOptions.dh;
+            var uw = r.width * teOptions.dw;
+            var uh = r.height * teOptions.dh;
+
+            teOptions.doc.setDrawColor.apply (undefined, lcolor);
+            teOptions.doc.setFillColor.apply (undefined, bcolor);
+            teOptions.doc.setLineWidth (lwidth);
+            teOptions.doc.rect(cell.x + ux, cell.y + uy, uw, uh, lwidth ? "FD" : "F");
+          }
+
+          if (typeof kids != 'undefined' && kids.length > 0)
+            drawCellElements (cell, kids, teOptions);
+        });
       }
 
       function escapeRegExp(string) {
@@ -885,7 +991,7 @@
         if (cell != null) {
           var $cell = $(cell);
           var htmlData;
-          
+
           if ($cell[0].hasAttribute("data-tableexport-value"))
             htmlData = $cell.data("tableexport-value");
           else
@@ -968,7 +1074,8 @@
           f += fs;
         if (f == '')
           f = 'normal';
-        return {
+
+        var result = {
           style: {
             align: a,
             bcolor: rgb2array(getStyle(cell, 'background-color'), [255, 255, 255]),
@@ -978,6 +1085,16 @@
           colspan: (parseInt($(cell).attr('colspan')) || 0),
           rowspan: (parseInt($(cell).attr('rowspan')) || 0)
         };
+
+        if (cell !== null) {
+          var r = cell.getBoundingClientRect();
+          result.rect = {
+            width: r.width,
+            height: r.height
+          };
+        }
+
+        return result;
       }
 
       // get computed style property
@@ -997,27 +1114,31 @@
         return "";
       }
 
-      function getPropertyUnitValue(target, prop, unit) {
+      function getUnitValue(parent, value, unit) {
         var baseline = 100;  // any number serves
 
+        var temp = document.createElement("div");  // create temporary element
+        temp.style.overflow = "hidden";  // in case baseline is set too low
+        temp.style.visibility = "hidden";  // no need to show it
+
+        parent.appendChild(temp); // insert it into the parent for em, ex and %
+
+        temp.style.width = baseline + unit;
+        var factor = baseline / temp.offsetWidth;
+
+        parent.removeChild(temp);  // clean up
+
+        return (value * factor);
+      }
+
+      function getPropertyUnitValue(target, prop, unit) {
         var value = getStyle(target, prop);  // get the computed style value
 
         var numeric = value.match(/\d+/);  // get the numeric component
         if (numeric !== null) {
           numeric = numeric[0];  // get the string
 
-          var temp = document.createElement("div");  // create temporary element
-          temp.style.overflow = "hidden";  // in case baseline is set too low
-          temp.style.visibility = "hidden";  // no need to show it
-
-          target.parentElement.appendChild(temp); // insert it into the parent for em, ex and %
-
-          temp.style.width = baseline + unit;
-          var factor = baseline / temp.offsetWidth;
-
-          target.parentElement.removeChild(temp);  // clean up
-
-          return (numeric * factor);
+          return getUnitValue (target.parentElement, numeric, unit);
         }
         return 0;
       }
