@@ -6,7 +6,7 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
-  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.src.js"></script>
   <script type="text/javascript" src="../libs/html2canvas/html2canvas.min.js"></script>
   <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
@@ -16,6 +16,21 @@
       font-weight: normal;
     }
 
+    .tdrect {
+      border:1px solid #d0d0d0;
+      background-color:white;
+      height:1em;
+      width:10em;
+      padding:0px;
+    }
+
+    .tdbar {
+      background-color:#d0d0d0;
+      height:0.8em;
+      margin:0;
+      width:0%;
+    }
+    
     .table-striped {
       background-color: white;
     }
@@ -135,13 +150,34 @@
                                                lineColor: 200,
                                                lineWidth: 0.1},
                                       tableWidth: 'auto'}}});">
-            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: inherited color styles)</a></li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: inherited color styles I)</a></li>
+      <li><a href="#" onClick="doExport('#excelstyles',
+                      {type: 'pdf',
+                        jspdf: {orientation: 'p',
+                          margins: {right: 20, left: 20, top: 30, bottom: 30},
+                          autotable: {styles: {fillColor: 'inherit', 
+                                               textColor: 'inherit',
+                                               fontStyle: 'inherit'},
+                                      tableWidth: 'wrap'}}});">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: inherited color styles II)</a></li>
       <li><a href="#" onClick="doExport('table',
                       {type: 'pdf',
                         jspdf: {orientation: 'p',
                           margins: {right: 20, left: 20, top: 30, bottom: 30},
                           autotable: {tableWidth: 'wrap'}}});">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: multiple tables)</a></li>
+      <li><a href="#" onClick="doExport('#mixspans',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: colspan + rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue47',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable issue47: colspan + rowspan))</a></li>
+      <li><a href="#" onClick="doExport('#colalignment',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable: different col alignment)</a></li>
       <li><a href="#" onClick="doExport('#alignments',
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
@@ -256,7 +292,13 @@
                       {type: 'pdf',
                        jspdf: {format: 'bestfit',
                                autotable: {tableWidth: 'wrap'}}});">
-            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (issue53: complex table thead rowspan colspan)</a></li>
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (issue53: Complex table thead rowspan colspan)</a></li>
+      <li><a href="#" 
+             onClick="doExport('#issue51lb',
+                      {type: 'pdf',
+                       jspdf: {format: 'bestfit',
+                               autotable: {tableWidth: 'wrap'}}});">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (issue51(LB): Extra Table Being Rendered, top row not being rendered correctly)</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
@@ -477,6 +519,32 @@
       </tr>
       </tbody>
     </table>
+    <h3>Table with different col alignment</h3>
+    <table id="colalignment">
+      <thead>
+        <tr>
+          <td width="30" aria-hidden="true">&nbsp;</td>
+          <th style="text-align: left; width: 150px" scope="col" tabindex="0">Description</th>
+          <th style="text-align: right; width: 100px" scope="col" tabindex="0">Value 1</th>
+          <th style="text-align: right; width: 100px" scope="col" tabindex="0">Value 2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td width="30" aria-hidden="true">&nbsp;</td>
+          <td style="text-align: left" tabindex="0">Not available</td>
+          <td style="text-align: right" tabindex="0">0</td>
+          <td style="text-align: right" tabindex="0">0</td>
+        </tr>
+        <tr>
+          <td width="30" aria-hidden="true">&nbsp;</td>
+          <td>&nbsp;</td>
+          <td style="text-align: right" tabindex="0">0</td>
+          <td style="text-align: right" tabindex="0">0</td>
+        </tr>
+      </tbody>
+    </table>
+    </h3>
     <h3>Table for column alignment tests</h3>
     <table id="alignments" class="table-striped">
       <thead>
@@ -555,7 +623,7 @@
       </tr>
       <tr>
         <td style="border: 1px solid #000000;">D</td>
-        <td style="border: 1px solid #000000;">E</td>
+        <td><div class="tdrect"><div class="tdbar" style="width:70%; background-color:yellow;"></div></div></td>
         <td style="border: 1px solid #000000;">F</td>
       </tr>
       <tr>
@@ -774,6 +842,58 @@
       </tr>
       </tbody>
     </table>
+    <h3>Issue 51(LB): Extra Table Being Rendered, top row not being rendered correctly</h3>
+    <table id="issue51lb">
+      <thead>
+        <tr>
+        <th rowspan="2">ethn1</th>
+        <th colspan="2">no1</th>
+        <th colspan="2">yes1</th>
+        <th rowspan="2">Totals1</th>
+        </tr>
+        <tr>
+        <th colspan="1">no2</th>
+        <th colspan="1">yes2</th>
+        <th colspan="1">no2</th>
+        <th colspan="1">yes2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+        <td rowspan="1">black</td>
+        <td>243</td>
+        <td>131</td>
+        <td>74</td>
+        <td>56</td>
+        <td>504</td>
+        </tr>
+        <tr>
+        <td rowspan="1">hisp</td>
+        <td>285</td>
+        <td>90</td>
+        <td>209</td>
+        <td>96</td>
+        <td>680</td>
+        </tr>
+        <tr>
+        <td rowspan="1">other</td>
+        <td>1,360</td>
+        <td>337</td>
+        <td>1,125</td>
+        <td>354</td>
+        <td>3,176</td>
+        </tr>
+        <tr>
+        <td colspan="1">Totals</td>
+        <td>1,888</td>
+        <td>558</td>
+        <td>1,408</td>
+        <td>506</td>
+        <td>4,360</td>
+        </tr>
+      </tbody>
+    </table>
+    
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">
