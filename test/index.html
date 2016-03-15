@@ -113,6 +113,8 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT</a></li>
       <li><a href="#" onClick="doExport('#invisible', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (hidden table)</a></li>
       <li><a href="#" onClick="doExport('#issue45', {type: 'txt', onCellHtmlData: DoOnCellHtmlData});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (onCellHtmlData)</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'txt', ignoreColumn: [1,3]});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (ignoreColumn by column index)</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'txt', ignoreColumn: ['flag','population']});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (ignoreColumn by column name)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: [2,3]});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
@@ -899,13 +901,13 @@
     <table id="countries" class="table-striped">
       <thead>
       <tr>
-        <th>Rank</th>
-        <th>Flag</th>
-        <th>Country</th>
-        <th>Population</th>
-        <th>Date</th>
-        <th>% of world</th>
-        <th>Language</th>
+        <th data-field="rank">Rank</th>
+        <th data-field="flag">Flag</th>
+        <th data-field="country">Country</th>
+        <th data-field="population">Population</th>
+        <th data-field="date">Date</th>
+        <th data-field="world">% of world</th>
+        <th data-field="language">Language</th>
       </tr>
       </thead>
       <tbody>

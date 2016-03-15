@@ -74,8 +74,11 @@
       var rowIndex = 0;
       var rowspans = [];
       var trData = '';
+      var colNames = [];
 
       $.extend(true, defaults, options);
+      
+      colNames = GetColumnNames (el);
 
       if (defaults.type == 'csv' || defaults.type == 'txt') {
 
@@ -313,6 +316,9 @@
 
         $tables.each(function(){
           rowIndex = 0;
+
+          colNames = GetColumnNames (this);
+
           docData += '<table><thead>';
           // Header
           $hrows = $(this).find('thead').first().find(defaults.theadSelector);
@@ -535,6 +541,8 @@
           }).each(function () {
             var colKey;
             var rowIndex = 0;
+
+            colNames = GetColumnNames (this);
 
             teOptions.columns = [];
             teOptions.rows = [];
@@ -776,6 +784,32 @@
         return result;
       }
 
+      function GetColumnNames (table) {
+        var result = [];
+        $(table).find('thead').first().find('th').each(function(index, el) {
+          if ($(el).attr("data-field") !== undefined)
+            result[index] = $(el).attr("data-field");
+        });
+        return result;
+      }
+
+      function isColumnIgnored($row, colIndex) {
+        var result = false;
+        if (defaults.ignoreColumn.length > 0) {
+          if (typeof defaults.ignoreColumn[0] == 'string') {
+            if (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined')
+              if ($.inArray(colNames[colIndex], defaults.ignoreColumn) != -1)
+                result = true;
+          }
+          else if (typeof defaults.ignoreColumn[0] == 'number') {
+            if ($.inArray(colIndex, defaults.ignoreColumn) != -1 ||
+                $.inArray(colIndex-$row.length, defaults.ignoreColumn) != -1)
+              result = true;
+          }
+        }
+        return result;
+      }
+
       function ForEachVisibleCell(tableRow, selector, rowIndex, rowCount, cellcallback) {
         if ($.inArray(rowIndex, defaults.ignoreRow) == -1 &&
             $.inArray(rowIndex-rowCount, defaults.ignoreRow) == -1) {
@@ -795,8 +829,7 @@
                 ($(this).css('display') != 'none' &&
                  $(this).css('visibility') != 'hidden' &&
                  $(this).data("tableexport-display") != 'none')) {
-              if ($.inArray(colIndex, defaults.ignoreColumn) == -1 &&
-                  $.inArray(colIndex-$row.length, defaults.ignoreColumn) == -1) {
+              if (isColumnIgnored($row, colIndex) == false) {
                 if (typeof (cellcallback) === "function") {
                   var c, Colspan = 0;
                   var r, Rowspan = 0;
