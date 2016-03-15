@@ -77,6 +77,13 @@
 
       $.extend(true, defaults, options);
 
+      var headers = {};
+      $('thead').find('th').each(function(index, el){
+        if ($(el).attr("data-field") !== undefined) {
+          headers[index] = $(el).attr("data-field");
+        }
+      });
+
       if (defaults.type == 'csv' || defaults.type == 'txt') {
 
         var csvData = "";
@@ -88,7 +95,7 @@
           $rows = $(el).find(tgroup).first().find(tselector);
           $rows.each(function () {
             trData = "";
-            ForEachVisibleCell(this, rowselector, rowIndex, length + $rows.length,
+            ForEachVisibleCell(this, headers, rowselector, rowIndex, length + $rows.length,
                     function (cell, row, col) {
                       trData += csvString(cell, row, col) + defaults.csvSeparator;
                     });
@@ -139,7 +146,7 @@
         var tdData = "INSERT INTO `" + defaults.tableName + "` (";
         $hrows = $(el).find('thead').first().find(defaults.theadSelector);
         $hrows.each(function () {
-          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
+          ForEachVisibleCell(this, headers, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     tdData += "'" + parseString(cell, row, col) + "',";
                   });
@@ -152,7 +159,7 @@
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
         $rows.each(function () {
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+          ForEachVisibleCell(this, headers, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     trData += "'" + parseString(cell, row, col) + "',";
                   });
@@ -194,7 +201,7 @@
         $hrows.each(function () {
           var jsonArrayTd = [];
 
-          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
+          ForEachVisibleCell(this, headers, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     jsonArrayTd.push(parseString(cell, row, col));
                   });
@@ -206,7 +213,7 @@
         $rows.each(function () {
           var jsonArrayTd = [];
 
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+          ForEachVisibleCell(this, headers, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     jsonArrayTd.push(parseString(cell, row, col));
                   });
@@ -251,7 +258,7 @@
         $hrows = $(el).find('thead').first().find(defaults.theadSelector);
         $hrows.each(function () {
 
-          ForEachVisibleCell(this, 'th,td', rowIndex, $rows.length,
+          ForEachVisibleCell(this, headers, 'th,td', rowIndex, $rows.length,
                   function (cell, row, col) {
                     xml += "<field>" + parseString(cell, row, col) + "</field>";
                   });
@@ -265,7 +272,7 @@
         $rows.each(function () {
           var colCount = 1;
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+          ForEachVisibleCell(this, headers, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     trData += "<column-" + colCount + ">" + parseString(cell, row, col) + "</column-" + colCount + ">";
                     colCount++;
@@ -318,7 +325,7 @@
           $hrows = $(this).find('thead').first().find(defaults.theadSelector);
           $hrows.each(function() {
             trData = "";
-            ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
+            ForEachVisibleCell(this, headers, 'th,td', rowIndex, $hrows.length,
               function(cell, row, col) {
                 if (cell != null) {
                   trData += '<th style="';
@@ -344,7 +351,7 @@
           $rows = $(this).find('tbody').first().find(defaults.tbodySelector);
           $rows.each(function() {
             trData = "";
-            ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+            ForEachVisibleCell(this, headers, 'td', rowIndex, $hrows.length + $rows.length,
               function(cell, row, col) {
                 if (cell != null) {
                   trData += '<td style="';
@@ -675,7 +682,7 @@
             $hrows.each(function () {
               colKey = 0;
 
-              ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
+              ForEachVisibleCell(this, headers, 'th,td', rowIndex, $hrows.length,
                       function (cell, row, col) {
                         var obj = getCellStyles (cell);
                         obj.title = parseString(cell, row, col);
@@ -707,7 +714,7 @@
               var rowData = [];
               colKey = 0;
 
-              ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+              ForEachVisibleCell(this, headers, 'td', rowIndex, $hrows.length + $rows.length,
                       function (cell, row, col) {
                         if (typeof teOptions.columns[colKey] === 'undefined') {
                           // jsPDF-Autotable needs columns. Thus define hidden ones for tables without thead
@@ -776,7 +783,19 @@
         return result;
       }
 
-      function ForEachVisibleCell(tableRow, selector, rowIndex, rowCount, cellcallback) {
+      function isColumnIgnoredByFieldName($row, colIndex, headers) {
+        return typeof defaults.ignoreColumn[0] == 'string' &&
+            $.inArray(headers[colIndex], defaults.ignoreColumn) == -1 &&
+            $.inArray(headers[colIndex-$row.length], defaults.ignoreColumn) == -1;
+      }
+
+      function isColumnIgnoredByIndex($row, colIndex) {
+        return typeof defaults.ignoreColumn[0] == 'number' &&
+            $.inArray(colIndex, defaults.ignoreColumn) == -1 &&
+            $.inArray(colIndex-$row.length, defaults.ignoreColumn) == -1;
+      }
+
+      function ForEachVisibleCell(tableRow, headers, selector, rowIndex, rowCount, cellcallback) {
         if ($.inArray(rowIndex, defaults.ignoreRow) == -1 &&
             $.inArray(rowIndex-rowCount, defaults.ignoreRow) == -1) {
 
@@ -795,8 +814,9 @@
                 ($(this).css('display') != 'none' &&
                  $(this).css('visibility') != 'hidden' &&
                  $(this).data("tableexport-display") != 'none')) {
-              if ($.inArray(colIndex, defaults.ignoreColumn) == -1 &&
-                  $.inArray(colIndex-$row.length, defaults.ignoreColumn) == -1) {
+              if (defaults.ignoreColumn.length == 0 ||
+                  isColumnIgnoredByFieldName($row, colIndex, headers) ||
+                  isColumnIgnoredByIndex($row, colIndex)) {
                 if (typeof (cellcallback) === "function") {
                   var c, Colspan = 0;
                   var r, Rowspan = 0;
