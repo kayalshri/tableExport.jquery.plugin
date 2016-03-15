@@ -815,8 +815,8 @@
                  $(this).css('visibility') != 'hidden' &&
                  $(this).data("tableexport-display") != 'none')) {
               if (defaults.ignoreColumn.length == 0 ||
-                  (isColumnNotIgnoredByFieldName($row, colIndex, headers) &&
-                  isColumnNotIgnoredByIndex($row, colIndex))) {
+                  isColumnNotIgnoredByFieldName($row, colIndex, headers) ||
+                  isColumnNotIgnoredByIndex($row, colIndex)) {
                 if (typeof (cellcallback) === "function") {
                   var c, Colspan = 0;
                   var r, Rowspan = 0;
