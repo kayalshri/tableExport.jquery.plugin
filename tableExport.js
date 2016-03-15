@@ -783,13 +783,13 @@
         return result;
       }
 
-      function isColumnIgnoredByFieldName($row, colIndex, headers) {
+      function isColumnNotIgnoredByFieldName($row, colIndex, headers) {
         return typeof defaults.ignoreColumn[0] == 'string' &&
             $.inArray(headers[colIndex], defaults.ignoreColumn) == -1 &&
             $.inArray(headers[colIndex-$row.length], defaults.ignoreColumn) == -1;
       }
 
-      function isColumnIgnoredByIndex($row, colIndex) {
+      function isColumnNotIgnoredByIndex($row, colIndex) {
         return typeof defaults.ignoreColumn[0] == 'number' &&
             $.inArray(colIndex, defaults.ignoreColumn) == -1 &&
             $.inArray(colIndex-$row.length, defaults.ignoreColumn) == -1;
@@ -815,8 +815,8 @@
                  $(this).css('visibility') != 'hidden' &&
                  $(this).data("tableexport-display") != 'none')) {
               if (defaults.ignoreColumn.length == 0 ||
-                  isColumnIgnoredByFieldName($row, colIndex, headers) ||
-                  isColumnIgnoredByIndex($row, colIndex)) {
+                  (isColumnNotIgnoredByFieldName($row, colIndex, headers) &&
+                  isColumnNotIgnoredByIndex($row, colIndex))) {
                 if (typeof (cellcallback) === "function") {
                   var c, Colspan = 0;
                   var r, Rowspan = 0;
