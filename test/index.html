@@ -6,7 +6,7 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
-  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.src.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
   <script type="text/javascript" src="../libs/html2canvas/html2canvas.min.js"></script>
   <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
@@ -131,7 +131,8 @@
                                                                                       'border-right-color', 'border-right-style', 'border-right-width',
                                                                                       'font-family', 'font-size', 'font-weight']
                                                         });"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
-      <li><a href="#" onClick="doExport('#issue53', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53: complex table thead rowspan colspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue53a', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 I: complex table thead rowspan colspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue53b', {type: 'excel', ignoreColumn:[3,4]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 II: complex table thead rowspan colspan)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -290,7 +291,7 @@
                                           });">
             <img src='icons/pdf.png' alt="PDF" style="width:24px">Testing Rowspan</a></li>
       <li><a href="#" 
-             onClick="doExport('#issue53',
+             onClick="doExport('#issue53a',
                       {type: 'pdf',
                        jspdf: {format: 'bestfit',
                                autotable: {tableWidth: 'wrap'}}});">
@@ -794,8 +795,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 53: complex table thead rowspan colspan</h3>
-    <table id="issue53">
+    <h3>Issue 53 I: complex table thead rowspan colspan</h3>
+    <table id="issue53a">
       <thead>
         <tr>
           <th rowspan="2">Name</th><th colspan="2">detail1</th>
@@ -822,6 +823,59 @@
         </tr>
       </tbody>
     </table>    
+    <h3>Issue 53 II: complex table thead rowspan colspan</h3>
+    <table id="issue53b">
+      <tbody>
+        <tr>
+          <td>col1</td>
+          <td>col2</td>
+          <td>col3</td>
+          <td>col4</td>
+          <td>col5</td>
+          <td>col8</td>
+          <td>col7</td>
+          <td>col8</td>
+        </tr>
+        <tr>
+          <td>x main1</td>
+          <td>x main2</td>
+          <td>x main3</td>
+          <td>x main4</td>
+          <td>x sub1-1</td>
+          <td>x sub1-2</td>
+          <td>x sub1-3</td>
+          <td>x sub1-4</td>
+        </tr>
+        <tr>
+          <td rowspan="4">y main1</td>
+          <td rowspan="4">y main2</td>
+          <td rowspan="4">y main3</td>
+          <td rowspan="4">y main4</td>
+          <td>y sub1-1</td>
+          <td>y sub1-2</td>
+          <td>y sub1-3</td>
+          <td>y sub1-4</td>
+        </tr>
+        <tr>
+          <td>y sub2-1</td>
+          <td>y sub2-2</td>
+          <td>y sub2-3</td>
+          <td>y sub2-4</td>
+        </tr>
+        <tr>
+          <td>y sub3-1</td>
+          <td>y sub3-2</td>
+          <td>y sub3-3</td>
+          <td>y sub3-4</td>
+        </tr>
+        <tr>
+          <td>y sub4-1</td>
+          <td>y sub4-2</td>
+          <td>y sub4-3</td>
+          <td>y sub4-4</td>
+        </tr>
+      </tbody>
+    </table>
     <h3>Issue 60: Export a data attribute instead of the TD content</h3>
     <table id="issue60" class="table-striped">
       <thead>
