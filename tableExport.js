@@ -207,23 +207,22 @@
         var jsonArray = [];
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
         $rows.each(function () {
-          var jsonArrayTd = [];
+          var jsonObjectTd = {};
 
           ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
-                    jsonArrayTd.push(parseString(cell, row, col));
+                    if (jsonHeaderArray.length)
+                      jsonObjectTd[jsonHeaderArray[jsonHeaderArray.length-1][col]] = parseString(cell, row, col);
+                    else
+                      jsonObjectTd[col] = parseString(cell, row, col);
                   });
-
-          if (jsonArrayTd.length > 0 && (jsonArrayTd.length != 1 || jsonArrayTd[0] != ""))
-            jsonArray.push(jsonArrayTd);
+          if ($.isEmptyObject(jsonObjectTd) == false)
+            jsonArray.push(jsonObjectTd);
 
           rowIndex++;
         });
 
-        var jsonExportArray = [];
-        jsonExportArray.push({header: jsonHeaderArray, data: jsonArray});
-
-        var sdata = JSON.stringify(jsonExportArray);
+        var sdata = JSON.stringify({header: jsonHeaderArray, data: jsonArray});
 
         if (defaults.consoleLog === true)
           console.log(sdata);
@@ -584,7 +583,7 @@
               atOptions.createdHeaderCell = function (cell, data) {
 
                 // jsPDF AutoTable plugin v2.0.14 fix: each cell needs its own styles object
-                cell.styles = Object.assign({}, data.row.styles);
+                cell.styles = $.extend({}, data.row.styles);
                 
                 if (typeof teOptions.columns [data.column.dataKey] != 'undefined') {
                   var col = teOptions.columns [data.column.dataKey];
