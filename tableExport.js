@@ -32,7 +32,8 @@ THE SOFTWARE.*/
 						pdfLeftMargin:20,
 						escape:'true',
 						htmlContent:'false',
-						consoleLog:'false'
+						consoleLog:'false',
+						hiddenColumn: false
 				};
                 
 				var options = $.extend(defaults, options);
@@ -45,7 +46,7 @@ THE SOFTWARE.*/
 					$(el).find('thead').find('tr').each(function() {
 					tdData += "\n";					
 						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									tdData += '"' + parseString($(this)) + '"' + defaults.separator;									
 								}
@@ -60,7 +61,7 @@ THE SOFTWARE.*/
 					$(el).find('tbody').find('tr').each(function() {
 					tdData += "\n";
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									tdData += '"'+ parseString($(this)) + '"'+ defaults.separator;
 								}
@@ -83,7 +84,7 @@ THE SOFTWARE.*/
 					$(el).find('thead').find('tr').each(function() {
 					
 						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									tdData += '`' + parseString($(this)) + '`,' ;									
 								}
@@ -98,7 +99,7 @@ THE SOFTWARE.*/
 					$(el).find('tbody').find('tr').each(function() {
 					tdData += "(";
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									tdData += '"'+ parseString($(this)) + '",';
 								}
@@ -130,7 +131,7 @@ THE SOFTWARE.*/
 						var jsonArrayTd = [];
 					
 						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									jsonArrayTd.push(parseString($(this)));									
 								}
@@ -146,7 +147,7 @@ THE SOFTWARE.*/
 						var jsonArrayTd = [];
 					
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									jsonArrayTd.push(parseString($(this)));									
 								}
@@ -177,7 +178,7 @@ THE SOFTWARE.*/
 					// Header
 					$(el).find('thead').find('tr').each(function() {
 						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){					
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									xml += "<field>" + parseString($(this)) + "</field>";
 								}
@@ -192,7 +193,7 @@ THE SOFTWARE.*/
 						xml += '<row id="'+rowCount+'">';
 						var colCount=0;
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){	
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									xml += "<column-"+colCount+">"+parseString($(this))+"</column-"+colCount+">";
 								}
@@ -218,7 +219,7 @@ THE SOFTWARE.*/
 					$(el).find('thead').find('tr').each(function() {
 						excel += "<tr>";
 						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){					
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									excel += "<td>" + parseString($(this))+ "</td>";
 								}
@@ -235,7 +236,7 @@ THE SOFTWARE.*/
 						excel += "<tr>";
 						var colCount=0;
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){	
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									excel += "<td>"+parseString($(this))+"</td>";
 								}
@@ -296,7 +297,7 @@ THE SOFTWARE.*/
 					var startColPosition=defaults.pdfLeftMargin;
 					$(el).find('thead').find('tr').each(function() {
 						$(this).filter(':visible').find('th').each(function(index,data) {
-							if ($(this).css('display') != 'none'){					
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									var colPosition = startColPosition+ (index * 50);									
 									doc.text(colPosition,20, parseString($(this)));
@@ -319,7 +320,7 @@ THE SOFTWARE.*/
 					rowPosition=(startRowPosition + (rowCalc * 10)) - ((page -1) * 280);
 						
 						$(this).filter(':visible').find('td').each(function(index,data) {
-							if ($(this).css('display') != 'none'){	
+							if ($(this).css('display') != 'none' || options.hiddenColumn == true){	
 								if(defaults.ignoreColumn.indexOf(index) == -1){
 									var colPosition = startColPosition+ (index * 50);									
 									doc.text(colPosition,rowPosition, parseString($(this)));
