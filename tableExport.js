@@ -1,7 +1,7 @@
 /*
  tableExport.jquery.plugin
 
- Copyright (c) 2015 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
+ Copyright (c) 2015,2016 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
 
  Original work Copyright (c) 2014 Giri Raj, https://github.com/kayalshri/
  Licensed under the MIT License, http://opensource.org/licenses/mit-license
@@ -17,11 +17,12 @@
         csvUseBOM: true,
         displayTableName: false,
         escape: false,
-        excelstyles: ['border-bottom', 'border-top', 'border-left', 'border-right'],
+        excelstyles: [], // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
         fileName: 'tableExport',
         htmlContent: false,
         ignoreColumn: [],
         ignoreRow:[],
+        jsonScope: 'data', // head, data, all
         jspdf: {orientation: 'p',
                 unit: 'pt',
                 format: 'a4', // jspdf page format or 'bestfit' for autmatic paper format selection
@@ -77,7 +78,7 @@
       var colNames = [];
 
       $.extend(true, defaults, options);
-      
+
       colNames = GetColumnNames (el);
 
       if (defaults.type == 'csv' || defaults.type == 'txt') {
@@ -222,7 +223,14 @@
           rowIndex++;
         });
 
-        var sdata = JSON.stringify({header: jsonHeaderArray, data: jsonArray});
+        var sdata = "";
+
+        if (defaults.jsonScope == 'head')
+          sdata = JSON.stringify(jsonHeaderArray);
+        else if (defaults.jsonScope == 'data')
+          sdata = JSON.stringify(jsonArray);
+        else // all
+          sdata = JSON.stringify({header: jsonHeaderArray, data: jsonArray});
 
         if (defaults.consoleLog === true)
           console.log(sdata);
@@ -625,7 +633,7 @@
               atOptions.createdCell = function (cell, data) {
                 var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
 
-                if (typeof rowopt != 'undefined' && 
+                if (typeof rowopt != 'undefined' &&
                     typeof rowopt.style != 'undefined' &&
                     rowopt.style.hidden !== true) {
                   cell.styles.halign = rowopt.style.align;
@@ -677,10 +685,12 @@
             }
 
             // collect header and data rows
-            var hcols = [];
+            teOptions.headerrows = [];
             $hrows = $(this).find('thead').find(defaults.theadSelector);
             $hrows.each(function () {
               colKey = 0;
+
+              teOptions.headerrows[rowIndex] = [];
 
               ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                       function (cell, row, col) {
@@ -688,23 +698,21 @@
                         obj.title = parseString(cell, row, col);
                         obj.key = colKey++;
                         obj.rowIndex = rowIndex;
-                        hcols.push(obj);
+                        teOptions.headerrows[rowIndex].push(obj);
                       });
               rowIndex++;
             });
 
             if (rowIndex > 0) {
               // iterate through last row
-              $.each(hcols, function () {
-                if (this.rowIndex == rowIndex-1) {
-                  if (rowIndex > 1 && this.rect == null)
-                    obj = FindColObject (hcols, this.key, rowIndex-2);
-                  else
-                    obj = this;
+              $.each(teOptions.headerrows[rowIndex-1], function () {
+                if (rowIndex > 1 && this.rect == null)
+                  obj = teOptions.headerrows[rowIndex-2][this.key];
+                else
+                  obj = this;
 
-                  if (obj != null)
-                    teOptions.columns.push(obj);
-                }
+                if (obj != null)
+                  teOptions.columns.push(obj);
               });
             }
 
@@ -765,8 +773,12 @@
 
           jsPdfOutput(teOptions.doc);
 
-          teOptions.columns.length = 0;
-          teOptions.rows.length = 0;
+          if (typeof teOptions.headerrows != 'undefined')
+            teOptions.headerrows.length = 0;
+          if (typeof teOptions.columns != 'undefined')
+            teOptions.columns.length = 0;
+          if (typeof teOptions.rows != 'undefined')
+            teOptions.rows.length = 0;
           delete teOptions.doc;
           teOptions.doc = null;
         }

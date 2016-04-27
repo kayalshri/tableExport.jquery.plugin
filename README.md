@@ -102,6 +102,7 @@ fileName: 'tableExport'
 htmlContent: false
 ignoreColumn: []
 ignoreRow: []
+jsonScope: 'data'
 jspdf: orientation: 'p'
        unit:'pt'
        format: 'a4'
