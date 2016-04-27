@@ -44,7 +44,7 @@
       Table.innerHTML = T.join ("");
 
       $('#export').click(function() {
-        $('#grid').tableExport({type:'excel', excelstyles:[]});
+        $('#grid').tableExport({type:'excel', excelstyles:['border-bottom', 'border-top', 'border-left', 'border-right']});
       });
     });
 
