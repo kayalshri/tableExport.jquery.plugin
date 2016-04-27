@@ -7,24 +7,6 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../tableExport.js"></script>
-  <script type="text/javascript">
-    function doExport(selector, params) {
-      var options = {
-        DoOnCellHtmlData(cell, row, col, data) {
-          var result = "";
-          if (data !== "") {
-            var html = $.parseHTML(data);
-            $.each(html, function() {
-              if (typeof $(this).html() === 'undefined') result += $(this).text();
-              else if ($(this).is("input")) result += $('#' + $(this).attr('id')).val();
-              else if (!$(this).hasClass('no_export')) result += $(this).html();
-            });
-          }
-          return result;
-        }
-      };
-    }
-  </script>
   <style type="text/css">
     <!-- h3 {
       font-size: 1em;
