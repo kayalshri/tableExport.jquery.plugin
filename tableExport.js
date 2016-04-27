@@ -334,17 +334,25 @@
             ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
               function(cell, row, col) {
                 if (cell != null) {
-                  trData += '<th style="';
+                  var thstyle = '';
+                  trData += '<th';
                   for (var styles in defaults.excelstyles) {
                     if (defaults.excelstyles.hasOwnProperty(styles)) {
-                      trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
+                      var thcss = $(cell).css(defaults.excelstyles[styles]);
+                      if (thcss != '' && thcss !='0px none rgb(0, 0, 0)') {
+                        if (thstyle == '')
+                          thstyle = 'style="';
+                        thstyle += defaults.excelstyles[styles] + ':' + thcss + ';';
+                      }
                     }
                   }
+                  if (thstyle != '' )
+                    trData += ' ' + thstyle + '"';
                   if ($(cell).is("[colspan]"))
-                    trData += '" colspan="' + $(cell).attr('colspan');
+                    trData += ' colspan="' + $(cell).attr('colspan') + '"';
                   if ($(cell).is("[rowspan]"))
-                    trData += '" rowspan="' + $(cell).attr('rowspan');
-                  trData += '">' + parseString(cell, row, col) + '</th>';
+                    trData += ' rowspan="' + $(cell).attr('rowspan') + '"';
+                  trData += '>' + parseString(cell, row, col) + '</th>';
                 }
               });
             if (trData.length > 0)
@@ -360,17 +368,25 @@
             ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
               function(cell, row, col) {
                 if (cell != null) {
-                  trData += '<td style="';
+                  var tdstyle = '';
+                  trData += '<td';
                   for (var styles in defaults.excelstyles) {
                     if (defaults.excelstyles.hasOwnProperty(styles)) {
-                      trData += defaults.excelstyles[styles] + ': ' + $(cell).css(defaults.excelstyles[styles]) + ';';
+                      var tdcss = $(cell).css(defaults.excelstyles[styles]);
+                      if (tdcss != '' && tdcss !='0px none rgb(0, 0, 0)') {
+                        if (tdstyle == '')
+                          tdstyle = 'style="';
+                        tdstyle += defaults.excelstyles[styles] + ':' + tdcss + ';';
+                      }
                     }
                   }
+                  if (tdstyle != '' )
+                    trData += ' ' + tdstyle + '"';
                   if ($(cell).is("[colspan]"))
-                    trData += '" colspan="' + $(cell).attr('colspan');
+                    trData += ' colspan="' + $(cell).attr('colspan') + '"';
                   if ($(cell).is("[rowspan]"))
-                    trData += '" rowspan="' + $(cell).attr('rowspan');
-                  trData += '">' + parseString(cell, row, col) + '</td>';
+                    trData += ' rowspan="' + $(cell).attr('rowspan') + '"';
+                  trData += '>' + parseString(cell, row, col) + '</td>';
                 }
               });
             if (trData.length > 0)
@@ -592,7 +608,7 @@
 
                 // jsPDF AutoTable plugin v2.0.14 fix: each cell needs its own styles object
                 cell.styles = $.extend({}, data.row.styles);
-                
+
                 if (typeof teOptions.columns [data.column.dataKey] != 'undefined') {
                   var col = teOptions.columns [data.column.dataKey];
 
