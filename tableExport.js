@@ -22,7 +22,7 @@
         htmlContent: false,
         ignoreColumn: [],
         ignoreRow:[],
-        jsonScope: 'data', // head, data, all
+        jsonScope: 'all', // head, data, all
         jspdf: {orientation: 'p',
                 unit: 'pt',
                 format: 'a4', // jspdf page format or 'bestfit' for autmatic paper format selection
