@@ -210,12 +210,15 @@
         $rows.each(function () {
           var jsonObjectTd = {};
 
+          var colIndex = 0;
           ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
-                    if (jsonHeaderArray.length)
-                      jsonObjectTd[jsonHeaderArray[jsonHeaderArray.length-1][col]] = parseString(cell, row, col);
-                    else
-                      jsonObjectTd[col] = parseString(cell, row, col);
+                    if (jsonHeaderArray.length) {
+                      jsonObjectTd[jsonHeaderArray[jsonHeaderArray.length-1][colIndex]] = parseString(cell, row, col);
+                    } else {
+                      jsonObjectTd[colIndex] = parseString(cell, row, col);
+                    }
+                    colIndex++;
                   });
           if ($.isEmptyObject(jsonObjectTd) == false)
             jsonArray.push(jsonObjectTd);
