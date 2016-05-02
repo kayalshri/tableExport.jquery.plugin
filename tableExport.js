@@ -220,7 +220,9 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									excel += "<td>" + parseString($(this))+ "</td>";
+									colSpan = ($(this).prop('colSpan') > 0) ? $(this).prop('colSpan') : 1;
+									rowSpan = ($(this).prop('rowSpan') > 0) ? $(this).prop('rowSpan') : 1;
+									excel += "<td colSpan='"+colSpan+"' rowSpan='"+rowSpan+"'>" + parseString($(this))+ "</td>";
 								}
 							}
 						});	
@@ -250,7 +252,8 @@ THE SOFTWARE.*/
 					if(defaults.consoleLog == 'true'){
 						console.log(excel);
 					}
-					
+					var worksheetName = $(el).attr('data-name');
+					worksheetName = worksheetName != null && worksheetName != "" ? worksheetName : "worksheet";
 					var excelFile = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:"+defaults.type+"' xmlns='http://www.w3.org/TR/REC-html40'>";
 					excelFile += "<head>";
 					excelFile += "<!--[if gte mso 9]>";
@@ -259,7 +262,7 @@ THE SOFTWARE.*/
 					excelFile += "<x:ExcelWorksheets>";
 					excelFile += "<x:ExcelWorksheet>";
 					excelFile += "<x:Name>";
-					excelFile += "{worksheet}";
+					excelFile += worksheetName;
 					excelFile += "</x:Name>";
 					excelFile += "<x:WorksheetOptions>";
 					excelFile += "<x:DisplayGridlines/>";
