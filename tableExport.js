@@ -220,8 +220,10 @@ THE SOFTWARE.*/
 						$(this).filter(':visible').find('th').each(function(index,data) {
 							if ($(this).css('display') != 'none'){					
 								if(defaults.ignoreColumn.indexOf(index) == -1){
-									excel += "<td>" + parseString($(this))+ "</td>";
-								}
+									colSpan = ($(this).prop('colSpan') > 0) ? $(this).prop('colSpan') : 1;
+									rowSpan = ($(this).prop('rowSpan') > 0) ? $(this).prop('rowSpan') : 1;
+									excel += "<td colSpan='"+colSpan+"' rowSpan='"+rowSpan+"'>" + parseString($(this))+ "</td>";
+						        }
 							}
 						});	
 						excel += '</tr>';						
