@@ -69,6 +69,7 @@ $('#tableID').tableExport({type:'pdf',
                                    autotable: {styles: {fillColor: 'inherit', 
                                                         textColor: 'inherit'},
                                                tableWidth: 'auto'}
+                                  }
                           });
 ```
 
