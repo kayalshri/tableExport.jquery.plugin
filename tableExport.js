@@ -372,10 +372,21 @@
               function(cell, row, col) {
                 if (cell != null) {
                   var tdstyle = '';
+                  var tdcss = $(cell).data("tableexport-msonumberformat");
+
+                  if (typeof tdcss == 'undefined' && typeof defaults.onMsoNumberFormat === 'function')
+                    tdcss = defaults.onMsoNumberFormat(cell, row, col);
+
+                  if (typeof tdcss != 'undefined' && tdcss != '') {
+                    if (tdstyle == '')
+                      tdstyle = 'style="';
+                    tdstyle = 'style="mso-number-format:' + tdcss + ';';
+                  }
+
                   trData += '<td';
                   for (var styles in defaults.excelstyles) {
                     if (defaults.excelstyles.hasOwnProperty(styles)) {
-                      var tdcss = $(cell).css(defaults.excelstyles[styles]);
+                      tdcss = $(cell).css(defaults.excelstyles[styles]);
                       if (tdcss != '' && tdcss !='0px none rgb(0, 0, 0)') {
                         if (tdstyle == '')
                           tdstyle = 'style="';

@@ -89,6 +89,13 @@
       return result;
     }
 
+    function DoOnMsoNumberFormat(cell, row, col) {
+      var result = "";
+      if (row > 2 && col == 0)
+        result = '\\@';
+      return result;
+    }
+
   </script>
 </head>
 <body>
@@ -133,6 +140,7 @@
                                                         });"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
       <li><a href="#" onClick="doExport('#issue53a', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 I: complex table thead rowspan colspan)</a></li>
       <li><a href="#" onClick="doExport('#issue53b', {type: 'excel', ignoreColumn:[3,4]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 II: complex table thead rowspan colspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue81', {type: 'excel', onMsoNumberFormat: DoOnMsoNumberFormat});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -947,6 +955,29 @@
         <td>506</td>
         <td>4,360</td>
         </tr>
+      </tbody>
+    </table>
+    <h3>Issue 81: Export String to excel with rows formatted as text</h3>
+    <table id="issue81" class="table-striped">
+      <thead>
+      <tr>
+        <th>Number as text</th>
+        <th>Number</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td data-tableexport-msonumberformat="\@">00212704</td>
+        <td>00212704</td>
+      </tr>
+      <tr>
+        <td>00212336</td>
+        <td>00212336</td>
+      </tr>
+      <tr>
+        <td>00212251</td>
+        <td>00212251</td>
+      </tr>
       </tbody>
     </table>
     

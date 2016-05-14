@@ -134,6 +134,7 @@ numbers: html: decimalMark: '.'
                  thousandsSeparator: ','
 onCellData: null
 onCellHtmlData: null
+onMsoNumberFormat: null
 outputMode: 'file'
 tbodySelector: 'tr'
 theadSelector: 'tr'
@@ -142,15 +143,15 @@ type: 'csv'
 worksheetName: 'xlsWorksheetName'
 ```
 
+```ignoreColumn``` can be either an array of indexes (i.e. [0, 2]) or field names (i.e. ["id", "name"]).
+* Indexes correspond to the position of the header elements `th` in the DOM starting at 0. (If the `th` elements are removed or added to the DOM, the indexes will be shifted so use the functionality wisely!)
+* Field names should correspond to the values set on the "data-field" attribute of the header elements `th` in the DOM.
+
 For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
 
 There is an extended setting for ``` jsPDF option 'format' ```. Setting the option value to ``` 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
 
 Also there is an extended setting for the ``` jsPDF-AutoTable options 'fillColor', 'textColor' and 'fontStyle'```. When setting these option values to ``` 'inherit' ``` the original css values for background and text color will be used as fill and text color while exporting to pdf. A css font-weight >= 700 results in a bold fontStyle and the italic css font-style will be used as italic fontStyle.
-
-```ignoreColumn``` can be either an array of indexes (i.e. [0, 2]) or field names (i.e. ["id", "name"]).
-* Indexes correspond to the position of the header elements `th` in the DOM starting at 0. (If the `th` elements are removed or added to the DOM, the indexes will be shifted so use the functionality wisely!)
-* Field names should correspond to the values set on the "data-field" attribute of the header elements `th` in the DOM.
 
 Optional html data attributes
 =============================
@@ -165,6 +166,11 @@ Optional html data attributes
 <td data-tableexport-display="none">...</td> -> cell will not be exported
 
 <tr data-tableexport-display="none">...</tr> -> all cells of this row will not be exported
+```
+
+<h3>data-tableexport-msonumberformat</h3>
+```html
+<td data-tableexport-msonumberformat="\@">...</td> -> data value will be used as mso-number-format style attribute when exporting to excel
 ```
 
 <h3>data-tableexport-value</h3>
