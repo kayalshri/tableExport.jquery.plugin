@@ -1,5 +1,6 @@
 {
   "name": "tableExport.jquery.plugin",
+  "version": "1.5.1",
   "main": "tableExport.min.js",
   "license": "MIT",
   "description": "html table export",
@@ -28,6 +29,7 @@
     "libs",
     "test",
     "tools",
+    "package.json",
     "tableExport.js"
   ]
 }

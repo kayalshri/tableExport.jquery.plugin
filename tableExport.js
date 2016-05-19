@@ -1,11 +1,11 @@
-/*
- tableExport.jquery.plugin
-
- Copyright (c) 2015,2016 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
-
- Original work Copyright (c) 2014 Giri Raj, https://github.com/kayalshri/
- Licensed under the MIT License, http://opensource.org/licenses/mit-license
-*/
+/**
+ * @preserve tableExport.jquery.plugin
+ *
+ * Copyright (c) 2015,2016 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
+ * Original work Copyright (c) 2014 Giri Raj, https://github.com/kayalshri/
+ *
+ * Licensed under the MIT License, http://opensource.org/licenses/mit-license
+ */
 
 (function ($) {
   $.fn.extend({
