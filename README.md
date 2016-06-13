@@ -17,7 +17,7 @@ tableExport.jquery.plugin
 Installation
 ============
 
-To save the generatetd export files on client side include 
+To save the generated export files on client side, include:
 
 ```javascript
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
@@ -30,13 +30,13 @@ To export the table as a PDF file the following includes are required:
 <script type="text/javascript" src="libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 ```
 
-To export the table in PNG format you need to include:
+To export the table in PNG format, you need to include:
 
 ```javascript
 <script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"></script>
 ```
 
-To generate the export file in the desired format finally include:
+To generate the export file in the desired format, finally include:
 
 ```javascript
 <script type="text/javascript" src="tableExport.min.js"></script>
