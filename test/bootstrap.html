@@ -50,7 +50,7 @@
   $(document).ready(function()
   {
     $('#table').bootstrapTable('refreshOptions', {
-        exportOptions: {ignoreColumn: [0,1],
+        exportOptions: {ignoreColumn: [0,1], // or as string array: ['0','checkbox']
                         onCellHtmlData: DoOnCellHtmlData}
     });
   });

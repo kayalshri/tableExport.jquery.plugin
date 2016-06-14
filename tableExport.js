@@ -830,6 +830,8 @@
         $(table).find('thead').first().find('th').each(function(index, el) {
           if ($(el).attr("data-field") !== undefined)
             result[index] = $(el).attr("data-field");
+          else
+            result[index] = index.toString();
         });
         return result;
       }

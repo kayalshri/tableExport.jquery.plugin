@@ -146,6 +146,7 @@ worksheetName: 'xlsWorksheetName'
 ```ignoreColumn``` can be either an array of indexes (i.e. [0, 2]) or field names (i.e. ["id", "name"]).
 * Indexes correspond to the position of the header elements `th` in the DOM starting at 0. (If the `th` elements are removed or added to the DOM, the indexes will be shifted so use the functionality wisely!)
 * Field names should correspond to the values set on the "data-field" attribute of the header elements `th` in the DOM.
+* "Nameless" columns without data-field attribute will be named by their index number (converted to a string)
 
 For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
 
