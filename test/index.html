@@ -30,7 +30,7 @@
       margin:0;
       width:0%;
     }
-    
+
     .table-striped {
       background-color: white;
     }
@@ -71,7 +71,7 @@
 
       $(selector).tableExport(options);
     }
-    
+
     function DoOnCellHtmlData(cell, row, col, data) {
       var result = "";
       if (data != "") {
@@ -91,8 +91,8 @@
 
     function DoOnMsoNumberFormat(cell, row, col) {
       var result = "";
-      if (row > 2 && col == 0)
-        result = '\\@';
+      if (row > 0 && col == 0)
+        result = "\\@";
       return result;
     }
 
@@ -131,16 +131,17 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
-      <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color', 'color', 
-                                                                                      'border-bottom-color', 'border-bottom-style', 'border-bottom-width', 
-                                                                                      'border-top-color', 'border-top-style', 'border-top-width', 
+      <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color', 'color',
+                                                                                      'border-bottom-color', 'border-bottom-style', 'border-bottom-width',
+                                                                                      'border-top-color', 'border-top-style', 'border-top-width',
                                                                                       'border-left-color', 'border-left-style', 'border-left-width',
                                                                                       'border-right-color', 'border-right-style', 'border-right-width',
                                                                                       'font-family', 'font-size', 'font-weight']
                                                         });"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
       <li><a href="#" onClick="doExport('#issue53a', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 I: complex table thead rowspan colspan)</a></li>
       <li><a href="#" onClick="doExport('#issue53b', {type: 'excel', ignoreColumn:[3,4]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 II: complex table thead rowspan colspan)</a></li>
-      <li><a href="#" onClick="doExport('#issue81', {type: 'excel', onMsoNumberFormat: DoOnMsoNumberFormat});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
+      <li><a href="#" onClick="doExport('#issue81', {type: 'excel', worksheetName: 'MSO-FORMATS', onMsoNumberFormat: DoOnMsoNumberFormat});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
+      <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -155,7 +156,7 @@
                       {type: 'pdf',
                         jspdf: {orientation: 'l',
                           margins: {right: 10, left: 10, top: 40, bottom: 40},
-                          autotable: {styles: {fillColor: 'inherit', 
+                          autotable: {styles: {fillColor: 'inherit',
                                                textColor: 'inherit',
                                                fillStyle: 'DF',
                                                lineColor: 200,
@@ -166,7 +167,7 @@
                       {type: 'pdf',
                         jspdf: {orientation: 'p',
                           margins: {right: 20, left: 20, top: 30, bottom: 30},
-                          autotable: {styles: {fillColor: 'inherit', 
+                          autotable: {styles: {fillColor: 'inherit',
                                                textColor: 'inherit',
                                                fontStyle: 'inherit'},
                                       tableWidth: 'wrap'}}});">
@@ -298,13 +299,13 @@
                                             }
                                           });">
             <img src='icons/pdf.png' alt="PDF" style="width:24px">Testing Rowspan</a></li>
-      <li><a href="#" 
+      <li><a href="#"
              onClick="doExport('#issue53a',
                       {type: 'pdf',
                        jspdf: {format: 'bestfit',
                                autotable: {tableWidth: 'wrap'}}});">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (issue53: Complex table thead rowspan colspan)</a></li>
-      <li><a href="#" 
+      <li><a href="#"
              onClick="doExport('#issue51lb',
                       {type: 'pdf',
                        jspdf: {format: 'bestfit',
@@ -706,7 +707,7 @@
                 </td>
             </tr>
         </tbody>
-    </table>    
+    </table>
     <h3>Issue 42 I: Incorrect size of cell with multiline text</h3>
     <table id="issue42_1">
         <thead>
@@ -749,7 +750,7 @@
                 <td>Second row cell 2</td>
             </tr>
         </tbody>
-    </table>    
+    </table>
     <h3>Issue 43: Configuration of PDF page breaks</h3>
     <table id="issue43">
         <thead>
@@ -760,8 +761,8 @@
         <tbody>
         <tr><td>row 1<td/><tr/> <tr><td>row 2<td/><tr/> <tr><td>row 3<td/><tr/> <tr><td>row 4<td/><tr/> <tr><td>row 5<td/><tr/>
         <tr><td>row 6<td/><tr/> <tr><td>row 7<td/><tr/> <tr><td>row 8<td/><tr/> <tr><td>row 9<td/><tr/> <tr><td>row 10<td/><tr/>
-        <tr><td>row 11<td/><tr/> <tr><td>row 12<td/><tr/> <tr><td>row 13<td/><tr/> <tr><td>row 14<td/><tr/> <tr><td>row 15<td/><tr/> 
-        <tr><td>row 16<td/><tr/> 
+        <tr><td>row 11<td/><tr/> <tr><td>row 12<td/><tr/> <tr><td>row 13<td/><tr/> <tr><td>row 14<td/><tr/> <tr><td>row 15<td/><tr/>
+        <tr><td>row 16<td/><tr/>
             <tr>
                 <td style="margin: 5px">
                     Very long long long long long long long long long long long long long
@@ -830,7 +831,7 @@
           <td>61</td><td>62</td><td>63</td><td>64</td>
         </tr>
       </tbody>
-    </table>    
+    </table>
     <h3>Issue 53 II: complex table thead rowspan colspan</h3>
     <table id="issue53b">
       <tbody>
@@ -967,20 +968,20 @@
       </thead>
       <tbody>
       <tr>
-        <td data-tableexport-msonumberformat="\@">00212704</td>
+        <td data-tableexport-msonumberformat="\@">1,357,805.84</td>
         <td>00212704</td>
       </tr>
       <tr>
         <td>00212336</td>
-        <td>00212336</td>
+        <td data-tableexport-msonumberformat="\#\,\#\#0\.00_ \;\[Red\]\-\#\,\#\#0\.00\ ">-212336</td>
       </tr>
       <tr>
-        <td>00212251</td>
-        <td>00212251</td>
+        <td>00212347</td>
+        <td>1357805,84</td>
       </tr>
       </tbody>
     </table>
-    
+
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">
