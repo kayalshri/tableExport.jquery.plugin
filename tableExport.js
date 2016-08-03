@@ -59,8 +59,9 @@
                  },
         onCellData: null,
         onCellHtmlData: null,
-        outputMode: 'file', // 'file', 'string' or 'base64'
+        outputMode: 'file',  // 'file', 'string' or 'base64'
         tbodySelector: 'tr',
+        tfootSelector: 'tr', // set empty ('') to prevent export of tfoot rows
         theadSelector: 'tr',
         tableName: 'myTableName',
         type: 'csv', // 'csv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
@@ -112,7 +113,8 @@
 
         rowlength += CollectCsvData ('thead', defaults.theadSelector, 'th,td', rowlength);
         rowlength += CollectCsvData ('tbody', defaults.tbodySelector, 'td', rowlength);
-        CollectCsvData ('tfoot', defaults.tbodySelector, 'td', rowlength);
+        if (defaults.tfootSelector.length)
+          CollectCsvData ('tfoot', defaults.tfootSelector, 'td', rowlength);
 
         csvData += "\n";
 
@@ -154,6 +156,8 @@
         tdData += ") VALUES ";
         // Row vs Column
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        if (defaults.tfootSelector.length)
+          $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
         $rows.each(function () {
           trData = "";
           ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
@@ -207,6 +211,8 @@
 
         var jsonArray = [];
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        if (defaults.tfootSelector.length)
+          $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
         $rows.each(function () {
           var jsonObjectTd = {};
 
@@ -275,6 +281,8 @@
         // Row Vs Column
         var rowCount = 1;
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        if (defaults.tfootSelector.length)
+          $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
         $rows.each(function () {
           var colCount = 1;
           trData = "";
@@ -366,6 +374,8 @@
           docData += '</thead><tbody>';
           // Row Vs Column
           $rows = $(this).find('tbody').first().find(defaults.tbodySelector);
+          if (defaults.tfootSelector.length)
+            $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
           $rows.each(function() {
             trData = "";
             ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
@@ -748,6 +758,8 @@
 
             var rowCount = 0;
             $rows = $(this).find('tbody').find(defaults.tbodySelector);
+            if (defaults.tfootSelector.length)
+              $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
             $rows.each(function () {
               var rowData = [];
               colKey = 0;

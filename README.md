@@ -137,6 +137,7 @@ onCellHtmlData: null
 onMsoNumberFormat: null
 outputMode: 'file'
 tbodySelector: 'tr'
+tfootSelector: 'tr'
 theadSelector: 'tr'
 tableName: 'myTableName'
 type: 'csv'
