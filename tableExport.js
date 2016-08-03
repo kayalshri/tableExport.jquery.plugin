@@ -390,7 +390,7 @@
                   if (typeof tdcss != 'undefined' && tdcss != '') {
                     if (tdstyle == '')
                       tdstyle = 'style="';
-                    tdstyle = 'style="mso-number-format:' + tdcss + ';';
+                    tdstyle = 'style="mso-number-format:\'' + tdcss + '\'';
                   }
 
                   trData += '<td';
