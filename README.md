@@ -1,6 +1,16 @@
 tableExport.jquery.plugin
 =========================
 
+Bug And Fix History (BUG修正清单)
+===================
+Bug 001
+
+[FIXED]When export to excel table, there are some cells which have different column span, output is wrong. （表头宽度错误）
+
+Bug 002
+
+[FIXED]Chinese characters output wrong（中文输出乱码）
+
 <h3>Export HTML Table to</h3>
 <ul>
 <li> JSON
