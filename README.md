@@ -1,7 +1,7 @@
 tableExport.jquery.plugin
 =========================
 
-Bug And Fix History (BUG修正清单)
+Bugs Fix History (BUG修正清单)
 ===================
 Bug 001
 
