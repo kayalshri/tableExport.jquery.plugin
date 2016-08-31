@@ -33,12 +33,24 @@
 
     .table-striped {
       background-color: white;
+      padding: 0.5rem;
+    }
+
+    table  {
+      border-collapse: collapse;
     }
 
     table > thead > tr > td,
     table > thead > tr > th {
       background-color: gray;
+      border: 1px solid #efefef;
       color: white;
+      padding: 0.2rem;
+    }
+
+    table > tbody > tr > td {
+      border: 1px solid #999;
+      padding: 0.2rem;
     }
 
     .table-striped > tbody > tr:nth-child(2n+1) > td {
@@ -142,7 +154,17 @@
       <li><a href="#" onClick="doExport('#issue53b', {type: 'excel', ignoreColumn:[3,4]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 II: complex table thead rowspan colspan)</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'excel', worksheetName: 'MSO-FORMATS', onMsoNumberFormat: DoOnMsoNumberFormat});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
+      <br>
+      <li><a href="#" onClick="doExport('#countries', {type: 'powerpoint'});"> <img src='icons/ppt.png' alt="PPT" style="width:24px"> PPT</a></li>
+      <li><a href="#" onClick="doExport('#excelstyles', {type: 'powerpoint', excelstyles: ['background-color', 'color',
+                                                                                      'border-bottom-color', 'border-bottom-style', 'border-bottom-width',
+                                                                                      'border-top-color', 'border-top-style', 'border-top-width',
+                                                                                      'border-left-color', 'border-left-style', 'border-left-width',
+                                                                                      'border-right-color', 'border-right-style', 'border-right-width',
+                                                                                      'font-family', 'font-size', 'font-weight']
+                                                        });"> <img src='icons/ppt.png' alt="PPT" style="width:24px"> PPT (excelstyles)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
       <br>
@@ -978,6 +1000,97 @@
       <tr>
         <td>00212347</td>
         <td>1357805,84</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <h3>Issue 93: colspan & rowspan</h3>
+    <table id="issue93">
+      <thead>
+      <tr>
+        <th colspan="2">Region</th>
+        <th>08/2016</th>
+        <th>PY</th>
+        <th>%Incr / Decr</th>
+        <th>YTD</th>
+        <th>PYTD</th>
+        <th>%Incr / Decr</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td rowspan="3">CER</td>
+        <td>AU</td>
+        <td>0.00</td>
+        <td>176.00</td>
+        <td>-100.00 %</td>
+        <td>34,000.20</td>
+        <td>17,512.13</td>
+        <td>94.49 %</td>
+      </tr>
+      <tr>
+        <td>DL</td>
+        <td>0.00</td>
+        <td>1,357,805.00</td>
+        <td>-100.00 %</td>
+        <td>9,584,309.39</td>
+        <td>379,621.68</td>
+        <td>-7.08 %</td>
+      </tr>
+      <tr>
+        <td>SZ</td>
+        <td>0.00</td>
+        <td>23,745.00</td>
+        <td>-100.00 %</td>
+        <td>10,314,806.62</td>
+        <td>241,957.52</td>
+        <td>56.90 %</td>
+      </tr>
+      <tr>
+        <td colspan="2">Subtotal</td>
+        <td>0.00</td>
+        <td>1,381,727.81</td>
+        <td></td>
+        <td>9,997,991.27</td>
+        <td>10,574,278.27</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td rowspan="3">CER</td>
+        <td>AU</td>
+        <td>0.00</td>
+        <td>176.00</td>
+        <td>-100.00 %</td>
+        <td>34,000.20</td>
+        <td>17,512.13</td>
+        <td>94.49 %</td>
+      </tr>
+      <tr>
+        <td>DL</td>
+        <td>0.00</td>
+        <td>1,357,805.00</td>
+        <td>-100.00 %</td>
+        <td>9,584,309.39</td>
+        <td>379,621.68</td>
+        <td>-7.08 %</td>
+      </tr>
+      <tr>
+        <td>SZ</td>
+        <td>0.00</td>
+        <td>23,745.00</td>
+        <td>-100.00 %</td>
+        <td>10,314,806.62</td>
+        <td>241,957.52</td>
+        <td>56.90 %</td>
+      </tr>
+      <tr>
+        <td colspan="2">Subtotal</td>
+        <td>0.00</td>
+        <td>1,381,727.81</td>
+        <td></td>
+        <td>9,997,991.27</td>
+        <td>10,574,278.27</td>
+        <td></td>
       </tr>
       </tbody>
     </table>
