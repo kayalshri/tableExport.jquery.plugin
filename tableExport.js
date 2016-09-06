@@ -474,10 +474,10 @@
         }
 
       } else if (defaults.type == 'png') {
-        html2canvas($(el)[0], {
-          allowTaint: true,
-          background: '#fff',
-          onrendered: function (canvas) {
+        //html2canvas($(el)[0], {
+        //  onrendered: function (canvas) {
+        html2canvas($(el)[0]).then(
+          function (canvas) {
 
             var image = canvas.toDataURL();
             image = image.substring(22); // remove data stuff
@@ -504,10 +504,10 @@
             }
             catch (e) {
               downloadFile(defaults.fileName + '.png',
-                           'data:image/png;base64,',
+                           'data:image/png,',
                            image);
             }
-          }
+          //}
         });
 
       } else if (defaults.type == 'pdf') {
