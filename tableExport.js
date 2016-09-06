@@ -320,16 +320,10 @@
                        xml);
         }
 
-      } else if (defaults.type == 'excel' || defaults.type == 'xls' ||
-                 defaults.type == 'word' || defaults.type == 'doc' ||
-                 defaults.type == 'powerpoint' || defaults.type == 'ppt') {
+      } else if (defaults.type == 'excel' || defaults.type == 'xls' || defaults.type == 'word' || defaults.type == 'doc') {
 
-        var MSDocType = (defaults.type == 'excel' || defaults.type == 'xls') ? 'excel' :
-                        (defaults.type == 'word' || defaults.type == 'doc') ? 'word' :
-                        'powerpoint';
-        var MSDocExt = (MSDocType == 'excel') ? 'xls' :
-                       (MSDocType == 'word') ? 'doc' :
-                       'pptx';
+        var MSDocType = (defaults.type == 'excel' || defaults.type == 'xls') ? 'excel' : 'word';
+        var MSDocExt = (MSDocType == 'excel') ? 'xls' : 'doc';
         var MSDocSchema = 'xmlns:x="urn:schemas-microsoft-com:office:' + MSDocType + '"';
         var $tables = $(el).filter(function() {
             return $(this).data("tableexport-display") != 'none' &&
