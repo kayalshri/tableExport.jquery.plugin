@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>HTML table Export</title>
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
@@ -141,6 +142,8 @@
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xml'});"> <img src='icons/xml.png' alt="XML" style="width:24px"> XML</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
+      <br>
+      <li><a href="#" onClick="doExport('#countries', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
       <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color', 'color',
@@ -1104,7 +1107,7 @@
       <tr>
         <td>1</td>
         <td></td>
-        <td>China</td>
+        <td><b>China</b></td>
         <td>1,368,710,000</td>
         <td>March 14, 2015</td>
         <td>18.9%</td>
@@ -1113,7 +1116,7 @@
       <tr>
         <td>2</td>
         <td></td>
-        <td>India</td>
+        <td><i>India</i></td>
         <td>1,268,220,000</td>
         <td>March 14, 2015</td>
         <td>17.5%</td>
@@ -1122,7 +1125,7 @@
       <tr>
         <td>3</td>
         <td></td>
-        <td>United States</td>
+        <td><u>United States</u></td>
         <td>320,583,000</td>
         <td>March 14, 2015</td>
         <td>4.43%</td>

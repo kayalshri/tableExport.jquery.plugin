@@ -473,6 +473,78 @@
                        docFile);
         }
 
+      } else if (defaults.type == 'xlsx') {
+
+        var data = [];
+        var ranges = [];
+        var rowIndex = 0;
+
+        $rows = $(el).find('thead').first().find(defaults.theadSelector);
+        $rows.push.apply ($rows, $(el).find('tbody').first().find(defaults.tbodySelector));
+        if (defaults.tfootSelector.length)
+          $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
+
+        $rows.each(function () {
+          var cols = [];
+          ForEachVisibleCell(this, 'th,td', rowIndex, $rows.length,
+            function (cell, row, col) {
+              if (typeof cell !== 'undefined' && cell != null) {
+
+                var colspan = cell.getAttribute('colspan');
+                var rowspan = cell.getAttribute('rowspan');
+
+                var cellValue = parseString(cell, row, col);
+
+                if(cellValue !== "" && cellValue == +cellValue) cellValue = +cellValue;
+
+                //Skip ranges
+                ranges.forEach(function(range) {
+                  if(rowIndex >= range.s.r && rowIndex <= range.e.r && cols.length >= range.s.c && cols.length <= range.e.c) {
+                    for(var i = 0; i <= range.e.c - range.s.c; ++i) cols.push(null);
+                  }
+                });
+
+                //Handle Row Span
+                if (rowspan || colspan) {
+                  rowspan = rowspan || 1;
+                  colspan = colspan || 1;
+                  ranges.push({s:{r:rowIndex, c:cols.length},e:{r:rowIndex+rowspan-1, c:cols.length+colspan-1}});
+                };
+
+                //Handle Value
+                cols.push(cellValue !== "" ? cellValue : null);
+
+                //Handle Colspan
+                if (colspan) for (var k = 0; k < colspan - 1; ++k) cols.push(null);
+              }
+            });
+          data.push(cols);
+          rowIndex++;
+        });
+        console.log(data);
+
+        var wb = new jx_Workbook(),
+            ws = jx_createSheet(data);
+
+        // add ranges to worksheet
+        ws['!merges'] = ranges;
+
+        // add worksheet to workbook
+        wb.SheetNames.push(defaults.worksheetName);
+        wb.Sheets[defaults.worksheetName] = ws;
+
+        var wbout = XLSX.write(wb, {bookType: defaults.type, bookSST: false, type: 'binary'});
+
+        try {
+          var blob = new Blob([jx_s2ab(wbout)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8'});
+          saveAs(blob, defaults.fileName + '.' + defaults.type);
+        }
+        catch (e) {
+          downloadFile(defaults.fileName + '.' + defaults.type,
+                       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8',
+                       data);
+        }
+
       } else if (defaults.type == 'png') {
         //html2canvas($(el)[0], {
         //  onrendered: function (canvas) {
@@ -1229,6 +1301,53 @@
           return getUnitValue (target.parentElement, numeric, unit);
         }
         return 0;
+      }
+
+      function jx_Workbook() {
+        if(!(this instanceof jx_Workbook)) return new jx_Workbook();
+        this.SheetNames = [];
+        this.Sheets = {};
+      }
+
+      function jx_s2ab(s) {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+        for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+        return buf;
+      }
+
+      function jx_datenum(v, date1904) {
+        if(date1904) v+=1462;
+        var epoch = Date.parse(v);
+        return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
+      }
+
+      function jx_createSheet(data) {
+        var ws = {};
+        var range = {s: {c:10000000, r:10000000}, e: {c:0, r:0 }};
+        for(var R = 0; R != data.length; ++R) {
+          for(var C = 0; C != data[R].length; ++C) {
+            if(range.s.r > R) range.s.r = R;
+            if(range.s.c > C) range.s.c = C;
+            if(range.e.r < R) range.e.r = R;
+            if(range.e.c < C) range.e.c = C;
+            var cell = {v: data[R][C] };
+            if(cell.v == null) continue;
+            var cell_ref = XLSX.utils.encode_cell({c:C,r:R});
+
+            if(typeof cell.v === 'number') cell.t = 'n';
+            else if(typeof cell.v === 'boolean') cell.t = 'b';
+            else if(cell.v instanceof Date) {
+              cell.t = 'n'; cell.z = XLSX.SSF._table[14];
+              cell.v = datenum(cell.v);
+            }
+            else cell.t = 's';
+            ws[cell_ref] = cell;
+          }
+        }
+
+        if(range.s.c < 10000000) ws['!ref'] = XLSX.utils.encode_range(range);
+        return ws;
       }
 
       function downloadFile(filename, header, data) {

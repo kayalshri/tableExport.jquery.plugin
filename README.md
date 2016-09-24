@@ -9,6 +9,7 @@ tableExport.jquery.plugin
 <li> XML
 <li> SQL
 <li> XLS
+<li> XLSX
 <li> DOC
 <li> PNG
 <li> PDF
@@ -21,6 +22,11 @@ To save the generated export files on client side, include:
 
 ```javascript
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
+```
+
+To export the table in XSLX (Excel 2007+ XML Format) format, you need to include:
+```javascript
+<script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
 ```
 
 To export the table as a PDF file the following includes are required:
@@ -36,7 +42,7 @@ To export the table in PNG format, you need to include:
 <script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"></script>
 ```
 
-To generate the export file in the desired format, finally include:
+Regardless of the desired format, finally include:
 
 ```javascript
 <script type="text/javascript" src="tableExport.min.js"></script>
@@ -154,6 +160,9 @@ For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPD
 There is an extended setting for ``` jsPDF option 'format' ```. Setting the option value to ``` 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
 
 Also there is an extended setting for the ``` jsPDF-AutoTable options 'fillColor', 'textColor' and 'fontStyle'```. When setting these option values to ``` 'inherit' ``` the original css values for background and text color will be used as fill and text color while exporting to pdf. A css font-weight >= 700 results in a bold fontStyle and the italic css font-style will be used as italic fontStyle.
+
+To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) forked from [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data but not any styling information of the htm table.
+
 
 Optional html data attributes
 =============================
