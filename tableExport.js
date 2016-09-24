@@ -157,7 +157,7 @@
         // Row vs Column
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
         if (defaults.tfootSelector.length)
-          $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
+          $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
         $rows.each(function () {
           trData = "";
           ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
@@ -212,7 +212,7 @@
         var jsonArray = [];
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
         if (defaults.tfootSelector.length)
-          $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
+          $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
         $rows.each(function () {
           var jsonObjectTd = {};
 
@@ -282,7 +282,7 @@
         var rowCount = 1;
         $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
         if (defaults.tfootSelector.length)
-          $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
+          $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
         $rows.each(function () {
           var colCount = 1;
           trData = "";
@@ -375,7 +375,7 @@
           // Row Vs Column
           $rows = $(this).find('tbody').first().find(defaults.tbodySelector);
           if (defaults.tfootSelector.length)
-            $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
+            $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
           $rows.each(function() {
             trData = "";
             ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
@@ -759,7 +759,7 @@
             var rowCount = 0;
             $rows = $(this).find('tbody').find(defaults.tbodySelector);
             if (defaults.tfootSelector.length)
-              $rows.push ($(el).find('tfoot').find(defaults.tfootSelector));
+              $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
             $rows.each(function () {
               var rowData = [];
               colKey = 0;
