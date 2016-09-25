@@ -6,6 +6,10 @@
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <!--
+  <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
+  <script type="text/javascript" src="../libs/pdfmake/vfs_fonts.js"></script>
+  -->
   <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
   <script type="text/javascript" src="../libs/html2canvas/html2canvas.min.js"></script>
@@ -76,6 +80,7 @@
       var options = {
         //ignoreRow: [1,11,12,-2],
         //ignoreColumn: [0,-1],
+        //pdfmake: {enabled: true},
         tableName: 'Countries',
         worksheetName: 'Countries by population'
       };
@@ -1195,7 +1200,7 @@
         <td>日本語</td>
       </tr>
       <tr>
-        <td colspan="6">&nbsp;</td>
+        <td colspan="7">&nbsp;</td>
       </tr>
       <tr>
         <td>11</td>

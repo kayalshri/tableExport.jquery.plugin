@@ -60,6 +60,7 @@
         onCellData: null,
         onCellHtmlData: null,
         outputMode: 'file',  // 'file', 'string' or 'base64'
+        pdfmake: {enabled: false}, // true: use pdfmake instead of jspdf(-autotable)
         tbodySelector: 'tr',
         tfootSelector: 'tr', // set empty ('') to prevent export of tfoot rows
         theadSelector: 'tr',
@@ -477,7 +478,7 @@
 
         var data = [];
         var ranges = [];
-        var rowIndex = 0;
+        rowIndex = 0;
 
         $rows = $(el).find('thead').first().find(defaults.theadSelector);
         $rows.push.apply ($rows, $(el).find('tbody').first().find(defaults.tbodySelector));
@@ -583,7 +584,79 @@
         });
 
       } else if (defaults.type == 'pdf') {
-        if (defaults.jspdf.autotable === false) {
+
+        if (defaults.pdfmake.enabled === true) {
+          // pdf output using pdfmake
+          // https://github.com/bpampuch/pdfmake
+
+          var widths = [];
+          var body = [];
+          rowIndex = 0;
+
+          $hrows = $(this).find('thead').find(defaults.theadSelector);
+          $hrows.each(function () {
+            var h = [];
+
+            ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
+                    function (cell, row, col) {
+                      h.push(parseString(cell, row, col));
+                    });
+
+            if (h.length)
+              body.push(h);
+
+            for(var i = widths.length; i < h.length;i++)
+              widths.push("*");
+
+            rowIndex++;
+          });
+
+          $rows = $(this).find('tbody').find(defaults.tbodySelector);
+          if (defaults.tfootSelector.length)
+            $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
+
+          $rows.each(function () {
+            var r = [];
+
+            ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+                    function (cell, row, col) {
+                      r.push(parseString(cell, row, col));
+                    });
+
+            if (r.length)
+              body.push(r);
+            rowIndex++;
+          });
+
+          var docDefinition = {
+              pageOrientation: 'landscape',
+              content: [
+                      {
+                        table: {
+                          headerRows: $hrows.length,
+                          widths: widths,
+                          body: body
+                        }
+                      }
+                     ]
+          };
+          pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
+
+            try {
+              var blob = new Blob([buffer], {type: "application/pdf"});
+              saveAs(blob, defaults.fileName + '.pdf');
+            }
+            catch (e) {
+              downloadFile(defaults.fileName + '.pdf',
+                           'data:application/pdf;base64,',
+                           buffer);
+            }
+          });
+
+        }
+        else if (defaults.jspdf.autotable === false) {
+          // pdf output using jsPDF's core html support
+
           var addHtmlOptions = {
             dim: {
               w: getPropertyUnitValue($(el).first().get(0), 'width', 'mm'),
