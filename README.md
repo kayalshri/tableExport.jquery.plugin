@@ -134,6 +134,7 @@ jspdf: orientation: 'p'
                   tableExport: onAfterAutotable: null
                                onBeforeAutotable: null
                                onTable: null
+                               outputImages: true
 numbers: html: decimalMark: '.'
                thousandsSeparator: ','
          output: decimalMark: '.',
@@ -161,7 +162,9 @@ There is an extended setting for ``` jsPDF option 'format' ```. Setting the opti
 
 Also there is an extended setting for the ``` jsPDF-AutoTable options 'fillColor', 'textColor' and 'fontStyle'```. When setting these option values to ``` 'inherit' ``` the original css values for background and text color will be used as fill and text color while exporting to pdf. A css font-weight >= 700 results in a bold fontStyle and the italic css font-style will be used as italic fontStyle.
 
-To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) forked from [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data but not any styling information of the htm table.
+When exporting to pdf the option ```outputImages``` lets you disable the output of images that are located in the original html table.
+
+To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) forked from [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data, but not any styling information of the html table.
 
 
 Optional html data attributes
