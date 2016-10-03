@@ -17,7 +17,7 @@
         csvUseBOM: true,
         displayTableName: false,
         escape: false,
-        excelstyles: [], // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
+        excelstyles: [],       // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
         fileName: 'tableExport',
         htmlContent: false,
         ignoreColumn: [],
@@ -89,9 +89,8 @@
         var rowlength = 0;
         rowIndex = 0;
 
-        function CollectCsvData (tgroup, tselector, rowselector, length) {
+        function CollectCsvData ($rows, rowselector, length) {
 
-          $rows = $(el).find(tgroup).first().find(tselector);
           $rows.each(function () {
             trData = "";
             ForEachVisibleCell(this, rowselector, rowIndex, length + $rows.length,
@@ -112,10 +111,12 @@
           return $rows.length;
         }
 
-        rowlength += CollectCsvData ('thead', defaults.theadSelector, 'th,td', rowlength);
-        rowlength += CollectCsvData ('tbody', defaults.tbodySelector, 'td', rowlength);
+        rowlength += CollectCsvData ($(el).find('thead').first().find(defaults.theadSelector), 'th,td', rowlength);
+        $(el).find('tbody').each(function() {
+          rowlength += CollectCsvData ($(this).find(defaults.tbodySelector), 'td', rowlength);
+        });
         if (defaults.tfootSelector.length)
-          CollectCsvData ('tfoot', defaults.tfootSelector, 'td', rowlength);
+          CollectCsvData ($(el).find('tfoot').first().find(defaults.tfootSelector), 'td', rowlength);
 
         csvData += "\n";
 
@@ -156,10 +157,12 @@
         });
         tdData += ") VALUES ";
         // Row vs Column
-        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $(el).find('tbody').each(function() {
+          $rows.push.apply ($rows, $(this).find(defaults.tbodySelector));
+        });
         if (defaults.tfootSelector.length)
           $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
-        $rows.each(function () {
+        $($rows).each(function () {
           trData = "";
           ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
@@ -211,10 +214,12 @@
         });
 
         var jsonArray = [];
-        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $(el).find('tbody').each(function() {
+          $rows.push.apply ($rows, $(this).find(defaults.tbodySelector));
+        });
         if (defaults.tfootSelector.length)
           $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
-        $rows.each(function () {
+        $($rows).each(function () {
           var jsonObjectTd = {};
 
           var colIndex = 0;
@@ -271,7 +276,7 @@
         $hrows = $(el).find('thead').first().find(defaults.theadSelector);
         $hrows.each(function () {
 
-          ForEachVisibleCell(this, 'th,td', rowIndex, $rows.length,
+          ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                   function (cell, row, col) {
                     xml += "<field>" + parseString(cell, row, col) + "</field>";
                   });
@@ -281,10 +286,12 @@
 
         // Row Vs Column
         var rowCount = 1;
-        $rows = $(el).find('tbody').first().find(defaults.tbodySelector);
+        $(el).find('tbody').each(function() {
+          $rows.push.apply ($rows, $(this).find(defaults.tbodySelector));
+        });
         if (defaults.tfootSelector.length)
           $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
-        $rows.each(function () {
+        $($rows).each(function () {
           var colCount = 1;
           trData = "";
           ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
@@ -334,13 +341,13 @@
         var docData = '';
 
         $tables.each(function(){
+          var $table = $(this);
           rowIndex = 0;
-
           colNames = GetColumnNames (this);
 
           docData += '<table><thead>';
           // Header
-          $hrows = $(this).find('thead').first().find(defaults.theadSelector);
+          $hrows = $table.find('thead').first().find(defaults.theadSelector);
           $hrows.each(function() {
             trData = "";
             ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
@@ -373,11 +380,15 @@
           });
 
           docData += '</thead><tbody>';
-          // Row Vs Column
-          $rows = $(this).find('tbody').first().find(defaults.tbodySelector);
+          // Row Vs Column, support multiple tbodys
+          $table.find('tbody').each(function() {
+            $rows.push.apply ($rows, $(this).find(defaults.tbodySelector));
+          });
           if (defaults.tfootSelector.length)
-            $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
-          $rows.each(function() {
+            $rows.push.apply ($rows, $table.find('tfoot').find(defaults.tfootSelector));
+
+          $($rows).each(function() {
+            var $row = $(this);
             trData = "";
             ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
               function(cell, row, col) {
@@ -395,13 +406,16 @@
                   }
 
                   trData += '<td';
-                  for (var styles in defaults.excelstyles) {
-                    if (defaults.excelstyles.hasOwnProperty(styles)) {
-                      tdcss = $(cell).css(defaults.excelstyles[styles]);
-                      if (tdcss != '' && tdcss !='0px none rgb(0, 0, 0)') {
+                  for (var cssStyle in defaults.excelstyles) {
+                    if (defaults.excelstyles.hasOwnProperty(cssStyle)) {
+                      tdcss = $(cell).css(defaults.excelstyles[cssStyle]);
+                      if (tdcss == '')
+                        tdcss = $row.css(defaults.excelstyles[cssStyle]);
+
+                      if (tdcss != '' && tdcss !='0px none rgb(0, 0, 0)' && tdcss != 'rgba(0, 0, 0, 0)') {
                         if (tdstyle == '')
                           tdstyle = 'style="';
-                        tdstyle += defaults.excelstyles[styles] + ':' + tdcss + ';';
+                        tdstyle += defaults.excelstyles[cssStyle] + ':' + tdcss + ';';
                       }
                     }
                   }
@@ -481,11 +495,13 @@
         rowIndex = 0;
 
         $rows = $(el).find('thead').first().find(defaults.theadSelector);
-        $rows.push.apply ($rows, $(el).find('tbody').first().find(defaults.tbodySelector));
+        $(el).find('tbody').each(function() {
+          $rows.push.apply ($rows, $(this).find(defaults.tbodySelector));
+        });
         if (defaults.tfootSelector.length)
           $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
 
-        $rows.each(function () {
+        $($rows).each(function () {
           var cols = [];
           ForEachVisibleCell(this, 'th,td', rowIndex, $rows.length,
             function (cell, row, col) {
@@ -522,7 +538,6 @@
           data.push(cols);
           rowIndex++;
         });
-        console.log(data);
 
         var wb = new jx_Workbook(),
             ws = jx_createSheet(data);
@@ -593,7 +608,7 @@
           var body = [];
           rowIndex = 0;
 
-          $hrows = $(this).find('thead').find(defaults.theadSelector);
+          $hrows = $(el).find('thead').first().find(defaults.theadSelector);
           $hrows.each(function () {
             var h = [];
 
@@ -611,11 +626,13 @@
             rowIndex++;
           });
 
-          $rows = $(this).find('tbody').find(defaults.tbodySelector);
+          $(el).find('tbody').each(function() {
+            $rows.push.apply ($rows, $(this).find(defaults.tbodySelector));
+          });
           if (defaults.tfootSelector.length)
             $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
 
-          $rows.each(function () {
+          $($rows).each(function () {
             var r = [];
 
             ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
@@ -904,8 +921,8 @@
             var rowCount = 0;
             $rows = $(this).find('tbody').find(defaults.tbodySelector);
             if (defaults.tfootSelector.length)
-              $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
-            $rows.each(function () {
+              $rows.push.apply ($rows, $(this).find('tfoot').find(defaults.tfootSelector));
+            $($rows).each(function () {
               var rowData = [];
               colKey = 0;
 
