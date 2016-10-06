@@ -24,7 +24,7 @@ To save the generated export files on client side, include:
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
 ```
 
-To export the table in XSLX (Excel 2007+ XML Format) format, you need to include:
+To export the table in XLSX (Excel 2007+ XML Format) format, you need to include:
 ```javascript
 <script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
 ```
