@@ -360,10 +360,9 @@
                   for (var styles in defaults.excelstyles) {
                     if (defaults.excelstyles.hasOwnProperty(styles)) {
                       var thcss = $(cell).css(defaults.excelstyles[styles]);
-                      if (thcss !== '' && thcss !='0px none rgb(0, 0, 0)') {
-                        if (thstyle === '')
-                          thstyle = 'style="';
-                        thstyle += defaults.excelstyles[styles] + ':' + thcss + ';';
+                      if (thcss !== '' && thcss !='0px none rgb(0, 0, 0)' && thcss != 'rgba(0, 0, 0, 0)') {
+                        thstyle += (thstyle === '') ? 'style="' : ';';
+                        thstyle += defaults.excelstyles[styles] + ':' + thcss;
                       }
                     }
                   }
@@ -401,13 +400,9 @@
                   if (typeof tdcss == 'undefined' && typeof defaults.onMsoNumberFormat === 'function')
                     tdcss = defaults.onMsoNumberFormat(cell, row, col);
 
-                  if (typeof tdcss != 'undefined' && tdcss !== '') {
-                    if (tdstyle === '')
-                      tdstyle = 'style="';
+                  if (typeof tdcss != 'undefined' && tdcss !== '')
                     tdstyle = 'style="mso-number-format:\'' + tdcss + '\'';
-                  }
 
-                  trData += '<td';
                   for (var cssStyle in defaults.excelstyles) {
                     if (defaults.excelstyles.hasOwnProperty(cssStyle)) {
                       tdcss = $(cell).css(defaults.excelstyles[cssStyle]);
@@ -415,12 +410,12 @@
                         tdcss = $row.css(defaults.excelstyles[cssStyle]);
 
                       if (tdcss !== '' && tdcss !='0px none rgb(0, 0, 0)' && tdcss != 'rgba(0, 0, 0, 0)') {
-                        if (tdstyle === '')
-                          tdstyle = 'style="';
-                        tdstyle += defaults.excelstyles[cssStyle] + ':' + tdcss + ';';
+                        tdstyle += (tdstyle === '') ? 'style="' : ';';
+                        tdstyle += defaults.excelstyles[cssStyle] + ':' + tdcss;
                       }
                     }
                   }
+                  trData += '<td';
                   if (tdstyle !== '' )
                     trData += ' ' + tdstyle + '"';
                   if ($(cell).is("[colspan]"))
