@@ -60,7 +60,7 @@
                  },
         onCellData: null,
         onCellHtmlData: null,
-        outputMode: 'file',  // 'file', 'string' or 'base64'
+        outputMode: 'file',  // 'file', 'string', 'base64' or 'window' (experimental)
         pdfmake: {enabled: false}, // true: use pdfmake instead of jspdf(-autotable)
         tbodySelector: 'tr',
         tfootSelector: 'tr', // set empty ('') to prevent export of tfoot rows
@@ -131,6 +131,11 @@
 
         if (defaults.outputMode === 'base64')
           return base64encode(csvData);
+
+        if (defaults.outputMode === 'window') {
+          downloadFile(false, 'data:text/' + (defaults.type == 'csv' ? 'csv' : 'plain') + ';charset=utf-8,', csvData);
+          return;
+        }
 
         try {
           blob = new Blob([csvData], {type: "text/" + (defaults.type == 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
@@ -504,8 +509,8 @@
             function (cell, row, col) {
               if (typeof cell !== 'undefined' && cell !== null) {
 
-                var colspan = cell.getAttribute('colspan');
-                var rowspan = cell.getAttribute('rowspan');
+                var colspan = parseInt(cell.getAttribute('colspan'));
+                var rowspan = parseInt(cell.getAttribute('rowspan'));
 
                 var cellValue = parseString(cell, row, col);
 
@@ -565,9 +570,7 @@
           function (canvas) {
 
             var image = canvas.toDataURL();
-            image = image.substring(22); // remove data stuff
-
-            var byteString = atob(image);
+            var byteString = atob(image.substring(22)); // remove data stuff
             var buffer = new ArrayBuffer(byteString.length);
             var intArray = new Uint8Array(buffer);
 
@@ -582,6 +585,11 @@
 
             if (defaults.outputMode === 'base64')
               return base64encode(image);
+
+            if (defaults.outputMode === 'window') {
+              window.open(image);
+              return;
+            }
 
             try {
               blob = new Blob([buffer], {type: "image/png"});
@@ -1153,6 +1161,11 @@
         if (defaults.outputMode === 'base64')
           return base64encode(doc.output());
 
+        if (defaults.outputMode === 'window') {
+          window.open(URL.createObjectURL(doc.output("blob")));
+          return;
+        }
+
         try {
           var blob = doc.output('blob');
           saveAs(blob, defaults.fileName + '.pdf');
@@ -1567,22 +1580,26 @@
       function downloadFile(filename, header, data) {
 
         var ua = window.navigator.userAgent;
-        if (ua.indexOf("MSIE ") > 0 || !!ua.match(/Trident.*rv\:11\./)) {
-          // Internet Explorer (<= 9) workaround by Darryl (https://github.com/dawiong/tableExport.jquery.plugin)
-          // based on sampopes answer on http://stackoverflow.com/questions/22317951
-          // ! Not working for json and pdf format !
-          var frame = document.createElement("iframe");
+        if (filename !== false && (ua.indexOf("MSIE ") > 0 || !!ua.match(/Trident.*rv\:11\./))) {
+          if (window.navigator.msSaveOrOpenBlob)
+            window.navigator.msSaveOrOpenBlob(new Blob([data]), filename);
+          else {
+            // Internet Explorer (<= 9) workaround by Darryl (https://github.com/dawiong/tableExport.jquery.plugin)
+            // based on sampopes answer on http://stackoverflow.com/questions/22317951
+            // ! Not working for json and pdf format !
+            var frame = document.createElement("iframe");
 
-          if (frame) {
-            document.body.appendChild(frame);
-            frame.setAttribute("style", "display:none");
-            frame.contentDocument.open("txt/html", "replace");
-            frame.contentDocument.write(data);
-            frame.contentDocument.close();
-            frame.focus();
+            if (frame) {
+              document.body.appendChild(frame);
+              frame.setAttribute("style", "display:none");
+              frame.contentDocument.open("txt/html", "replace");
+              frame.contentDocument.write(data);
+              frame.contentDocument.close();
+              frame.focus();
 
-            frame.contentDocument.execCommand("SaveAs", true, filename);
-            document.body.removeChild(frame);
+              frame.contentDocument.execCommand("SaveAs", true, filename);
+              document.body.removeChild(frame);
+            }
           }
         }
         else {
@@ -1590,7 +1607,10 @@
 
           if (DownloadLink) {
             DownloadLink.style.display = 'none';
-            DownloadLink.download = filename;
+            if (filename !== false)
+              DownloadLink.download = filename;
+            else
+              DownloadLink.target = '_blank';
 
             if (header.toLowerCase().indexOf("base64,") >= 0)
               DownloadLink.href = header + base64encode(data);
