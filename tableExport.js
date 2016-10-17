@@ -1383,7 +1383,7 @@
             var text = htmlData.replace(/\n/g,'\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
             var obj = $('<div/>').html(text).contents();
             text = '';
-            $.each(obj.text().split("\u2028"), function(i, v) {
+            $.each((obj.html() || obj.text()).split("\u2028"), function(i, v) {
               if (i > 0)
                 text += " ";
               text += $.trim(v);
