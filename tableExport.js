@@ -427,7 +427,7 @@
                     trData += ' colspan="' + $(cell).attr('colspan') + '"';
                   if ($(cell).is("[rowspan]"))
                     trData += ' rowspan="' + $(cell).attr('rowspan') + '"';
-                  trData += '>' + parseString(cell, row, col) + '</td>';
+                  trData += '>' + parseString(cell, row, col).replace(/\n/g,'<br>') + '</td>';
                 }
               });
             if (trData.length > 0)
@@ -465,6 +465,7 @@
           docFile += "</xml>";
           docFile += "<![endif]-->";
         }
+        docFile += "<style>br {mso-data-placement:same-cell;}</style>";
         docFile += "</head>";
         docFile += "<body>";
         docFile += docData;

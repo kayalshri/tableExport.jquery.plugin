@@ -163,6 +163,8 @@
       <li><a href="#" onClick="doExport('#issue81', {type: 'excel', onMsoNumberFormat: DoOnMsoNumberFormat, worksheetName: 'MSO-FORMATS', excelstyles: ['background-color', 'color']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue121', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>
+
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -1002,7 +1004,6 @@
       </tr>
       </tbody>
     </table>
-
     <h3>Issue 93: colspan & rowspan</h3>
     <table id="issue93">
       <thead>
@@ -1090,6 +1091,29 @@
         <td>9,997,991.27</td>
         <td>10,574,278.27</td>
         <td></td>
+      </tr>
+      </tbody>
+    </table>
+    <h3>Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</h3>
+    <table id="issue121" class="">
+      <thead>
+      <tr>
+        <th>column 1</th>
+        <th>column 2</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>A</td>
+        <td>Line 1<br>Line 2<br>Line 3</td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td> </td>
+      </tr>
+      <tr>
+        <td>C</td>
+        <td> </td>
       </tr>
       </tbody>
     </table>
