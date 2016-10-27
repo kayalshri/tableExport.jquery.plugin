@@ -1374,6 +1374,22 @@
           else
             htmlData = $cell.html();
 
+          if (htmlData != '') {
+            var html = $.parseHTML( htmlData );
+
+            htmlData = '';
+            $.each( html, function() {
+              if ( $(this).is("input") )
+                htmlData += $cell.find('input').val();
+              else if ( $(this).is("select") )
+                htmlData += $cell.find('select option:selected').text();
+              else {
+                htmlData += $cell.html();
+                return false;
+              }
+            });
+          }
+
           if (typeof defaults.onCellHtmlData === 'function')
             htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
 
@@ -1384,7 +1400,7 @@
             var text = htmlData.replace(/\n/g,'\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
             var obj = $('<div/>').html(text).contents();
             text = '';
-            $.each((obj.html() || obj.text()).split("\u2028"), function(i, v) {
+            $.each(obj.text().split("\u2028"), function(i, v) {
               if (i > 0)
                 text += " ";
               text += $.trim(v);
