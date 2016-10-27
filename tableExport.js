@@ -1312,8 +1312,27 @@
               var image = teOptions.images[hash];
 
               if (typeof image != 'undefined') {
-                teOptions.doc.addImage (image.src, cell.textPos.x, cell.y, this.width, this.height);
-                cell.textPos.x += this.width;
+
+                var arCell = cell.width / cell.height;
+                var arImg  = this.width / this.height;
+                var imgWidth = cell.width;
+                var imgHeight = cell.height;
+                var uy = 0;
+                
+                if (arImg < arCell) {
+                  imgHeight = Math.min (cell.height, this.height);
+                  imgWidth  = this.width * imgHeight / this.height;
+                }
+                else if (arImg > arCell) {
+                  imgWidth  = Math.min (cell.width, this.width);
+                  imgHeight = this.height * imgWidth / this.width;
+                }
+                
+                if (imgHeight < cell.height)
+                  uy = (cell.height - imgHeight) / 2;
+                
+                teOptions.doc.addImage (image.src, cell.textPos.x, cell.y + uy, imgWidth, imgHeight);
+                cell.textPos.x += imgWidth;
               }
             }
           }

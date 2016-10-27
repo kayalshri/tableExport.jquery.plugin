@@ -93,7 +93,7 @@
     function DoOnCellHtmlData(cell, row, col, data) {
       var result = "";
       if (data != "") {
-        var html = $.parseHTML( data )
+        var html = $.parseHTML( data );
 
         $.each( html, function() {
           if ( typeof $(this).html() === 'undefined' )
@@ -334,6 +334,10 @@
                        jspdf: {format: 'bestfit',
                                autotable: {tableWidth: 'wrap'}}});">
             <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (issue51(LB): Extra Table Being Rendered, top row not being rendered correctly)</a></li>
+      <li><a href="#" onClick="doExport('#issue111',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 111: Export pdf with images)</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
@@ -821,7 +825,7 @@
         <td><div>F</div></td>
       </tr>
       <tr>
-        <td>G</td>
+        <td><select><option>option1</option><option>option2</option><option>option3</option></select></td>
         <td>H</td>
         <td>I</td>
       </tr>
@@ -1117,6 +1121,29 @@
       </tr>
       </tbody>
     </table>
+    <h3>Issue 111: Export pdf with images</h3>
+    <table id="issue111" class="">
+      <thead>
+      <tr>
+        <th>column 1</th>
+        <th>column 2</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>A</td>
+        <td><img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTmz5uo5mCCab-mCxueyW6nvEv-Y8AVI58Y2WYmwwVGrCBhKFFMxg"/></td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEber0z-4l7590XFfg_pRTX3Gl6-sYLmLIrrSNKn2tbHTeHf8F"/></td>
+      </tr>
+      <tr>
+        <td>C</td>
+        <td><img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSBnkKvffHqzj3INyaZNxS7DXnd9xdquGBzLJHDqWijAhbpLTrI"/></td>
+      </tr>
+      </tbody>
+    </table>
 
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
@@ -1153,7 +1180,7 @@
       </tr>
       <tr>
         <td>3</td>
-        <td></td>
+        <td><img height="12" width="23" src="//upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/23px-Flag_of_the_United_States.svg.png"></td>
         <td><u>United States</u></td>
         <td>320,583,000</td>
         <td>March 14, 2015</td>
