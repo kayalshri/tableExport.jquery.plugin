@@ -115,10 +115,10 @@
 
         rowlength += CollectCsvData ($(el).find('thead').first().find(defaults.theadSelector), 'th,td', rowlength);
         $(el).find('tbody').each(function() {
-          rowlength += CollectCsvData ($(this).find(defaults.tbodySelector), 'td', rowlength);
+          rowlength += CollectCsvData ($(this).find(defaults.tbodySelector), 'td,th', rowlength);
         });
         if (defaults.tfootSelector.length)
-          CollectCsvData ($(el).find('tfoot').first().find(defaults.tfootSelector), 'td', rowlength);
+          CollectCsvData ($(el).find('tfoot').first().find(defaults.tfootSelector), 'td,th', rowlength);
 
         csvData += "\n";
 
@@ -171,7 +171,7 @@
           $rows.push.apply ($rows, $(el).find('tfoot').find(defaults.tfootSelector));
         $($rows).each(function () {
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+          ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     trData += "'" + parseString(cell, row, col) + "',";
                   });
@@ -230,7 +230,7 @@
           var jsonObjectTd = {};
 
           var colIndex = 0;
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+          ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     if (jsonHeaderArray.length) {
                       jsonObjectTd[jsonHeaderArray[jsonHeaderArray.length-1][colIndex]] = parseString(cell, row, col);
@@ -301,7 +301,7 @@
         $($rows).each(function () {
           var colCount = 1;
           trData = "";
-          ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+          ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     trData += "<column-" + colCount + ">" + parseString(cell, row, col) + "</column-" + colCount + ">";
                     colCount++;
@@ -396,7 +396,7 @@
           $($rows).each(function() {
             var $row = $(this);
             trData = "";
-            ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+            ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
               function(cell, row, col) {
                 if (cell !== null) {
                   var tdstyle = '';
@@ -641,7 +641,7 @@
           $($rows).each(function () {
             var r = [];
 
-            ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+            ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
                     function (cell, row, col) {
                       r.push(parseString(cell, row, col));
                     });
@@ -768,7 +768,7 @@
                 $rows.push.apply ($rows, $(this).find('tfoot').find(defaults.tfootSelector));
 
               $($rows).each(function () {
-                ForEachVisibleCell(this, 'td', $hrows.length + rowCount, $hrows.length + $rows.length,
+                ForEachVisibleCell(this, 'td,th', $hrows.length + rowCount, $hrows.length + $rows.length,
                   function (cell, row, col) {
                     if (typeof cell !== 'undefined' && cell !== null) {
                       var kids = $(cell).children();
@@ -970,7 +970,7 @@
                 var rowData = [];
                 colKey = 0;
 
-                ForEachVisibleCell(this, 'td', rowIndex, $hrows.length + $rows.length,
+                ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
                         function (cell, row, col) {
                           if (typeof teOptions.columns[colKey] === 'undefined') {
                             // jsPDF-Autotable needs columns. Thus define hidden ones for tables without thead
@@ -1318,7 +1318,7 @@
                 var imgWidth = cell.width;
                 var imgHeight = cell.height;
                 var uy = 0;
-                
+
                 if (arImg < arCell) {
                   imgHeight = Math.min (cell.height, this.height);
                   imgWidth  = this.width * imgHeight / this.height;
@@ -1327,10 +1327,10 @@
                   imgWidth  = Math.min (cell.width, this.width);
                   imgHeight = this.height * imgWidth / this.width;
                 }
-                
+
                 if (imgHeight < cell.height)
                   uy = (cell.height - imgHeight) / 2;
-                
+
                 teOptions.doc.addImage (image.src, cell.textPos.x, cell.y + uy, imgWidth, imgHeight);
                 cell.textPos.x += imgWidth;
               }
