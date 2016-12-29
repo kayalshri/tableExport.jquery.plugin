@@ -1390,23 +1390,24 @@
 
           if ($cell[0].hasAttribute("data-tableexport-value"))
             htmlData = $cell.data("tableexport-value");
-          else
+          else {
             htmlData = $cell.html();
 
-          if (htmlData != '') {
-            var html = $.parseHTML( htmlData );
+            if (htmlData != '') {
+              var html = $.parseHTML( htmlData );
 
-            htmlData = '';
-            $.each( html, function() {
-              if ( $(this).is("input") )
-                htmlData += $cell.find('input').val();
-              else if ( $(this).is("select") )
-                htmlData += $cell.find('select option:selected').text();
-              else {
-                htmlData += $cell.html();
-                return false;
-              }
-            });
+              htmlData = '';
+              $.each( html, function() {
+                if ( $(this).is("input") )
+                  htmlData += $cell.find('input').val();
+                else if ( $(this).is("select") )
+                  htmlData += $cell.find('select option:selected').text();
+                else {
+                  htmlData += $cell.html();
+                  return false;
+                }
+              });
+            }
           }
 
           if (typeof defaults.onCellHtmlData === 'function')
