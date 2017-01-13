@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Copyright (c) 2015,2016 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
+ * Copyright (c) 2015-2017 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  * Original work Copyright (c) 2014 Giri Raj, https://github.com/kayalshri/
  *
  * Licensed under the MIT License, http://opensource.org/licenses/mit-license
@@ -66,7 +66,7 @@
         tfootSelector: 'tr', // set empty ('') to prevent export of tfoot rows
         theadSelector: 'tr',
         tableName: 'myTableName',
-        type: 'csv', // 'csv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
+        type: 'csv', // 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
         worksheetName: 'xlsWorksheetName'
       };
 
@@ -85,11 +85,44 @@
 
       colNames = GetColumnNames (el);
 
-      if (defaults.type == 'csv' || defaults.type == 'txt') {
+      if (defaults.type == 'csv' || defaults.type == 'tsv' || defaults.type == 'txt') {
 
         var csvData = "";
         var rowlength = 0;
         rowIndex = 0;
+
+        function csvString(cell, rowIndex, colIndex) {
+          var result = '';
+
+          if (cell !== null) {
+            var dataString = parseString(cell, rowIndex, colIndex);
+
+            var csvValue = (dataString === null || dataString === '') ? '' : dataString.toString();
+
+            if (defaults.type == 'tsv') {
+              if (dataString instanceof Date)
+                result = dataString.toLocaleString();
+
+              // According to http://www.iana.org/assignments/media-types/text/tab-separated-values
+              // are fields that contain tabs not allowable in tsv encoding
+              result = replaceAll(csvValue, '\t', ' ');
+            }
+            else {
+              // Takes a string and encapsulates it (by default in double-quotes) if it
+              // contains the csv field separator, spaces, or linebreaks.
+              if (dataString instanceof Date)
+                result = defaults.csvEnclosure + dataString.toLocaleString() + defaults.csvEnclosure;
+              else {
+                result = replaceAll(csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
+
+                if (result.indexOf(defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result))
+                  result = defaults.csvEnclosure + result + defaults.csvEnclosure;
+              }
+            }
+          }
+
+          return result;
+        }
 
         var CollectCsvData = function ($rows, rowselector, length) {
 
@@ -97,7 +130,7 @@
             trData = "";
             ForEachVisibleCell(this, rowselector, rowIndex, length + $rows.length,
                     function (cell, row, col) {
-                      trData += csvString(cell, row, col) + defaults.csvSeparator;
+                      trData += csvString(cell, row, col) + (defaults.type == 'tsv' ? '\t' : defaults.csvSeparator);
                     });
             trData = $.trim(trData).substring(0, trData.length - 1);
             if (trData.length > 0) {
@@ -1348,29 +1381,6 @@
 
       function replaceAll(string, find, replace) {
         return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
-      }
-
-      // Takes a string and encapsulates it (by default in double-quotes) if it
-      // contains the csv field separator, spaces, or linebreaks.
-      function csvString(cell, rowIndex, colIndex) {
-        var result = '';
-
-        if (cell !== null) {
-          var dataString = parseString(cell, rowIndex, colIndex);
-
-          var csvValue = (dataString === null || dataString === '') ? '' : dataString.toString();
-
-          if (dataString instanceof Date)
-            result = defaults.csvEnclosure + dataString.toLocaleString() + defaults.csvEnclosure;
-          else {
-            result = replaceAll(csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
-
-            if (result.indexOf(defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result))
-              result = defaults.csvEnclosure + result + defaults.csvEnclosure;
-          }
-        }
-
-        return result;
       }
 
       function parseNumber(value) {
