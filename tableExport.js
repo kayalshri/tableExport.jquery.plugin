@@ -1442,8 +1442,14 @@
               result += $.trim(v).replace(/\u00AD/g, ""); // remove soft hyphens
             });
 
-            if (defaults.numbers.html.decimalMark != defaults.numbers.output.decimalMark ||
-                defaults.numbers.html.thousandsSeparator != defaults.numbers.output.thousandsSeparator) {
+            if (defaults.type == 'json' ) {
+              var number = parseNumber (result);
+
+              if (number !== false)
+                result = Number (number);
+            }
+            else if (defaults.numbers.html.decimalMark != defaults.numbers.output.decimalMark ||
+                     defaults.numbers.html.thousandsSeparator != defaults.numbers.output.thousandsSeparator) {
               var number = parseNumber (result);
 
               if ( number !== false ) {
