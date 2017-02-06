@@ -19,7 +19,7 @@ tableExport.jquery.plugin
 Installation
 ============
 
-To save the generated export files on client side, include in your javascript code:
+To save the generated export files on client side, include in your html code:
 
 ```javascript
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
