@@ -130,7 +130,7 @@
                                                                                       thousandsSeparator: ''}}
                                                       });"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV</a></li>
       <li><a href="#" onClick="doExport('#countries', {csvUseBOM: false, type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (without BOM)</a></li>
-      <li><a href="#" onClick="doExport('#rowspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#rowspans', {type: 'csv',numbers: {html: {decimalMark: '.', thousandsSeparator: ','}, output: false}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (rowspan)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue47', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue47: colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#invisiblecols', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-display="always")</a></li>

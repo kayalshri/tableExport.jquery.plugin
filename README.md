@@ -19,13 +19,13 @@ tableExport.jquery.plugin
 Installation
 ============
 
-To save the generated export files on client side, include:
+To save the generated export files on client side, include in your javascript code:
 
 ```javascript
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
 ```
 
-To export the table in XLSX (Excel 2007+ XML Format) format, you need to include:
+To export the table in XLSX (Excel 2007+ XML Format) format, you need to include additionally:
 ```javascript
 <script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
 ```
@@ -95,7 +95,7 @@ $('table').tableExport({fileName: sFileName,
                        });
 ```
 
-Options
+Options (Default settings)
 =======
 
 ```javascript
@@ -105,7 +105,7 @@ csvSeparator: ','
 csvUseBOM: true
 displayTableName: false
 escape: false
-excelstyles: [ 'css','properties','to','export','to','excel' ]
+excelstyles: []
 fileName: 'tableExport'
 htmlContent: false
 ignoreColumn: []
@@ -157,13 +157,17 @@ worksheetName: 'xlsWorksheetName'
 * Field names should correspond to the values set on the "data-field" attribute of the header elements `th` in the DOM.
 * "Nameless" columns without data-field attribute will be named by their index number (converted to a string)
 
+To disable formatting of numbers in the exported output, which can be useful for csv and excel format, set the option ``` numbers: output ``` to ``` false ```.
+
+The ``` excelstyles ``` option lets you define the css attributes of the original html table cells, that should be taken over when exporting to an excel table.
+
 For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
 
 There is an extended setting for ``` jsPDF option 'format' ```. Setting the option value to ``` 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
 
 Also there is an extended setting for the ``` jsPDF-AutoTable options 'fillColor', 'textColor' and 'fontStyle'```. When setting these option values to ``` 'inherit' ``` the original css values for background and text color will be used as fill and text color while exporting to pdf. A css font-weight >= 700 results in a bold fontStyle and the italic css font-style will be used as italic fontStyle.
 
-When exporting to pdf the option ```outputImages``` lets you disable the output of images that are located in the original html table.
+When exporting to pdf the option ``` outputImages ``` lets you enable or disable the output of images that are located in the original html table.
 
 To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) forked from [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data, but not any styling information of the html table.
 

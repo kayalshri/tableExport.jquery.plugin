@@ -54,14 +54,15 @@
         numbers: {html: {decimalMark: '.',
                          thousandsSeparator: ','
                         },
-                  output: {decimalMark: '.',
+                  output: // set to false to not format numbers in exported output
+                          {decimalMark: '.',
                            thousandsSeparator: ','
                           }
                  },
         onCellData: null,
         onCellHtmlData: null,
         outputMode: 'file',  // 'file', 'string', 'base64' or 'window' (experimental)
-        pdfmake: {enabled: false}, // true: use pdfmake instead of jspdf(-autotable)
+        pdfmake: {enabled: false}, // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
         tbodySelector: 'tr',
         tfootSelector: 'tr', // set empty ('') to prevent export of tfoot rows
         theadSelector: 'tr',
@@ -1442,7 +1443,7 @@
               result += $.trim(v).replace(/\u00AD/g, ""); // remove soft hyphens
             });
 
-            if (defaults.type == 'json' ) {
+            if (defaults.type == 'json' || defaults.numbers.output === false) {
               var number = parseNumber (result);
 
               if (number !== false)
