@@ -984,13 +984,21 @@
 
               if (rowIndex > 0) {
                 // iterate through last row
-                $.each(teOptions.headerrows[rowIndex-1], function () {
-                  var obj = this;
-                  if (rowIndex > 1 && this.rect === null)
-                    obj = teOptions.headerrows[rowIndex-2][this.key];
-                  if (obj !== null)
-                    teOptions.columns.push(obj);
-                });
+                var lastrow = rowIndex-1;
+                while (lastrow >= 0) {
+                  $.each(teOptions.headerrows[lastrow], function () {
+                    var obj = this;
+
+                    if (lastrow > 0 && this.rect === null)
+                      obj = teOptions.headerrows[lastrow-1][this.key];
+
+                    if (obj !== null && obj.rowIndex >= 0 &&
+                        (obj.style.hasOwnProperty("hidden") !== true || obj.style.hidden !== true))
+                      teOptions.columns.push(obj);
+                  });
+
+                  lastrow = (teOptions.columns.length > 0) ? -1 : lastrow-1;
+                }
               }
 
               var rowCount = 0;
@@ -1427,7 +1435,7 @@
           if (defaults.htmlContent === true) {
             result = $.trim(htmlData);
           }
-          else {
+          else if (htmlData != '') {
             var text = htmlData.replace(/\n/g,'\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
             var obj = $('<div/>').html(text).contents();
             text = '';

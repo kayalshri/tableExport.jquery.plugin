@@ -343,6 +343,10 @@
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
         <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 111: Export pdf with images)</a></li>
+      <li><a href="#" onClick="doExport('#issue60',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable issue60))</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
@@ -925,6 +929,11 @@
         <th>C2</th>
         <th>C3</th>
       </tr>
+      <tr data-tableexport-display="none">
+        <th>C_1</th>
+        <th>C_2</th>
+        <th>C_3</th>
+      </tr>
       </thead>
       <tbody>
       <tr>
@@ -934,7 +943,7 @@
       </tr>
       <tr>
         <td>D</td>
-        <td>E</td>
+        <td data-tableexport-value="">E</td>
         <td>F</td>
       </tr>
       </tbody>
