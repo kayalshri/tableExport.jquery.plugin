@@ -148,7 +148,8 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: [2,3]});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', escape: 'true'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (with escape)</a></li>
-      <li><a href="#" onClick="doExport('#rowspans', {type: 'json'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> JSON (rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#rowspans', {type: 'json'});"> <img src='icons/json.png' alt="CSV" style="width:24px"> JSON (rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue142', {type: 'json', tfootSelector: ''});"> <img src='icons/json.png' alt="CSV" style="width:24px"> JSON (omit tfoot from output)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xml'});"> <img src='icons/xml.png' alt="XML" style="width:24px"> XML</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
@@ -1195,6 +1196,30 @@
         <td>201611xx</td><td>15098xxx</td><td>其他</td><td>六盘水市</td><td>未量房死单</td><td>未量房</td><td>量房7天内</td><td>公司电话报价</td><td>2016-11-xx 14:41:45</td>
       </tr>
       </tbody>
+    </table>
+    <h3>Issue 142: Omit tfoot from output</h3>
+    <table id="issue142" class="">
+      <thead>
+          <tr>
+              <th>class name</th>
+              <th>class code</th>
+              <th>class comments</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+          </tr>
+      </tbody>
+      <tfoot>
+          <tr>
+              <th>class name</th>
+              <th>class code</th>
+              <th>class comments</th>
+          </tr>
+      </tfoot>
     </table>
 
     <h3>Countries and dependencies by population (font test)</h3>
