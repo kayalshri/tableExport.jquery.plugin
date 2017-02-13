@@ -1429,6 +1429,7 @@
             }
 
             if (htmlData != '' && jQuery().bootstrapTable != undefined) {
+              // filter bootstrap-table-filter-control entries
               var html = $.parseHTML(htmlData);
 
               htmlData = '';
