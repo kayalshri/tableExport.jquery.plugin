@@ -1427,6 +1427,18 @@
                 }
               });
             }
+
+            if (htmlData != '' && jQuery().bootstrapTable != undefined) {
+              var html = $.parseHTML(htmlData);
+
+              htmlData = '';
+              $.each( html, function() {
+                if ( typeof $(this).html() === 'undefined' )
+                  htmlData += $(this).text();
+                else if ( typeof $(this).attr('class') === 'undefined' || $(this).hasClass('th-inner') === true )
+                  htmlData += $(this).html();
+              });
+            }
           }
 
           if (typeof defaults.onCellHtmlData === 'function')
