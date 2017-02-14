@@ -1412,38 +1412,28 @@
           else {
             htmlData = $cell.html();
 
-            if (htmlData != '') {
+            if (typeof defaults.onCellHtmlData === 'function')
+              htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
+            else if (htmlData != '') {
               var html = $.parseHTML( htmlData );
+              var inputidx = 0;
+              var selectidx = 0;
 
               htmlData = '';
               $.each( html, function() {
                 if ( $(this).is("input") )
-                  htmlData += $cell.find('input').val();
+                  htmlData += $cell.find('input').eq(inputidx++).val();
                 else if ( $(this).is("select") )
-                  htmlData += $cell.find('select option:selected').text();
+                  htmlData += $cell.find('select option:selected').eq(selectidx++).text();
                 else {
-                  htmlData += $cell.html();
-                  return false;
+                  if ( typeof $(this).html() === 'undefined' )
+                    htmlData += $(this).text();
+                  else if ( jQuery().bootstrapTable === undefined || $(this).hasClass('filterControl') !== true )
+                    htmlData += $(this).html();
                 }
               });
             }
-
-            if (htmlData != '' && jQuery().bootstrapTable != undefined) {
-              // filter bootstrap-table-filter-control entries
-              var html = $.parseHTML(htmlData);
-
-              htmlData = '';
-              $.each( html, function() {
-                if ( typeof $(this).html() === 'undefined' )
-                  htmlData += $(this).text();
-                else if ( typeof $(this).attr('class') === 'undefined' || $(this).hasClass('th-inner') === true )
-                  htmlData += $(this).html();
-              });
-            }
           }
-
-          if (typeof defaults.onCellHtmlData === 'function')
-            htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
 
           if (defaults.htmlContent === true) {
             result = $.trim(htmlData);

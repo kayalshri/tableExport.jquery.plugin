@@ -100,7 +100,9 @@
             result += $(this).text();
           else if ( $(this).is("input") )
             result += $('#'+$(this).attr('id')).val();
-          else if ( ! $(this).hasClass('no_export') )
+          else if ( $(this).is("select") )
+            result += $('#'+$(this).attr('id')+" option:selected").text();
+          else if ( $(this).hasClass('no_export') !== true )
             result += $(this).html();
         });
       }
@@ -825,17 +827,19 @@
       </thead>
       <tbody>
       <tr>
-        <td><input type="number" id="r1c0"></td>
+        <td><input type="number" id="r1i1"></td>
         <td>B</td>
         <td>C</td>
       </tr>
       <tr>
-        <td><div class="no_export">when exporting you<br>should only see a </div><div>D</div></td>
+        <td><div class="no_export">onCellHtmlData should filter<br>this text, but not this letter:</div><div>D</div></td>
         <td><b>E</b></td>
-        <td><div>F</div></td>
+        <td><input type="text" id="r2i1" value="text1"><br>
+        <input type="text" id="r2i2" value="text2"><br>
+        <input type="text" id="r2i3" value="text3"></td>
       </tr>
       <tr>
-        <td><select><option>option1</option><option>option2</option><option>option3</option></select></td>
+        <td><select id="r3s1"><option>option1</option><option>option2</option><option>option3</option></select></td>
         <td>H</td>
         <td>I</td>
       </tr>
