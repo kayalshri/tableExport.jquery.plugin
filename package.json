@@ -1,6 +1,6 @@
 {
   "name": "tableexport.jquery.plugin",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "html table export",
   "main": "tableExport.min.js",
   "dependencies": {
