@@ -589,13 +589,13 @@
         var wbout = XLSX.write(wb, {bookType: defaults.type, bookSST: false, type: 'binary'});
 
         try {
-          blob = new Blob([jx_s2ab(wbout)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8'});
+          blob = new Blob([jx_s2ab(wbout)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'});
           saveAs(blob, defaults.fileName + '.' + defaults.type);
         }
         catch (e) {
           downloadFile(defaults.fileName + '.' + defaults.type,
-                       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8',
-                       data);
+                       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8,',
+                       blob);
         }
 
       } else if (defaults.type == 'png') {
@@ -631,9 +631,7 @@
               saveAs(blob, defaults.fileName + '.png');
             }
             catch (e) {
-              downloadFile(defaults.fileName + '.png',
-                           'data:image/png,',
-                           image);
+              downloadFile(defaults.fileName + '.png', 'data:image/png,', blob);
             }
           //}
         });
@@ -728,7 +726,7 @@
                   defaults.jspdf.margins.top,
                   addHtmlOptions,
                   function () {
-                    jsPdfOutput(doc);
+                    jsPdfOutput(doc, false);
                   });
           //delete doc;
         }
@@ -1062,7 +1060,7 @@
 
             });
 
-            jsPdfOutput(teOptions.doc);
+            jsPdfOutput(teOptions.doc, (typeof teOptions.images != 'undefined' && jQuery.isEmptyObject(teOptions.images) === false));
 
             if (typeof teOptions.headerrows != 'undefined')
               teOptions.headerrows.length = 0;
@@ -1194,7 +1192,7 @@
         }
       }
 
-      function jsPdfOutput(doc) {
+      function jsPdfOutput(doc, hasimages) {
         if (defaults.consoleLog === true)
           console.log(doc.output());
 
@@ -1215,8 +1213,8 @@
         }
         catch (e) {
           downloadFile(defaults.fileName + '.pdf',
-                       'data:application/pdf;base64,',
-                       doc.output());
+                       'data:application/pdf' + (hasimages ? '' : ';base64') + ',',
+                       hasimages ? blob : doc.output());
         }
       }
 
@@ -1373,7 +1371,12 @@
                 if (imgHeight < cell.height)
                   uy = (cell.height - imgHeight) / 2;
 
-                teOptions.doc.addImage (image.src, cell.textPos.x, cell.y + uy, imgWidth, imgHeight);
+                try {
+                  teOptions.doc.addImage (image.src, cell.textPos.x, cell.y + uy, imgWidth, imgHeight);
+                }
+                catch (e) {
+                  // TODO: IE -> convert png to jpeg
+                }
                 cell.textPos.x += imgWidth;
               }
             }
@@ -1671,13 +1674,19 @@
           var DownloadLink = document.createElement('a');
 
           if (DownloadLink) {
+            var blobUrl = null;
+
             DownloadLink.style.display = 'none';
             if (filename !== false)
               DownloadLink.download = filename;
             else
               DownloadLink.target = '_blank';
 
-            if (header.toLowerCase().indexOf("base64,") >= 0)
+            if ( typeof data == 'object' ) {
+              blobUrl = window.URL.createObjectURL(data);
+              DownloadLink.href = blobUrl;
+            }
+            else if (header.toLowerCase().indexOf("base64,") >= 0)
               DownloadLink.href = header + base64encode(data);
             else
               DownloadLink.href = header + encodeURIComponent(data);
@@ -1695,6 +1704,9 @@
               DownloadLink.fireEvent('onclick');
             else if (typeof DownloadLink.onclick == 'function')
               DownloadLink.onclick();
+
+            if (blobUrl)
+              window.URL.revokeObjectURL(blobUrl);
 
             document.body.removeChild(DownloadLink);
           }
