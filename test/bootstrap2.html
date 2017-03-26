@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.17/jspdf.plugin.autotable.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/export/bootstrap-table-export.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/toolbar/bootstrap-table-toolbar.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.css" />
+
+  <script type="text/javaScript">
+
+  $(document).ready(function()
+  {
+    $('#table_sortSearchResult').bootstrapTable('refreshOptions', {
+        exportOptions: {fileName: "tableExport",
+                        jspdf: {
+                          format: 'bestfit',
+                          autotable: {
+                            startY: 20,
+                            bodyStyles: {valign: "top"},
+                            styles: {overflow: "linebreak", rowHeight: 20, fontSize: 11, font: "helvetica"},
+                            headerStyles: {fillColor: [41, 128, 185]}
+                          }
+                        }
+                       }
+
+    });
+  });
+
+  </script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="toolbar">
+      </div>
+      <table class="std_table"
+            id="table_sortSearchResult"
+            data-toggle="table"
+            data-maintain-selected="true"
+              data-sort-name="Zeitpunkt"
+            data-sort-order="asc"
+              data-search="true"
+              data-show-pagination-switch="true"
+              data-pagination="true"
+              data-page-list="[10, 25, 50, 100, ALL]"
+                data-page-size="25"
+              data-show-footer="false"
+              data-side-pagination="client"
+              data-show-export="true"
+              data-export-types="['excel', 'pdf']"
+              data-export-options='{
+              }'
+            data-click-to-select="true"
+          >
+      <thead>
+        <tr>
+          <th data-field="Zeitpunkt" data-sortable="true" data-sorter="dateSorter">
+            Zeitpunkt
+          </th>
+          <th data-field="Geändert von" data-sortable="true">
+            Geändert von
+          </th>
+          <th data-field="Art" data-sortable="true">
+            Art
+          </th>
+          <th data-field="Objekt" data-sortable="false">
+            Objekt
+          </th>
+          <th data-field="Änderungen" data-sortable="false">
+            Änderungen
+          </th>
+          <th data-field="Alte Werte" data-sortable="false">
+            Alte Werte
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>21.03.2017 11:20:12</td>
+          <td>admin \n new line</td>
+          <td>Modifikation
+          new line</td>
+          <td>maxi.aigner, Lehrer, <b>ALP</b>, GS, test, </td>
+          <td><b>givenName</b>:= Maximilian P.<br>mebisASVUID:-<br>mebisDeactivated:-<br><b>mebisIsNewsletter</b>:= FALSE</td>
+          <td><b>givenName</b>: Maximilian<br><b>mebisASVUID</b>: 3cbe1b2ce1b517e1126689bc92e73472<br><b>mebisDeactivated</b>: FALSE</td>
+          </tr>
+        <tr>
+          <td>22.03.2017 17:55:26</td>
+          <td>admin</td>
+          <td>Modifikation</td>
+          <td>maxi.aigner, Lehrer, ALP, GS, test, </td>
+          <td><b>givenName</b>:= Maximilian PQ.</td>
+          <td><b>givenName</b>: Maximilian P.</td>
+          </tr>
+      </tbody>
+      </table>
+    </div>
+  </body>
+</html>

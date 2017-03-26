@@ -46,6 +46,7 @@
                                                 },
                             tableExport: {onAfterAutotable: null,
                                           onBeforeAutotable: null,
+                                          onAutotableText: null,
                                           onTable: null,
                                           outputImages: true
                                          }
@@ -946,16 +947,15 @@
                     if (typeof rowopt != 'undefined' && typeof rowopt.kids != 'undefined' && rowopt.kids.length > 0) {
 
                       var dh = cell.height / rowopt.rect.height;
-                      if ( dh > teOptions.dh || typeof teOptions.dh == 'undefined' )
+                      if (dh > teOptions.dh || typeof teOptions.dh == 'undefined')
                         teOptions.dh = dh;
                       teOptions.dw = cell.width / rowopt.rect.width;
 
-                      drawCellElements (cell, rowopt.kids, teOptions);
+                      drawAutotableElements (cell, rowopt.kids, teOptions);
+                      drawAutotableText (cell, rowopt.kids, teOptions);
                     }
-                    teOptions.doc.autoTableText(cell.text, cell.textPos.x, cell.textPos.y, {
-                        halign: cell.styles.halign,
-                        valign: cell.styles.valign
-                    });
+                    else
+                      drawAutotableText (cell, {}, teOptions);
                   }
                   return false;
                 };
@@ -1326,7 +1326,7 @@
         return x || done();
       }
 
-      function drawCellElements (cell, elements, teOptions) {
+      function drawAutotableElements (cell, elements, teOptions) {
         elements.each(function () {
           var kids = $(this).children();
 
@@ -1385,6 +1385,60 @@
           if (typeof kids != 'undefined' && kids.length > 0)
             drawCellElements (cell, kids, teOptions);
         });
+      }
+
+      function drawAutotableText (cell, texttags, teOptions) {
+        if (typeof teOptions.onAutotableText === 'function') {
+          teOptions.onAutotableText(teOptions.doc, cell, texttags);
+        }
+        else {
+          var x = cell.textPos.x;
+          var y = cell.textPos.y;
+          var style = {halign: cell.styles.halign, valign: cell.styles.valign};
+
+          if (texttags.length) {
+            var tag = texttags[0];
+            while (tag.previousSibling)
+              tag = tag.previousSibling;
+
+            var b = false, i = false;
+
+            while (tag) {
+              if ($(tag).is("br")) {
+                x = cell.textPos.x;
+                y += teOptions.doc.internal.getFontSize();
+              }
+
+              if ($(tag).is("b"))
+                b = true;
+              else if ($(tag).is("i"))
+                i = true;
+
+              if (b || i)
+                teOptions.doc.setFontType((b && i) ? "bolditalic" : b ? "bold" : "italic");
+
+              teOptions.doc.autoTableText($(tag).text(), x, y, style);
+
+              x += teOptions.doc.getStringUnitWidth($(tag).text()) * teOptions.doc.internal.getFontSize();
+
+              if (b || i) {
+                if ($(tag).is("b"))
+                  b = false;
+                else if ($(tag).is("i"))
+                  i = false;
+
+                teOptions.doc.setFontType((!b && !i) ? "normal" : b ? "bold" : "italic");
+              }
+
+              tag = tag.nextSibling;
+            }
+            cell.textPos.x = x;
+            cell.textPos.y = y;
+          }
+          else {
+            teOptions.doc.autoTableText(cell.text, x, y, style);
+          }
+        }
       }
 
       function escapeRegExp(string) {

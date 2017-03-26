@@ -134,6 +134,7 @@ jspdf: orientation: 'p'
                   alternateRowStyles: fillColor: 245
                   tableExport: onAfterAutotable: null
                                onBeforeAutotable: null
+                               onAutotableText: null
                                onTable: null
                                outputImages: true
 numbers: html: decimalMark: '.'
