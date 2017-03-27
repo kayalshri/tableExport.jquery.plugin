@@ -26,6 +26,16 @@
   {
     $('#table_sortSearchResult').bootstrapTable('refreshOptions', {
         exportOptions: {fileName: "tableExport",
+/*
+                        jspdf: {
+                          autotable: {
+                            startY: 20,
+                            bodyStyles: {valign: "top"},
+                            styles: {overflow: "linebreak", rowHeight: 20, fontSize: 10, font: "helvetica"},
+                            headerStyles: {fillColor: [41, 128, 185]}
+                          }
+                        }
+*/
                         jspdf: {
                           format: 'bestfit',
                           autotable: {

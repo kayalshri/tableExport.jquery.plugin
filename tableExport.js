@@ -1404,7 +1404,10 @@
             var b = false, i = false;
 
             while (tag) {
-              if ($(tag).is("br")) {
+              var txt = $(tag).text();
+              var w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
+              
+              if ($(tag).is("br") || (x > cell.textPos.x && (x + w) > (cell.textPos.x + cell.width))) {
                 x = cell.textPos.x;
                 y += teOptions.doc.internal.getFontSize();
               }
@@ -1417,9 +1420,14 @@
               if (b || i)
                 teOptions.doc.setFontType((b && i) ? "bolditalic" : b ? "bold" : "italic");
 
-              teOptions.doc.autoTableText($(tag).text(), x, y, style);
+              while (txt.length && (x + w) > (cell.textPos.x + cell.width)) {
+                txt = txt.substring (0, txt.length - 1);
+                w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
+              }
+              
+              teOptions.doc.autoTableText(txt, x, y, style);
 
-              x += teOptions.doc.getStringUnitWidth($(tag).text()) * teOptions.doc.internal.getFontSize();
+              x += w;
 
               if (b || i) {
                 if ($(tag).is("b"))
