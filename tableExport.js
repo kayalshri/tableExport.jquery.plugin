@@ -1405,9 +1405,8 @@
 
             while (tag) {
               var txt = $(tag).text();
-              var w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
-              
-              if ($(tag).is("br") || (x > cell.textPos.x && (x + w) > (cell.textPos.x + cell.width))) {
+
+              if ($(tag).is("br")) {
                 x = cell.textPos.x;
                 y += teOptions.doc.internal.getFontSize();
               }
@@ -1420,13 +1419,32 @@
               if (b || i)
                 teOptions.doc.setFontType((b && i) ? "bolditalic" : b ? "bold" : "italic");
 
-              while (txt.length && (x + w) > (cell.textPos.x + cell.width)) {
-                txt = txt.substring (0, txt.length - 1);
-                w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
-              }
-              
-              teOptions.doc.autoTableText(txt, x, y, style);
+              var w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
 
+              if (w) {
+                if (cell.styles.overflow === 'linebreak' &&
+                    x > cell.textPos.x && (x + w) > (cell.textPos.x + cell.width)) {
+                  var chars = ".,!%*;:=-";
+                  if (chars.indexOf(txt.charAt(0)) >= 0) {
+                    var s = txt.charAt(0);
+                    w = teOptions.doc.getStringUnitWidth(s) * teOptions.doc.internal.getFontSize();
+                    if ((x + w) <= (cell.textPos.x + cell.width)) {
+                      teOptions.doc.autoTableText(s, x, y, style);
+                      txt = txt.substring (1, txt.length);
+                    }
+                    w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
+                  }
+                  x = cell.textPos.x;
+                  y += teOptions.doc.internal.getFontSize();
+                }
+
+                while (txt.length && (x + w) > (cell.textPos.x + cell.width)) {
+                  txt = txt.substring (0, txt.length - 1);
+                  w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
+                }
+              }
+
+              teOptions.doc.autoTableText(txt, x, y, style);
               x += w;
 
               if (b || i) {
