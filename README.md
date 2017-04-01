@@ -175,25 +175,34 @@ To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) f
 
 Optional html data attributes
 =============================
-(can be set while generating the table you want to export)
+(can be applied while generating the table that you want to export)
 
 <h3>data-tableexport-display</h3>
+
 ```html
-<table style="display:none;" data-tableexport-display="always">...</table> -> hidden table will be exported
+<table style="display:none;" data-tableexport-display="always">...</table> -> a hidden table will be exported
 
-<td style="display:none;" data-tableexport-display="always">...</td> -> hidden cell will be exported
+<td style="display:none;" data-tableexport-display="always">...</td> -> a hidden cell will be exported
 
-<td data-tableexport-display="none">...</td> -> cell will not be exported
+<td data-tableexport-display="none">...</td> -> this cell will not be exported
 
 <tr data-tableexport-display="none">...</tr> -> all cells of this row will not be exported
 ```
 
 <h3>data-tableexport-msonumberformat</h3>
+
 ```html
-<td data-tableexport-msonumberformat="\@">...</td> -> data value will be used as mso-number-format style attribute when exporting to excel
+<td data-tableexport-msonumberformat="\@">...</td> -> data value will be used to style excel cells with mso-number-format
+                                                      Examples:
+                                                      "\\@"      excel treats cell content alway as text, even numbers
+                                                      "0"        excel will display no decimals for numbers
+                                                      "0\\.000"  excel displays numbers with 3 decimals
+                                                      "0%"       excel will display a number as percent with no decimals
+                                                      "Percent"  excel will display a number as percent with 2 decimals
 ```
 
 <h3>data-tableexport-value</h3>
+
 ```html
 <th data-tableexport-value="export title">title</th> -> "export title" instead of "title" will be exported
 
