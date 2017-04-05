@@ -194,9 +194,9 @@ Optional html data attributes
 ```html
 <td data-tableexport-msonumberformat="\@">...</td> -> data value will be used to style excel cells with mso-number-format
                                                       Examples:
-                                                      "\\@"      excel treats cell content alway as text, even numbers
+                                                      "\@"       excel treats cell content alway as text, even numbers
                                                       "0"        excel will display no decimals for numbers
-                                                      "0\\.000"  excel displays numbers with 3 decimals
+                                                      "0\.000"   excel displays numbers with 3 decimals
                                                       "0%"       excel will display a number as percent with no decimals
                                                       "Percent"  excel will display a number as percent with 2 decimals
 ```
