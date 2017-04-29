@@ -694,8 +694,30 @@
                           body: body
                         }
                       }
-                     ]
+              ],
+              defaultStyle: {
+                  //font: 'Mirza'
+                  font: 'Roboto'
+              }
           };
+
+          pdfMake.fonts = {
+            /*
+            Mirza: {
+              normal: 'Mirza-Regular.ttf',
+              bold: 'Mirza-Bold.ttf',
+              italics: 'Mirza-Medium.ttf',
+              bolditalics: 'Mirza-SemiBold.ttf'
+            },
+            */
+            Roboto: {
+              normal: 'Roboto-Regular.ttf',
+              bold: 'Roboto-Medium.ttf',
+              italics: 'Roboto-Italic.ttf',
+              bolditalics: 'Roboto-MediumItalic.ttf'
+            }
+          };
+
           pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
 
             try {
@@ -951,7 +973,9 @@
                         teOptions.dh = dh;
                       teOptions.dw = cell.width / rowopt.rect.width;
 
+                      var y = cell.textPos.y;
                       drawAutotableElements (cell, rowopt.kids, teOptions);
+                      cell.textPos.y = y;
                       drawAutotableText (cell, rowopt.kids, teOptions);
                     }
                     else
@@ -1383,7 +1407,7 @@
           }
 
           if (typeof kids != 'undefined' && kids.length > 0)
-            drawCellElements (cell, kids, teOptions);
+            drawAutotableElements (cell, kids, teOptions);
         });
       }
 
@@ -1404,7 +1428,11 @@
             var b = false, i = false;
 
             while (tag) {
-              var txt = $(tag).text();
+              var txt = tag.innerText || tag.textContent || "";
+
+              txt = ((txt.length && txt[0] == " ") ? " " : "") +
+                    $.trim(txt) +
+                    ((txt.length > 1 && txt[txt.length-1] == " ") ? " " : "");
 
               if ($(tag).is("br")) {
                 x = cell.textPos.x;
@@ -1442,10 +1470,10 @@
                   txt = txt.substring (0, txt.length - 1);
                   w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
                 }
-              }
 
-              teOptions.doc.autoTableText(txt, x, y, style);
-              x += w;
+                teOptions.doc.autoTableText(txt, x, y, style);
+                x += w;
+              }
 
               if (b || i) {
                 if ($(tag).is("b"))
@@ -1462,7 +1490,7 @@
             cell.textPos.y = y;
           }
           else {
-            teOptions.doc.autoTableText(cell.text, x, y, style);
+            teOptions.doc.autoTableText(cell.text, cell.textPos.x, cell.textPos.y, style);
           }
         }
       }
