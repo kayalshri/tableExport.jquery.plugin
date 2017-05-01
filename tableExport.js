@@ -1381,9 +1381,10 @@
                 var arImg  = this.width / this.height;
                 var imgWidth = cell.width;
                 var imgHeight = cell.height;
+                var px2pt = 0.264583 * 72 / 25.4;
                 var uy = 0;
 
-                if (arImg < arCell) {
+                if (arImg <= arCell) {
                   imgHeight = Math.min (cell.height, this.height);
                   imgWidth  = this.width * imgHeight / this.height;
                 }
@@ -1391,6 +1392,9 @@
                   imgWidth  = Math.min (cell.width, this.width);
                   imgHeight = this.height * imgWidth / this.width;
                 }
+
+                imgWidth *= px2pt;
+                imgHeight *= px2pt;
 
                 if (imgHeight < cell.height)
                   uy = (cell.height - imgHeight) / 2;
