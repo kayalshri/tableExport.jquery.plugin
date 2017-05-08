@@ -62,6 +62,7 @@
                  },
         onCellData: null,
         onCellHtmlData: null,
+        onMsoNumberFormat: null, // excel format only. See readme.md for more information about msonumberformat
         outputMode: 'file',  // 'file', 'string', 'base64' or 'window' (experimental)
         pdfmake: {enabled: false}, // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
         tbodySelector: 'tr',
