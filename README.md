@@ -59,9 +59,9 @@ Examples
 ```javascript
 $('.tableClass').tableExport({ type: "multisheetxls", worksheetName: ["tab1", tab2, tab3] });
 ```
-![0](https://cloud.githubusercontent.com/assets/4100130/25935902/dd370858-3657-11e7-8b08-1d01e19ddfdb.png)
+![0](https://cloud.githubusercontent.com/assets/4100130/25936245/5e65d796-3659-11e7-9b2c-83eb182ffd6b.png)
 ![1](https://cloud.githubusercontent.com/assets/4100130/25935678/d976a35a-3656-11e7-9e8b-ba511986a785.png)
-![2](https://cloud.githubusercontent.com/assets/4100130/25935686/dc7c0626-3656-11e7-82c3-fad20a92b45d.png)
+![2](https://cloud.githubusercontent.com/assets/4100130/25936249/659f876e-3659-11e7-97b4-e1181450416d.png)
 ![3](https://cloud.githubusercontent.com/assets/4100130/25935689/e0b584ce-3656-11e7-9ba1-69fb043d9729.png)
 
 ```javascript
