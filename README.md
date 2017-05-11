@@ -1,4 +1,4 @@
-tableExport.jquery.plugin
+Forked From: https://github.com/hhurz/tableExport.jquery.plugin tableExport.jquery.plugin
 =========================
 
 <h3>Export HTML Table to</h3>
@@ -9,7 +9,7 @@ tableExport.jquery.plugin
 <li> JSON
 <li> XML
 <li> SQL
-<li> XLS
+<li> XLS <b>Now With Multi Worksheet Support</b>
 <li> XLSX
 <li> DOC
 <li> PNG
@@ -55,6 +55,14 @@ Please keep this include order.
 
 Examples
 ========
+
+```javascript
+$('.tableClass').tableExport({ type: "multisheetxls", worksheetName: ["tab1", tab2, tab3] });
+```
+![0](https://cloud.githubusercontent.com/assets/4100130/25935902/dd370858-3657-11e7-8b08-1d01e19ddfdb.png)
+![1](https://cloud.githubusercontent.com/assets/4100130/25935678/d976a35a-3656-11e7-9e8b-ba511986a785.png)
+![2](https://cloud.githubusercontent.com/assets/4100130/25935686/dc7c0626-3656-11e7-82c3-fad20a92b45d.png)
+![3](https://cloud.githubusercontent.com/assets/4100130/25935689/e0b584ce-3656-11e7-9ba1-69fb043d9729.png)
 
 ```javascript
 $('#tableID').tableExport({type:'csv'});
