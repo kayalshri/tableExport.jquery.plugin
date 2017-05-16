@@ -18,7 +18,8 @@
         csvUseBOM: true,
         displayTableName: false,
         escape: false,
-        excelstyles: [],       // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
+        excelFileFormat: 'xlshtml', // xmlss = XML Spreadsheet 2003 file format (XMLSS), xlshtml = Excel 2000 html format
+        excelstyles: [],            // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
         fileName: 'tableExport',
         htmlContent: false,
         ignoreColumn: [],
@@ -63,7 +64,7 @@
                  },
         onCellData: null,
         onCellHtmlData: null,
-        onMsoNumberFormat: null, // excel format only. See readme.md for more information about msonumberformat
+        onMsoNumberFormat: null, // Excel 2000 html format only. See readme.md for more information about msonumberformat
         outputMode: 'file',  // 'file', 'string', 'base64' or 'window' (experimental)
         pdfmake: {enabled: false}, // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
         tbodySelector: 'tr',
@@ -71,7 +72,7 @@
         theadSelector: 'tr',
         tableName: 'myTableName',
         type: 'csv', // 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
-        worksheetName: 'xlsWorksheetName'
+        worksheetName: 'Worksheet'
       };
 
       var FONT_ROW_RATIO = 1.15;
@@ -373,7 +374,7 @@
         }
 
       }
-      else if (defaults.type === 'multisheetxls') {
+      else if (defaults.type === 'excel' && defaults.excelFileFormat === 'xmlss') {
         var $tables = $(el).filter(function () {
           return $(this).data("tableexport-display") != 'none' &&
           ($(this).is(':visible') ||
@@ -386,11 +387,10 @@
           rowIndex = 0;
           colNames = GetColumnNames(this);
           $hrows = $table.find('thead').first().find(defaults.theadSelector);
+          docData += '<Table>';
 
-          docData += '<Table ss:ExpandedColumnCount="$cellcount" ss:ExpandedRowCount="$rowcount" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="14.25">';
           // Header
           var cols = 0;
-
           $hrows.each(function () {
             trData = "";
             ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
@@ -404,14 +404,12 @@
               docData += '<Row>' + trData + '</Row>';
             rowIndex++;
           });
-          docData = docData.replace("$cellcount", cols);
 
           // Row Vs Column, support multiple tbodys
           $rows = [];
           $table.find('tbody').each(function () {
             $rows.push.apply($rows, $(this).find(defaults.tbodySelector));
           });
-          console.log($rows);
 
           //if (defaults.tfootSelector.length)
           //    $rows.push.apply($rows, $table.find('tfoot').find(defaults.tfootSelector));
@@ -422,17 +420,26 @@
             ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
               function (cell, row, col) {
                 if (cell !== null) {
-                  var tdcss = $(cell).data("tableexport-msonumberformat");
                   var type = "String";
-                  var data = parseString(cell, row, col).replace(/\n/g, '<br>');
-                  if (typeof tdcss != 'undefined' && tdcss !== '') {
+                  var style = "";
+                  var data = parseString(cell, row, col);
+
+                  if (jQuery.isNumeric(data) !== false) {
                     type = "Number";
-                    data = data.replace(/,/g, "");
-                    if (data.indexOf("%") > -1) {
-                      data = data.replace(/%/g, "") / 100;
+                  }
+                  else {
+                    number = parsePercent (data);
+                    if (number !== false) {
+                      data = number;
+                      type = "Number";
+                      style = ' ss:StyleID="pct1"';
                     }
                   }
-                  trData += '<Cell><Data ss:Type="' + type + '">' + data + '</Data></Cell>';
+
+                  if (type !== "Number")
+                    data = data.replace(/\n/g, '<br>');
+
+                  trData += '<Cell'+ style + '><Data ss:Type="' + type + '">' + data + '</Data></Cell>';
                 }
               });
             if (trData.length > 0)
@@ -441,18 +448,57 @@
           });
 
           docData += '</Table>';
-          docData = docData.replace("$rowcount", rowIndex);
           docDatas.push(docData);
 
           if (defaults.consoleLog === true)
             console.log(docData);
         });
-        
 
-        var docFile = '<?xml version="1.0"?> <?mso-application progid="Excel.Sheet"?> <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" xmlns:html="http://www.w3.org/TR/REC-html40"> <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"> <Author>Henry He</Author> <Created>' + getToday() + '</Created> <Version>16.00</Version> </DocumentProperties> <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office"> <AllowPNG/> </OfficeDocumentSettings> <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"> <WindowHeight>4635</WindowHeight> <WindowWidth>10335</WindowWidth> <WindowTopX>0</WindowTopX> <WindowTopY>0</WindowTopY> <ProtectStructure>False</ProtectStructure> <ProtectWindows>False</ProtectWindows> </ExcelWorkbook> <Styles> <Style ss:ID="Default" ss:Name="Normal"> <Alignment ss:Vertical="Center"/> <Borders/> <Font ss:FontName="等线" x:CharSet="134" ss:Size="11" ss:Color="#000000"/> <Interior/> <NumberFormat/> <Protection/> </Style> </Styles>';
+        var CreationDate = new Date().toISOString();
+        var docFile = '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?> ' +
+                      '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
+                                'xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+                                'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+                                'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" ' +
+                                'xmlns:html="http://www.w3.org/TR/REC-html40"> ' +
+                        '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"> ' +
+                          '<Created>' + CreationDate + '</Created> ' +
+                        '</DocumentProperties> ' +
+                        '<OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office"> ' +
+                          '<AllowPNG/> ' +
+                          '</OfficeDocumentSettings> ' +
+                          '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"> ' +
+                            '<WindowHeight>9000</WindowHeight> ' +
+                            '<WindowWidth>13860</WindowWidth> ' +
+                            '<WindowTopX>0</WindowTopX> ' +
+                            '<WindowTopY>0</WindowTopY> ' +
+                            '<ProtectStructure>False</ProtectStructure> ' +
+                            '<ProtectWindows>False</ProtectWindows> ' +
+                          '</ExcelWorkbook> ' +
+                          '<Styles> ' +
+                            '<Style ss:ID="Default" ss:Name="Default"> ' +
+                              '<Alignment ss:Vertical="Center"/> ' +
+                              '<Borders/> ' +
+                              '<Font/> ' +
+                              '<Interior/> ' +
+                              '<NumberFormat/> ' +
+                              '<Protection/> ' +
+                            '</Style> ' +
+                            '<Style ss:ID="Normal" ss:Name="Normal"/> ' +
+                            '<Style ss:ID="pct1"> ' +
+                            '  <NumberFormat ss:Format="Percent"/> ' +
+                            '</Style> ' +
+                          '</Styles>';
 
         for (var j = 0; j < docDatas.length; j++) {
-          docFile += '<Worksheet ss:Name="' + defaults.worksheetName[j] + '">' + docDatas[j] + '<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"> <Selected/> <ProtectObjects>False</ProtectObjects> <ProtectScenarios>False</ProtectScenarios> </WorksheetOptions></Worksheet>';
+          var ssName = typeof defaults.worksheetName === 'string' ? defaults.worksheetName + ' ' + (j+1) :
+                       typeof defaults.worksheetName[j] !== 'undefined' ? defaults.worksheetName[j] :
+                       'Table ' + (j+1);
+
+          docFile += '<Worksheet ss:Name="' + ssName + '">' +
+                       docDatas[j] +
+                       '<WorksheetOptions/> ' +
+                      '</Worksheet>';
         }
 
         docFile += '</Workbook>';
@@ -467,15 +513,14 @@
           return base64encode(docFile);
 
         try {
-          blob = new Blob([docFile], { type: 'application/vnd.ms-xls'});
-          saveAs(blob, defaults.fileName + '.xls');
+          blob = new Blob([docFile], {type: "application/xml;charset=utf-8"});
+          saveAs(blob, defaults.fileName + '.xml');
         }
         catch (e) {
-          downloadFile(defaults.fileName + '.xls',
-            'data:application/vnd.ms-xls;base64,',
-            docFile);
+          downloadFile(defaults.fileName + '.xml',
+                       'data:application/xml;charset=utf-8;base64,',
+                       xml);
         }
-
       }
       else if (defaults.type == 'excel' || defaults.type == 'xls' || defaults.type == 'word' || defaults.type == 'doc') {
 
@@ -1205,10 +1250,6 @@
         }
       }
 
-      function getToday() {
-        return new Date().toISOString();
-      }
-
       function FindColObject (objects, colIndex, rowIndex) {
         var result = null;
         $.each(objects, function () {
@@ -1626,6 +1667,17 @@
         return typeof value === "number" || jQuery.isNumeric(value) !== false ? value : false;
       }
 
+      function parsePercent(value) {
+        if (value.indexOf("%") > -1) {
+          value = parseNumber (value.replace(/%/g, ""));
+          if (value !== false)
+            value = value / 100;
+        }
+        else
+          value = false;
+        return value;
+      }
+
       function parseString(cell, rowIndex, colIndex) {
         var result = '';
 
@@ -1680,7 +1732,9 @@
               result += $.trim(v).replace(/\u00AD/g, ""); // remove soft hyphens
             });
 
-            if (defaults.type == 'json' || defaults.numbers.output === false) {
+            if (defaults.type == 'json' ||
+                (defaults.type === 'excel' && defaults.excelFileFormat === 'xmlss') ||
+                defaults.numbers.output === false) {
               var number = parseNumber (result);
 
               if (number !== false)

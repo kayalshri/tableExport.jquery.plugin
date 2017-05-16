@@ -1,19 +1,20 @@
-Forked From: https://github.com/hhurz/tableExport.jquery.plugin tableExport.jquery.plugin
+tableExport.jquery.plugin
 =========================
 
 <h3>Export HTML Table to</h3>
 <ul>
 <li> CSV
+<li> DOC
+<li> JSON
+<li> PDF
+<li> PNG
+<li> SQL
 <li> TSV
 <li> TXT
-<li> JSON
-<li> XML
-<li> SQL
-<li> XLS <b>Now With Multi Worksheet Support</b>
-<li> XLSX
-<li> DOC
-<li> PNG
-<li> PDF
+<li> XLS   (Excel 2000 HTML format)
+<li> XLSX  (Excel 2007 Office Open XML format)
+<li> XML   (Excel 2003 XML Spreadsheet format)
+<li> XML   (Raw xml)
 </ul>
 
 Installation
@@ -57,18 +58,27 @@ Examples
 ========
 
 ```javascript
-$('.tableClass').tableExport({ type: "multisheetxls", worksheetName: ["tab1", tab2, tab3] });
-```
-![0](https://cloud.githubusercontent.com/assets/4100130/25936245/5e65d796-3659-11e7-9b2c-83eb182ffd6b.png)
-![1](https://cloud.githubusercontent.com/assets/4100130/25935678/d976a35a-3656-11e7-9e8b-ba511986a785.png)
-![2](https://cloud.githubusercontent.com/assets/4100130/25936249/659f876e-3659-11e7-97b4-e1181450416d.png)
-![3](https://cloud.githubusercontent.com/assets/4100130/25935689/e0b584ce-3656-11e7-9ba1-69fb043d9729.png)
+// CSV format
 
-```javascript
 $('#tableID').tableExport({type:'csv'});
 ```
 
 ```javascript
+// Excel 2000 html format
+
+$('#tableID').tableExport({type:'excel'});
+```
+
+```javascript
+// XML Spreadsheet 2003 file format with multiple worksheet support
+
+$('table').tableExport({type:'excel',
+                        excelFileFormat:'xmlss',
+                        worksheetName: ['Table 1','Table 2', 'Table 3']});
+```
+
+```javascript
+// PDF export using jsPDF only
 $('#tableID').tableExport({type:'pdf',
                            jspdf: {orientation: 'p',
                                    margins: {left:20, top:10},
@@ -77,6 +87,8 @@ $('#tableID').tableExport({type:'pdf',
 ```
 
 ```javascript
+// PDF format using jsPDF and jsPDF Autotable 
+
 $('#tableID').tableExport({type:'pdf',
                            jspdf: {orientation: 'l',
                                    format: 'a3',
@@ -89,6 +101,8 @@ $('#tableID').tableExport({type:'pdf',
 ```
 
 ```javascript
+// PDF format with callback example
+
 function DoCellData(cell, row, col, data) {}
 function DoBeforeAutotable(table, headers, rows, AutotableSettings) {}
 
@@ -114,6 +128,7 @@ csvUseBOM: true
 displayTableName: false
 escape: false
 excelstyles: []
+excelFileFormat: 'xlshtml'
 fileName: 'tableExport'
 htmlContent: false
 ignoreColumn: []
@@ -158,7 +173,7 @@ tfootSelector: 'tr'
 theadSelector: 'tr'
 tableName: 'myTableName'
 type: 'csv'
-worksheetName: 'xlsWorksheetName'
+worksheetName: 'WorksheetName'
 ```
 
 ```ignoreColumn``` can be either an array of indexes (i.e. [0, 2]) or field names (i.e. ["id", "name"]).
@@ -168,7 +183,11 @@ worksheetName: 'xlsWorksheetName'
 
 To disable formatting of numbers in the exported output, which can be useful for csv and excel format, set the option ``` numbers: output ``` to ``` false ```.
 
-The ``` excelstyles ``` option lets you define the css attributes of the original html table cells, that should be taken over when exporting to an excel table.
+Set the option ``` excelFileFormat ``` to ``` 'xmlss' ``` if you want to export in XML Spreadsheet 2003 file format. Use this format if multiple tables should be exported into a single file. Excel 2000 html format is the default excel file format which has better support of exporting table styles.
+
+The ``` excelstyles ``` option lets you define the css attributes of the original html table cells, that should be taken over when exporting to an excel worksheet (Excel 2000 html format only).
+
+To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) forked from [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data, but not any styling information of the html table.
 
 For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
 
@@ -177,8 +196,6 @@ There is an extended setting for ``` jsPDF option 'format' ```. Setting the opti
 Also there is an extended setting for the ``` jsPDF-AutoTable options 'fillColor', 'textColor' and 'fontStyle'```. When setting these option values to ``` 'inherit' ``` the original css values for background and text color will be used as fill and text color while exporting to pdf. A css font-weight >= 700 results in a bold fontStyle and the italic css font-style will be used as italic fontStyle.
 
 When exporting to pdf the option ``` outputImages ``` lets you enable or disable the output of images that are located in the original html table.
-
-To export in XSLX format [protobi/js-xlsx](https://github.com/protobi/js-xlsx) forked from [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data, but not any styling information of the html table.
 
 
 Optional html data attributes
@@ -200,7 +217,7 @@ Optional html data attributes
 <h3>data-tableexport-msonumberformat</h3>
 
 ```html
-<td data-tableexport-msonumberformat="\@">...</td> -> data value will be used to style excel cells with mso-number-format
+<td data-tableexport-msonumberformat="\@">...</td> -> data value will be used to style excel cells with mso-number-format (Excel 2000 html format only)
                                                       Examples:
                                                       "\@"       excel treats cell content alway as text, even numbers
                                                       "0"        excel will display no decimals for numbers
