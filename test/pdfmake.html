@@ -7,6 +7,9 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
     <script type="text/javascript" src="../libs/pdfmake/vfs_fonts.js"></script>
+    <!--
+    <script type="text/javascript" src="../libs/pdfmake/mirza_fonts.js"></script>
+    -->
     <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
     <script type="text/javascript" src="../tableExport.js"></script>
     <style type="text/css">
@@ -42,10 +45,31 @@
           <a href="#" onClick="$('#countries').tableExport({type:'pdf',pdfmake:{enabled:true}});">
           <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (pdfmake)</a>
         </li>
+        <li>
+          <a href="#" onClick="$('#mixspans').tableExport({type:'pdf',pdfmake:{enabled:true}});">
+          <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (pdfmake colspan & rowspan)</a>
+        </li>
+        <!--
+        <li>
+          <a href="#" onClick="$('#countries').tableExport({type:'pdf',
+                                                            pdfmake:{enabled:true,
+                                                                     docDefinition: {defaultStyle: {font: 'Mirza'}
+                                                                                    },
+                                                                     fonts: {Mirza: {normal: 'Mirza-Regular.ttf',
+                                                                                     bold: 'Mirza-Bold.ttf',
+                                                                                     italics: 'Mirza-Medium.ttf',
+                                                                                     bolditalics: 'Mirza-SemiBold.ttf'
+                                                                                    }
+                                                                            }
+                                                                    }
+                                                          });">
+          <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (pdfmake arabic)</a>
+        </li>
+        -->
       </ul>
     </section>
     <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
-    <table id="countries" class="table-striped">
+    <table id="countries">
       <thead>
       <tr>
         <th data-field="rank">Rank</th>
@@ -230,5 +254,46 @@
       </tr>
       </tbody>
     </table>
+
+    <h3>Table with rowspan and colspan</h3>
+    <table id="mixspans">
+      <thead>
+      <tr>
+        <th>C1</th>
+        <th>C2</th>
+        <th>C3</th>
+      </tr>
+      </thead>
+      <tfoot>
+      <tr>
+        <td>9</td>
+        <td>9</td>
+        <td>9</td>
+      </tr>
+      </tfoot>
+      <tbody>
+      <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td rowspan="3" colspan="2">1</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>3</td>
+      </tr>
+      </tbody>
+    </table>
+
   </body>
 </html>

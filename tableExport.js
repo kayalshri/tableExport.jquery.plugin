@@ -66,7 +66,13 @@
         onCellHtmlData: null,
         onMsoNumberFormat: null, // Excel 2000 html format only. See readme.md for more information about msonumberformat
         outputMode: 'file',  // 'file', 'string', 'base64' or 'window' (experimental)
-        pdfmake: {enabled: false}, // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
+        pdfmake: {enabled: false,                               // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
+                  docDefinition: {pageOrientation: 'portrait',  // 'portrait' or 'landscape'
+                                  defaultStyle: {font: 'Roboto' // default is 'Roboto', for arabic font set this option to 'Mirza' and include mirza_fonts.js
+                                                }
+                                 },
+                  fonts: {}
+                 },
         tbodySelector: 'tr',
         tfootSelector: 'tr', // set empty ('') to prevent export of tfoot rows
         theadSelector: 'tr',
@@ -804,9 +810,23 @@
             var h = [];
 
             ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
-                    function (cell, row, col) {
-                      h.push(parseString(cell, row, col));
-                    });
+              function (cell, row, col) {
+                if (typeof cell !== 'undefined' && cell !== null) {
+
+                  var colspan = parseInt(cell.getAttribute('colspan'));
+                  var rowspan = parseInt(cell.getAttribute('rowspan'));
+
+                  var cellValue = parseString(cell, row, col);
+
+                  if (colspan > 1 || rowspan > 1) {
+                    colspan = colspan || 1;
+                    rowspan = rowspan || 1;
+                    h.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
+                  }
+                  else
+                    h.push(cellValue);
+                }
+              });
 
             if (h.length)
               body.push(h);
@@ -827,41 +847,41 @@
             var r = [];
 
             ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
-                    function (cell, row, col) {
-                      r.push(parseString(cell, row, col));
-                    });
+              function (cell, row, col) {
+                if (typeof cell !== 'undefined' && cell !== null) {
+                  var colspan = parseInt(cell.getAttribute('colspan'));
+                  var rowspan = parseInt(cell.getAttribute('rowspan'));
+
+                  var cellValue = parseString(cell, row, col) || " ";
+
+                  if (colspan > 1 || rowspan > 1) {
+                    colspan = colspan || 1;
+                    rowspan = rowspan || 1;
+                    r.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
+                  }
+                  else
+                    r.push(cellValue);
+                }
+                else
+                  r.push(" ");
+              });
 
             if (r.length)
               body.push(r);
             rowIndex++;
           });
 
-          var docDefinition = {
-              pageOrientation: 'landscape',
-              content: [
-                      {
-                        table: {
-                          headerRows: $hrows.length,
-                          widths: widths,
-                          body: body
-                        }
-                      }
-              ],
-              defaultStyle: {
-                  //font: 'Mirza'
-                  font: 'Roboto'
-              }
-          };
+          var docDefinition = { content: [ {
+                                  table: {
+                                    headerRows: $hrows.length,
+                                    widths: widths,
+                                    body: body
+                                  }
+                               }]};
+
+          $.extend(true, docDefinition, defaults.pdfmake.docDefinition);
 
           pdfMake.fonts = {
-            /*
-            Mirza: {
-              normal: 'Mirza-Regular.ttf',
-              bold: 'Mirza-Bold.ttf',
-              italics: 'Mirza-Medium.ttf',
-              bolditalics: 'Mirza-SemiBold.ttf'
-            },
-            */
             Roboto: {
               normal: 'Roboto-Regular.ttf',
               bold: 'Roboto-Medium.ttf',
@@ -869,6 +889,8 @@
               bolditalics: 'Roboto-MediumItalic.ttf'
             }
           };
+
+          $.extend(true, pdfMake.fonts, defaults.pdfmake.fonts);
 
           pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
 
