@@ -350,6 +350,10 @@
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
         <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable issue60))</a></li>
+      <li><a href="#" onClick="doExport('#issue164',
+                      {type: 'pdf',
+                        jspdf: {autotable: {tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 164: PDF(Make) don't support rowspan and colspan?)</a></li>
     </ul>
     <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
@@ -882,47 +886,47 @@
           <td>col3</td>
           <td>col4</td>
           <td>col5</td>
-          <td>col8</td>
+          <td>col6</td>
           <td>col7</td>
           <td>col8</td>
         </tr>
         <tr>
-          <td>x main1</td>
-          <td>x main2</td>
-          <td>x main3</td>
-          <td>x main4</td>
-          <td>x sub1-1</td>
-          <td>x sub1-2</td>
-          <td>x sub1-3</td>
-          <td>x sub1-4</td>
+          <td>r1 c1</td>
+          <td>r1 c2</td>
+          <td>r1 c3</td>
+          <td>r1 c4</td>
+          <td>r1 c5</td>
+          <td>r1 c6</td>
+          <td>r1 c7</td>
+          <td>r1 c8</td>
         </tr>
         <tr>
-          <td rowspan="4">y main1</td>
-          <td rowspan="4">y main2</td>
-          <td rowspan="4">y main3</td>
-          <td rowspan="4">y main4</td>
-          <td>y sub1-1</td>
-          <td>y sub1-2</td>
-          <td>y sub1-3</td>
-          <td>y sub1-4</td>
+          <td rowspan="4">r2 c1</td>
+          <td rowspan="4">r2 c2</td>
+          <td rowspan="4">r2 c3</td>
+          <td rowspan="4">r2 c4</td>
+          <td>r2 c5</td>
+          <td>r2 c6</td>
+          <td>r2 c7</td>
+          <td>r2 c8</td>
         </tr>
         <tr>
-          <td>y sub2-1</td>
-          <td>y sub2-2</td>
-          <td>y sub2-3</td>
-          <td>y sub2-4</td>
+          <td>r3 c5</td>
+          <td>r3 c6</td>
+          <td>r3 c7</td>
+          <td>r3 c8</td>
         </tr>
         <tr>
-          <td>y sub3-1</td>
-          <td>y sub3-2</td>
-          <td>y sub3-3</td>
-          <td>y sub3-4</td>
+          <td>r4 c5</td>
+          <td>r4 c6</td>
+          <td>r4 c7</td>
+          <td>r4 c8</td>
         </tr>
         <tr>
-          <td>y sub4-1</td>
-          <td>y sub4-2</td>
-          <td>y sub4-3</td>
-          <td>y sub4-4</td>
+          <td>r5 c5</td>
+          <td>r5 c6</td>
+          <td>r5 c7</td>
+          <td>r5 c8</td>
         </tr>
       </tbody>
     </table>
@@ -1226,6 +1230,27 @@
       </tfoot>
     </table>
 
+    <h3>Issue 164: PDF(Make) don't support rowspan and colspan?</h3>
+    <table id="issue164" class="">
+      <tbody>
+        <tr>
+          <td rowspan="3">R1-C1</td>
+          <td rowspan="3">R1-C2</td>
+          <td colspan="5">R1-C3</td>
+        </tr>
+        <tr>
+          <td rowspan="2">R2-C1</td>
+          <td rowspan="2">R2-C2</td>
+          <td colspan="3">R2-C3</td>
+        </tr>
+        <tr>
+          <td>R3-C1</td>
+          <td>R3-C2</td>
+          <td>R3-C3</td>
+        </tr>
+      </tbody>    
+    </table>
+    
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">

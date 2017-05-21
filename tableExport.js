@@ -805,37 +805,51 @@
           var body = [];
           rowIndex = 0;
 
-          $hrows = $(this).find('thead').first().find(defaults.theadSelector);
-          $hrows.each(function () {
-            var h = [];
+          var CollectPdfmakeData = function ($rows, colselector, length) {
+            var rlength = 0;
 
-            ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
-              function (cell, row, col) {
-                if (typeof cell !== 'undefined' && cell !== null) {
+            $rows.each(function () {
+              var r = [];
 
-                  var colspan = parseInt(cell.getAttribute('colspan'));
-                  var rowspan = parseInt(cell.getAttribute('rowspan'));
+              ForEachVisibleCell(this, colselector, rowIndex, length,
+                function (cell, row, col) {
+                  if (typeof cell !== 'undefined' && cell !== null) {
 
-                  var cellValue = parseString(cell, row, col);
+                    var colspan = parseInt(cell.getAttribute('colspan'));
+                    var rowspan = parseInt(cell.getAttribute('rowspan'));
 
-                  if (colspan > 1 || rowspan > 1) {
-                    colspan = colspan || 1;
-                    rowspan = rowspan || 1;
-                    h.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
+                    var cellValue = parseString(cell, row, col) || " ";
+
+                    if (colspan > 1 || rowspan > 1) {
+                      colspan = colspan || 1;
+                      rowspan = rowspan || 1;
+                      r.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
+                    }
+                    else
+                      r.push(cellValue);
                   }
                   else
-                    h.push(cellValue);
-                }
-              });
+                    r.push(" ");
+                });
 
-            if (h.length)
-              body.push(h);
+              if (r.length)
+                body.push(r);
 
-            for(var i = widths.length; i < h.length;i++)
-              widths.push("*");
+              if ( rlength < r.length )
+                rlength = r.length;
 
-            rowIndex++;
-          });
+              rowIndex++;
+            });
+
+            return rlength;
+          }
+
+          $hrows = $(this).find('thead').first().find(defaults.theadSelector);
+
+          var colcount = CollectPdfmakeData ($hrows, 'th,td', $hrows.length);
+
+          for(var i = widths.length; i < colcount;i++)
+            widths.push("*");
 
           $(this).find('tbody').each(function() {
             $rows.push.apply ($rows, $(this).find(defaults.tbodySelector));
@@ -843,33 +857,7 @@
           if (defaults.tfootSelector.length)
             $rows.push.apply ($rows, $(this).find('tfoot').find(defaults.tfootSelector));
 
-          $($rows).each(function () {
-            var r = [];
-
-            ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
-              function (cell, row, col) {
-                if (typeof cell !== 'undefined' && cell !== null) {
-                  var colspan = parseInt(cell.getAttribute('colspan'));
-                  var rowspan = parseInt(cell.getAttribute('rowspan'));
-
-                  var cellValue = parseString(cell, row, col) || " ";
-
-                  if (colspan > 1 || rowspan > 1) {
-                    colspan = colspan || 1;
-                    rowspan = rowspan || 1;
-                    r.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
-                  }
-                  else
-                    r.push(cellValue);
-                }
-                else
-                  r.push(" ");
-              });
-
-            if (r.length)
-              body.push(r);
-            rowIndex++;
-          });
+          CollectPdfmakeData ($rows, 'th,td', $hrows.length + $rows.length);
 
           var docDefinition = { content: [ {
                                   table: {
@@ -1323,47 +1311,52 @@
           }).find(selector);
 
           var rowColspan = 0;
-          var rowColIndex = 0;
 
           $row.each(function (colIndex) {
             if ($(this).data("tableexport-display") == 'always' ||
                 ($(this).css('display') != 'none' &&
                  $(this).css('visibility') != 'hidden' &&
                  $(this).data("tableexport-display") != 'none')) {
-              if (isColumnIgnored($row, colIndex) === false) {
-                if (typeof (cellcallback) === "function") {
-                  var c, Colspan = 0;
-                  var r, Rowspan = 0;
+              if (typeof (cellcallback) === "function") {
+                var c, Colspan = 1;
+                var r, Rowspan = 1;
 
-                  // handle rowspans from previous rows
-                  if (typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0) {
-                    for (c = 0; c <= colIndex; c++) {
-                      if (typeof rowspans[rowIndex][c] != 'undefined') {
-                        cellcallback(null, rowIndex, c);
-                        delete rowspans[rowIndex][c];
-                        colIndex++;
-                      }
+                // handle rowspans from previous rows
+                if (typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0) {
+                  var colCount = colIndex;
+                  for (c = 0; c <= colCount; c++) {
+                    if (typeof rowspans[rowIndex][c] != 'undefined') {
+                      cellcallback(null, rowIndex, c);
+                      delete rowspans[rowIndex][c];
+                      colCount++;
                     }
                   }
-                  rowColIndex = colIndex;
+                  colIndex += rowspans[rowIndex].length;
+                }
 
+                if (isColumnIgnored($row, colIndex + rowColspan) === false) {
                   if ($(this).is("[colspan]")) {
-                    Colspan = parseInt($(this).attr('colspan'));
+                    Colspan = parseInt($(this).attr('colspan')) || 1;
+
+                    for (c = 1; c < Colspan; c++)
+                      if (isColumnIgnored($row, colIndex + c) === true)
+                        Colspan--;
+
                     rowColspan += Colspan > 0 ? Colspan - 1 : 0;
                   }
 
                   if ($(this).is("[rowspan]"))
-                    Rowspan = parseInt($(this).attr('rowspan'));
+                    Rowspan = parseInt($(this).attr('rowspan')) || 1;
 
                   // output content of current cell
                   cellcallback(this, rowIndex, colIndex);
 
                   // handle colspan of current cell
-                  for (c = 0; c < Colspan - 1; c++)
+                  for (c = 1; c < Colspan; c++)
                     cellcallback(null, rowIndex, colIndex + c);
 
                   // store rowspan for following rows
-                  if (Rowspan) {
+                  if (Rowspan > 1) {
                     for (r = 1; r < Rowspan; r++) {
                       if (typeof rowspans[rowIndex + r] == 'undefined')
                         rowspans[rowIndex + r] = [];
