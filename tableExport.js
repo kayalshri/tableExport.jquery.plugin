@@ -1282,7 +1282,7 @@
         return result;
       }
 
-      function isColumnIgnored($row, colIndex) {
+      function isColumnIgnored(rowLength, colIndex) {
         var result = false;
         if (defaults.ignoreColumn.length > 0) {
           if (typeof defaults.ignoreColumn[0] == 'string') {
@@ -1292,7 +1292,7 @@
           }
           else if (typeof defaults.ignoreColumn[0] == 'number') {
             if ($.inArray(colIndex, defaults.ignoreColumn) != -1 ||
-                $.inArray(colIndex-$row.length, defaults.ignoreColumn) != -1)
+                $.inArray(colIndex-rowLength, defaults.ignoreColumn) != -1)
               result = true;
           }
         }
@@ -1320,6 +1320,7 @@
               if (typeof (cellcallback) === "function") {
                 var c, Colspan = 1;
                 var r, Rowspan = 1;
+                var rowLength = $row.length;
 
                 // handle rowspans from previous rows
                 if (typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0) {
@@ -1332,40 +1333,37 @@
                     }
                   }
                   colIndex += rowspans[rowIndex].length;
+                  rowLength += rowspans[rowIndex].length;
                 }
 
-                if (isColumnIgnored($row, colIndex + rowColspan) === false) {
-                  if ($(this).is("[colspan]")) {
-                    Colspan = parseInt($(this).attr('colspan')) || 1;
+                if ($(this).is("[colspan]")) {
+                  Colspan = parseInt($(this).attr('colspan')) || 1;
 
-                    for (c = 1; c < Colspan; c++)
-                      if (isColumnIgnored($row, colIndex + c) === true)
-                        Colspan--;
+                  rowColspan += Colspan > 0 ? Colspan - 1 : 0;
+                }
 
-                    rowColspan += Colspan > 0 ? Colspan - 1 : 0;
-                  }
+                if ($(this).is("[rowspan]"))
+                  Rowspan = parseInt($(this).attr('rowspan')) || 1;
 
-                  if ($(this).is("[rowspan]"))
-                    Rowspan = parseInt($(this).attr('rowspan')) || 1;
-
+                if (isColumnIgnored(rowLength, colIndex + rowColspan) === false) {
                   // output content of current cell
                   cellcallback(this, rowIndex, colIndex);
 
                   // handle colspan of current cell
                   for (c = 1; c < Colspan; c++)
                     cellcallback(null, rowIndex, colIndex + c);
+                }
 
-                  // store rowspan for following rows
-                  if (Rowspan > 1) {
-                    for (r = 1; r < Rowspan; r++) {
-                      if (typeof rowspans[rowIndex + r] == 'undefined')
-                        rowspans[rowIndex + r] = [];
+                // store rowspan for following rows
+                if (Rowspan > 1) {
+                  for (r = 1; r < Rowspan; r++) {
+                    if (typeof rowspans[rowIndex + r] == 'undefined')
+                      rowspans[rowIndex + r] = [];
 
-                      rowspans[rowIndex + r][colIndex + rowColspan] = "";
+                    rowspans[rowIndex + r][colIndex + rowColspan] = "";
 
-                      for (c = 1; c < Colspan; c++)
-                        rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
-                    }
+                    for (c = 1; c < Colspan; c++)
+                      rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
                   }
                 }
               }
