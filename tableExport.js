@@ -808,7 +808,7 @@
           var CollectPdfmakeData = function ($rows, colselector, length) {
             var rlength = 0;
 
-            $rows.each(function () {
+            $($rows).each(function () {
               var r = [];
 
               ForEachVisibleCell(this, colselector, rowIndex, length,
