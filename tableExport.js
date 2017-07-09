@@ -1,12 +1,12 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Copyright (c) 2015-2017 hhurz, https://github.com/hhurz/
- * Multi Worksheets Support, Copyright (c) 2017 hejiheji001, https://github.com/hejiheji001/
- * Original Work, Copyright (c) 2014 Giri Raj, https://github.com/kayalshri/
+ * Copyright (c) 2015-2017 hhurz, https://github.com/hhurz
  *
- * Licensed under the MIT License, http://opensource.org/licenses/mit-license
- */
+ * Original Work Copyright (c) 2014 Giri Raj
+ *
+ * Licensed under the MIT License
+ **/
 
 (function ($) {
   $.fn.extend({
