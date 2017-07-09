@@ -4,19 +4,22 @@
   <meta charset="UTF-8">
   <title>HTML table Export</title>
   <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/filter-control/bootstrap-table-filter-control.js"></script>
 
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.0.17/jspdf.plugin.autotable.js"></script>
+
+  <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
+  <script type="text/javascript" src="../libs/pdfmake/vfs_fonts.js"></script>
+
   <script type="text/javascript" src="../tableExport.js"></script>
 
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/export/bootstrap-table-export.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/toolbar/bootstrap-table-toolbar.js"></script>
-  
+
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.css" />
 
@@ -26,25 +29,7 @@
   {
     $('#table_sortSearchResult').bootstrapTable('refreshOptions', {
         exportOptions: {fileName: "tableExport",
-/*
-                        jspdf: {
-                          autotable: {
-                            startY: 20,
-                            bodyStyles: {valign: "top"},
-                            styles: {overflow: "linebreak", rowHeight: 20, fontSize: 10, font: "helvetica"},
-                            headerStyles: {fillColor: [41, 128, 185]}
-                          }
-                        }
-*/
-                        jspdf: {
-                          format: 'bestfit',
-                          autotable: {
-                            startY: 20,
-                            bodyStyles: {valign: "top"},
-                            styles: {overflow: "linebreak", rowHeight: 20, fontSize: 11, font: "helvetica"},
-                            headerStyles: {fillColor: [41, 128, 185]}
-                          }
-                        }
+                        pdfmake: {enabled:true}
                        }
 
     });
