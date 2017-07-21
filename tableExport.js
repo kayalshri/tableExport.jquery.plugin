@@ -1763,8 +1763,7 @@
                   frac[1] = "";
                 var mod = frac[0].length > 3 ? frac[0].length % 3 : 0;
 
-                result = (number < 0 ? "-" : "") +
-                         (defaults.numbers.output.thousandsSeparator ? ((mod ? frac[0].substr(0, mod) + defaults.numbers.output.thousandsSeparator : "") + frac[0].substr(mod).replace(/(\d{3})(?=\d)/g, "$1" + defaults.numbers.output.thousandsSeparator)) : frac[0]) +
+                result = (defaults.numbers.output.thousandsSeparator ? ((mod ? frac[0].substr(0, mod) + defaults.numbers.output.thousandsSeparator : "") + frac[0].substr(mod).replace(/(\d{3})(?=\d)/g, "$1" + defaults.numbers.output.thousandsSeparator)) : frac[0]) +
                          (frac[1].length ? defaults.numbers.output.decimalMark + frac[1] : "");
               }
             }
