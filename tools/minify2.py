@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python2
 
 # Minify tableExport.jquery.plugin file(s)
 # using Simon Georget's python script to minify javascript files
@@ -26,7 +26,7 @@ import httplib, urllib, sys, os
 
 fmRootFolder = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + "/"
 
-os.chdir(fmRootFolder + "scripts/") # set working directory
+os.chdir(fmRootFolder) # set working directory
 
 toMinify = ["tableExport.js"]
 
