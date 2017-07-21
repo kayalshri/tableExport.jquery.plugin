@@ -144,7 +144,7 @@
       <li><a href="#" onClick="doExport('#invisiblecols', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-display="always")</a></li>
       <li><a href="#" onClick="doExport('#issue60', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-value)</a></li>
       <li><a href="#" onClick="doExport('#issue127', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue127: Chinese csv export)</a></li>
-      <li><a href="#" onClick="doExport('#issue178', {type: 'csv', numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: ''}}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue 178: negative numbers)</a></li>
+      <li><a href="#" onClick="doExport('#issue178', {type: 'csv', numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: '\''}}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue 178: negative numbers)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'tsv'});"> <img src='icons/txt.png' alt="TSV" style="width:24px"> TSV</a></li>
       <br>
@@ -1258,6 +1258,41 @@
       </tbody>    
     </table>
     
+    <h3>Issue 178: Export String to excel with rows formatted as text</h3>
+    <table id="issue178" class="table-striped">
+      <thead>
+      <tr>
+        <th>Number</th>
+        <th>Number</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>100</td>
+        <td>-100</td>
+      </tr>      <tr>
+        <td>1.000</td>
+        <td>-1.000</td>
+      </tr>
+      <tr>
+        <td>1.000,50</td>
+        <td>-1.000,50</td>
+      </tr>
+      <tr>
+        <td>10000,50</td>
+        <td>-10000,50</td>
+      </tr>
+      <tr>
+        <td>100000,50</td>
+        <td>-100000,50</td>
+      </tr>
+      <tr>
+        <td>1000000,50</td>
+        <td>-1000000,50</td>
+      </tr>
+      </tbody>
+    </table>
+
     <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">
@@ -5742,29 +5777,6 @@
       </tr>
       </tbody>
       <tfoot></tfoot>
-    </table>
-    <h3>Issue 178: Export String to excel with rows formatted as text</h3>
-    <table id="issue178" class="table-striped">
-      <thead>
-      <tr>
-        <th>Number</th>
-        <th>Number</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>100</td>
-        <td>-100</td>
-      </tr>
-      <tr>
-        <td>1.000</td>
-        <td>-1.000</td>
-      </tr>
-      <tr>
-        <td>1.000,50</td>
-        <td>-1.000,50</td>
-      </tr>
-      </tbody>
     </table>
   </section>
 </body>
