@@ -1285,16 +1285,11 @@
       function isColumnIgnored(rowLength, colIndex) {
         var result = false;
         if (defaults.ignoreColumn.length > 0) {
-          if (typeof defaults.ignoreColumn[0] == 'string') {
-            if (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined')
-              if ($.inArray(colNames[colIndex], defaults.ignoreColumn) != -1)
-                result = true;
-          }
-          else if (typeof defaults.ignoreColumn[0] == 'number') {
-            if ($.inArray(colIndex, defaults.ignoreColumn) != -1 ||
-                $.inArray(colIndex-rowLength, defaults.ignoreColumn) != -1)
+          if ($.inArray(colIndex, defaults.ignoreColumn) != -1 ||
+                $.inArray(colIndex-rowLength, defaults.ignoreColumn) != -1||
+                (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined'&&
+                $.inArray(colNames[colIndex], defaults.ignoreColumn) != -1))
               result = true;
-          }
         }
         return result;
       }
