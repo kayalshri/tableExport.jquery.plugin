@@ -1286,10 +1286,10 @@
         var result = false;
         if (defaults.ignoreColumn.length > 0) {
           if ($.inArray(colIndex, defaults.ignoreColumn) != -1 ||
-                $.inArray(colIndex-rowLength, defaults.ignoreColumn) != -1||
-                (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined'&&
-                $.inArray(colNames[colIndex], defaults.ignoreColumn) != -1))
-              result = true;
+              $.inArray(colIndex-rowLength, defaults.ignoreColumn) != -1 ||
+              (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined' &&
+               $.inArray(colNames[colIndex], defaults.ignoreColumn) != -1))
+            result = true;
         }
         return result;
       }
@@ -1693,8 +1693,10 @@
           var $cell = $(cell);
           var htmlData;
 
-          if ($cell[0].hasAttribute("data-tableexport-value"))
+          if ($cell[0].hasAttribute("data-tableexport-value")) {
             htmlData = $cell.data("tableexport-value");
+            htmlData = htmlData ? htmlData+'' : ''
+          }
           else {
             htmlData = $cell.html();
 
@@ -1724,7 +1726,7 @@
           if (defaults.htmlContent === true) {
             result = $.trim(htmlData);
           }
-          else if (htmlData != '') {
+          else if (htmlData && htmlData != '') {
             var text = htmlData.replace(/\n/g,'\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
             var obj = $('<div/>').html(text).contents();
             text = '';
