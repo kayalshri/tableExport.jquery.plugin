@@ -47,7 +47,8 @@
                                           },
                             alternateRowStyles: {fillColor: 245
                                                 },
-                            tableExport: {onAfterAutotable: null,
+                            tableExport: {doc: null, // jsPDF doc object. If set, an already created doc will be used to export to
+                                          onAfterAutotable: null,
                                           onBeforeAutotable: null,
                                           onAutotableText: null,
                                           onTable: null,
@@ -963,12 +964,14 @@
 
           // The jsPDF doc object is stored in defaults.jspdf.autotable.tableExport,
           // thus it can be accessed from any callback function
-          teOptions.doc = new jsPDF(defaults.jspdf.orientation,
-                  defaults.jspdf.unit,
-                  defaults.jspdf.format);
+          if (teOptions.doc == null) {
+            teOptions.doc = new jsPDF(defaults.jspdf.orientation,
+                    defaults.jspdf.unit,
+                    defaults.jspdf.format);
 
-          if (typeof defaults.jspdf.onDocCreated === 'function')
-            defaults.jspdf.onDocCreated(teOptions.doc);
+            if (typeof defaults.jspdf.onDocCreated === 'function')
+              defaults.jspdf.onDocCreated(teOptions.doc);
+          }
 
           if (teOptions.outputImages === true)
             teOptions.images = {};

@@ -141,6 +141,7 @@ jspdf: orientation: 'p'
                 right: 10
                 top: 10
                 bottom: 10
+       onDocCreated: null
        autotable: styles: cellPadding: 2
                           rowHeight: 12
                           fontSize: 8
@@ -155,7 +156,8 @@ jspdf: orientation: 'p'
                                 fontStyle: 'bold'
                                 halign: 'center'
                   alternateRowStyles: fillColor: 245
-                  tableExport: onAfterAutotable: null
+                  tableExport: doc: null
+                               onAfterAutotable: null
                                onBeforeAutotable: null
                                onAutotableText: null
                                onTable: null
