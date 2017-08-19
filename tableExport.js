@@ -29,6 +29,7 @@
                 unit: 'pt',
                 format: 'a4', // jspdf page format or 'bestfit' for autmatic paper format selection
                 margins: {left: 20, right: 10, top: 10, bottom: 10},
+                onDocCreated: null,
                 autotable: {styles: {cellPadding: 2,
                                      rowHeight: 12,
                                      fontSize: 8,
@@ -965,6 +966,9 @@
           teOptions.doc = new jsPDF(defaults.jspdf.orientation,
                   defaults.jspdf.unit,
                   defaults.jspdf.format);
+
+          if (typeof defaults.jspdf.onDocCreated === 'function')
+            defaults.jspdf.onDocCreated(teOptions.doc);
 
           if (teOptions.outputImages === true)
             teOptions.images = {};
