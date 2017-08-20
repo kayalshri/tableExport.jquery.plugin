@@ -18,17 +18,17 @@
         csvUseBOM:         true,
         displayTableName:  false,
         escape:            false,
-        excelFileFormat:   'xlshtml', // xmlss = XML Spreadsheet 2003 file format (XMLSS), xlshtml = Excel 2000 html format
+        excelFileFormat:   'xlshtml',     // xmlss = XML Spreadsheet 2003 file format (XMLSS), xlshtml = Excel 2000 html format
         excelstyles:       [],            // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
         fileName:          'tableExport',
         htmlContent:       false,
         ignoreColumn:      [],
         ignoreRow:         [],
-        jsonScope:         'all', // head, data, all
+        jsonScope:         'all',         // head, data, all
         jspdf: {
           orientation:  'p',
           unit:         'pt',
-          format:       'a4', // jspdf page format or 'bestfit' for autmatic paper format selection
+          format:       'a4',             // jspdf page format or 'bestfit' for autmatic paper format selection
           margins:      {left: 20, right: 10, top: 10, bottom: 10},
           onDocCreated: null,
           autotable: {
@@ -36,10 +36,10 @@
               cellPadding: 2,
               rowHeight:   12,
               fontSize:    8,
-              fillColor:   255,        // color value or 'inherit' to use css background-color from html table
-              textColor:   50,         // color value or 'inherit' to use css color from html table
-              fontStyle:   'normal',   // normal, bold, italic, bolditalic or 'inherit' to use css font-weight and fonst-style from html table
-              overflow:    'ellipsize', // visible, hidden, ellipsize or linebreak
+              fillColor:   255,           // color value or 'inherit' to use css background-color from html table
+              textColor:   50,            // color value or 'inherit' to use css color from html table
+              fontStyle:   'normal',      // normal, bold, italic, bolditalic or 'inherit' to use css font-weight and fonst-style from html table
+              overflow:    'ellipsize',   // visible, hidden, ellipsize or linebreak
               halign:      'left',        // left, center, right
               valign:      'middle'       // top, middle, bottom
             },
@@ -53,7 +53,7 @@
               fillColor: 245
             },
             tableExport: {
-              doc:               null, // jsPDF doc object. If set, an already created doc will be used to export to
+              doc:               null,    // jsPDF doc object. If set, an already created doc will be used to export to
               onAfterAutotable:  null,
               onBeforeAutotable: null,
               onAutotableText:   null,
@@ -67,7 +67,7 @@
             decimalMark:        '.',
             thousandsSeparator: ','
           },
-          output: // set to false to not format numbers in exported output
+          output:                         // set to false to not format numbers in exported output
                 {
                   decimalMark:        '.',
                   thousandsSeparator: ','
@@ -75,23 +75,23 @@
         },
         onCellData:        null,
         onCellHtmlData:    null,
-        onMsoNumberFormat: null, // Excel 2000 html format only. See readme.md for more information about msonumberformat
-        outputMode:        'file',  // 'file', 'string', 'base64' or 'window' (experimental)
+        onMsoNumberFormat: null,          // Excel 2000 html format only. See readme.md for more information about msonumberformat
+        outputMode:        'file',        // 'file', 'string', 'base64' or 'window' (experimental)
         pdfmake: {
-          enabled: false,                               // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
+          enabled: false,                 // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
           docDefinition: {
             pageOrientation: 'portrait',  // 'portrait' or 'landscape'
             defaultStyle: {
-              font: 'Roboto' // default is 'Roboto', for arabic font set this option to 'Mirza' and include mirza_fonts.js
+              font: 'Roboto'              // default is 'Roboto', for arabic font set this option to 'Mirza' and include mirza_fonts.js
             }
           },
           fonts: {}
         },
         tbodySelector:     'tr',
-        tfootSelector:     'tr', // set empty ('') to prevent export of tfoot rows
+        tfootSelector:     'tr',          // set empty ('') to prevent export of tfoot rows
         theadSelector:     'tr',
         tableName:         'myTableName',
-        type:              'csv', // 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
+        type:              'csv',         // 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
         worksheetName:     'Worksheet'
       };
 
@@ -473,39 +473,39 @@
 
         var CreationDate = new Date().toISOString();
         var xmlssDocFile = '<?xml version="1.0" encoding="UTF-8"?><?mso-application progid="Excel.Sheet"?> ' +
-                      '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
-                                'xmlns:o="urn:schemas-microsoft-com:office:office" ' +
-                                'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
-                                'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" ' +
-                                'xmlns:html="http://www.w3.org/TR/REC-html40"> ' +
-                        '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"> ' +
-                          '<Created>' + CreationDate + '</Created> ' +
-                        '</DocumentProperties> ' +
-                        '<OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office"> ' +
-                          '<AllowPNG/> ' +
-                          '</OfficeDocumentSettings> ' +
-                          '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"> ' +
-                            '<WindowHeight>9000</WindowHeight> ' +
-                            '<WindowWidth>13860</WindowWidth> ' +
-                            '<WindowTopX>0</WindowTopX> ' +
-                            '<WindowTopY>0</WindowTopY> ' +
-                            '<ProtectStructure>False</ProtectStructure> ' +
-                            '<ProtectWindows>False</ProtectWindows> ' +
-                          '</ExcelWorkbook> ' +
-                          '<Styles> ' +
-                            '<Style ss:ID="Default" ss:Name="Default"> ' +
-                              '<Alignment ss:Vertical="Center"/> ' +
-                              '<Borders/> ' +
-                              '<Font/> ' +
-                              '<Interior/> ' +
-                              '<NumberFormat/> ' +
-                              '<Protection/> ' +
-                            '</Style> ' +
-                            '<Style ss:ID="Normal" ss:Name="Normal"/> ' +
-                            '<Style ss:ID="pct1"> ' +
-                            '  <NumberFormat ss:Format="Percent"/> ' +
-                            '</Style> ' +
-                          '</Styles>';
+                            '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
+                                      'xmlns:o="urn:schemas-microsoft-com:office:office" ' +
+                                      'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
+                                      'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet" ' +
+                                      'xmlns:html="http://www.w3.org/TR/REC-html40"> ' +
+                              '<DocumentProperties xmlns="urn:schemas-microsoft-com:office:office"> ' +
+                                '<Created>' + CreationDate + '</Created> ' +
+                              '</DocumentProperties> ' +
+                              '<OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office"> ' +
+                                '<AllowPNG/> ' +
+                                '</OfficeDocumentSettings> ' +
+                                '<ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel"> ' +
+                                  '<WindowHeight>9000</WindowHeight> ' +
+                                  '<WindowWidth>13860</WindowWidth> ' +
+                                  '<WindowTopX>0</WindowTopX> ' +
+                                  '<WindowTopY>0</WindowTopY> ' +
+                                  '<ProtectStructure>False</ProtectStructure> ' +
+                                  '<ProtectWindows>False</ProtectWindows> ' +
+                                '</ExcelWorkbook> ' +
+                                '<Styles> ' +
+                                  '<Style ss:ID="Default" ss:Name="Default"> ' +
+                                    '<Alignment ss:Vertical="Center"/> ' +
+                                    '<Borders/> ' +
+                                    '<Font/> ' +
+                                    '<Interior/> ' +
+                                    '<NumberFormat/> ' +
+                                    '<Protection/> ' +
+                                  '</Style> ' +
+                                  '<Style ss:ID="Normal" ss:Name="Normal"/> ' +
+                                  '<Style ss:ID="pct1"> ' +
+                                  '  <NumberFormat ss:Format="Percent"/> ' +
+                                  '</Style> ' +
+                                '</Styles>';
 
         for ( var j = 0; j < docDatas.length; j++ ) {
           var ssName = typeof defaults.worksheetName === 'string' ? defaults.worksheetName + ' ' + (j + 1) :
