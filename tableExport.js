@@ -714,21 +714,20 @@
             function (cell, row, col) {
               if ( typeof cell !== 'undefined' && cell !== null ) {
 
+                var cellValue = parseString(cell, row, col);
+
                 var colspan = parseInt(cell.getAttribute('colspan'));
                 var rowspan = parseInt(cell.getAttribute('rowspan'));
 
-                var cellValue = parseString(cell, row, col);
-
-                if ( cellValue !== "" && cellValue == +cellValue ) cellValue = +cellValue;
-
-                //Skip ranges
+                // Skip ranges
                 ranges.forEach(function (range) {
                   if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cols.length >= range.s.c && cols.length <= range.e.c ) {
-                    for ( var i = 0; i <= range.e.c - range.s.c; ++i ) cols.push(null);
+                    for ( var i = 0; i <= range.e.c - range.s.c; ++i )
+                      cols.push(null);
                   }
                 });
 
-                //Handle Row Span
+                // Handle Row Span
                 if ( rowspan || colspan ) {
                   rowspan = rowspan || 1;
                   colspan = colspan || 1;
@@ -738,11 +737,19 @@
                   });
                 }
 
-                //Handle Value
+                // Handle Value
+                if ( typeof defaults.onCellData !== 'function' ) {
+
+                  // Type conversion
+                  if ( cellValue !== "" && cellValue == +cellValue )
+                    cellValue = +cellValue;
+                }
                 cols.push(cellValue !== "" ? cellValue : null);
 
-                //Handle Colspan
-                if ( colspan ) for ( var k = 0; k < colspan - 1; ++k ) cols.push(null);
+                // Handle Colspan
+                if ( colspan )
+                  for ( var k = 0; k < colspan - 1; ++k )
+                    cols.push(null);
               }
             });
           data.push(cols);

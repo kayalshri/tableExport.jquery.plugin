@@ -115,6 +115,15 @@
       return result;
     }
 
+    function DoOnXlsxCellData(cell, row, col, data) {
+      var result = data;
+      if (result != "" && (row < 1 || col != 0)) {
+        if ( result == +result )
+          result = +result;
+      }
+      return result;
+    }
+
     function DoOnMsoNumberFormat(cell, row, col) {
       var result = "";
       if (row > 0 && col == 0)
@@ -164,6 +173,7 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
+      <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
       <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color', 'color',
