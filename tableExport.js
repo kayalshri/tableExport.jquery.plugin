@@ -602,6 +602,7 @@
             ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
               function (cell, row, col) {
                 if ( cell !== null ) {
+                  var tdvalue = parseString(cell, row, col);
                   var tdstyle = '';
                   var tdcss   = $(cell).data("tableexport-msonumberformat");
 
@@ -630,7 +631,11 @@
                     trData += ' colspan="' + $(cell).attr('colspan') + '"';
                   if ( $(cell).is("[rowspan]") )
                     trData += ' rowspan="' + $(cell).attr('rowspan') + '"';
-                  trData += '>' + parseString(cell, row, col).replace(/\n/g, '<br>') + '</td>';
+
+                  if ( typeof tdvalue === 'string' && tdvalue != '' )
+                    tdvalue = tdvalue.replace(/\n/g, '<br>');
+
+                  trData += '>' + tdvalue + '</td>';
                 }
               });
             if ( trData.length > 0 )
