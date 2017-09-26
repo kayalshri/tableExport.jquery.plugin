@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Table Export</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <style type="text/css">
+    <!--
+    .table-striped {
+      background-color: white;
+      padding: 0.5rem;
+    }
+
+    table  {
+      border-collapse: collapse;
+    }
+
+    table > thead > tr > td,
+    table > thead > tr > th {
+      background-color: gray;
+      border: 1px solid #efefef;
+      color: white;
+      padding: 0.2rem;
+    }
+
+    table > tbody > tr > td {
+      border: 1px solid #999;
+      padding: 0.2rem;
+    }
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td {
+      background-color: #ccdf88;
+    }
+    -->
+  </style>
+  <script type="text/javaScript">
+
+    function doExport(selector, params) {
+    
+      var ignoredRows = [];
+    
+      $(selector + " input:checkbox:not(:checked)").each(function() {
+        ignoredRows.push($(this).closest("tr").index()+1);
+      });
+      
+      var options = {
+        ignoreRow: ignoredRows,
+        tableName: 'Countries',
+        worksheetName: 'Countries by population'
+      };
+
+      $.extend(true, options, params);
+
+      $(selector).tableExport(options);
+    }
+
+  </script>
+</head>
+<body>
+  <section>
+    <h1>
+      Table Export<br>
+    </h1>
+  </section>
+  <section>
+    <ul>
+      <li><a href="#" onClick="doExport('#countries',
+                      {type: 'pdf',
+                        jspdf: {orientation: 'l',
+                          margins: {right: 10, left: 10, top: 40, bottom: 40},
+                          autotable: {tableWidth: 'auto'}}});">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px">Export checked rows</a></li>
+    </ul>
+
+    <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
+    <table id="countries" class="table-striped">
+      <thead>
+      <tr>
+        <th>&nbsp;</th>
+        <th>Rank</th>
+        <th>Flag</th>
+        <th>Country</th>
+        <th>Population</th>
+        <th>Date</th>
+        <th>% of world</th>
+        <th>Language</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><input type="checkbox" checked /></td>
+        <td>1</td>
+        <td></td>
+        <td><b>China</b></td>
+        <td>1,368,710,000</td>
+        <td>March 14, 2015</td>
+        <td>18.9%</td>
+        <td>中文</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>2</td>
+        <td></td>
+        <td><i>India</i></td>
+        <td>1,268,220,000</td>
+        <td>March 14, 2015</td>
+        <td>17.5%</td>
+        <td>हिन्दी</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" checked /></td>
+        <td>3</td>
+        <td><img height="12" width="23" src="//upload.wikimedia.org/wikipedia/en/thumb/a/a4/Flag_of_the_United_States.svg/23px-Flag_of_the_United_States.svg.png"></td>
+        <td><u>United States</u></td>
+        <td>320,583,000</td>
+        <td>March 14, 2015</td>
+        <td>4.43%</td>
+        <td>English</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>4</td>
+        <td></td>
+        <td>Indonesia</td>
+        <td>255,461,700</td>
+        <td>July 1, 2015</td>
+        <td>3.53%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>5</td>
+        <td></td>
+        <td>Brazil</td>
+        <td>204,014,000</td>
+        <td>March 14, 2015</td>
+        <td>2.82%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>6</td>
+        <td></td>
+        <td>Pakistan</td>
+        <td>189,223,000</td>
+        <td>March 14, 2015</td>
+        <td>2.62%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>7</td>
+        <td></td>
+        <td>Nigeria</td>
+        <td>183,523,000</td>
+        <td>July 1, 2015</td>
+        <td>2.54%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>8</td>
+        <td></td>
+        <td>Bangladesh</td>
+        <td>157,986,000</td>
+        <td>March 14, 2015</td>
+        <td>2.18%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>9</td>
+        <td></td>
+        <td>Russia</td>
+        <td>146,270,033</td>
+        <td>January 1, 2015</td>
+        <td>2.02%</td>
+        <td>Русский</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>10</td>
+        <td></td>
+        <td>Japan</td>
+        <td>126,970,000</td>
+        <td>February 1, 2015</td>
+        <td>1.76%</td>
+        <td>日本語</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>11</td>
+        <td></td>
+        <td>Mexico</td>
+        <td>121,005,815</td>
+        <td>July 1, 2015</td>
+        <td>1.67%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>12</td>
+        <td></td>
+        <td>Philippines</td>
+        <td>101,137,900</td>
+        <td>March 14, 2015</td>
+        <td>1.4%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>13</td>
+        <td></td>
+        <td>Vietnam</td>
+        <td>90,730,000</td>
+        <td>July 1, 2014</td>
+        <td>1.25%</td>
+        <td>Tiếng Việt</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>14</td>
+        <td></td>
+        <td>Ethiopia</td>
+        <td>90,076,012</td>
+        <td>July 1, 2015</td>
+        <td>1.25%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>15</td>
+        <td></td>
+        <td>Egypt</td>
+        <td>88,168,200</td>
+        <td>March 14, 2015</td>
+        <td>1.22%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" checked /></td>
+        <td>16</td>
+        <td><img width="23" height="14" alt="" src="//upload.wikimedia.org/wikipedia/en/thumb/b/ba/Flag_of_Germany.svg/23px-Flag_of_Germany.svg.png"></td>
+        <td>Germany</td>
+        <td>80,925,000</td>
+        <td>June 30, 2014</td>
+        <td>1.12%</td>
+        <td>Deutsch</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>17</td>
+        <td></td>
+        <td>Iran</td>
+        <td>78,184,800</td>
+        <td>March 14, 2015</td>
+        <td>1.08%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>18</td>
+        <td></td>
+        <td>Turkey</td>
+        <td>77,695,904</td>
+        <td>December 31, 2014</td>
+        <td>1.07%</td>
+        <td>Türkçe</td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>19</td>
+        <td></td>
+        <td>Democratic Republic of the Congo</td>
+        <td>71,246,000</td>
+        <td>July 1, 2015</td>
+        <td>0.99%</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><input type="checkbox" /></td>
+        <td>20</td>
+        <td></td>
+        <td>France</td>
+        <td>66,104,000</td>
+        <td>February 1, 2015</td>
+        <td>0.91%</td>
+        <td>Français</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>
