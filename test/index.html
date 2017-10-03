@@ -115,6 +115,14 @@
       return result;
     }
 
+    function DoOnCsvCellData(cell, row, col, data) {
+      var result = data;
+      if (result != "" && row > 0 && col == 0) {
+        result = "\x1F" + data;
+      }
+      return result;
+    }
+
     function DoOnXlsxCellData(cell, row, col, data) {
       var result = data;
       if (result != "" && (row < 1 || col != 0)) {
@@ -154,6 +162,7 @@
       <li><a href="#" onClick="doExport('#issue60', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-value)</a></li>
       <li><a href="#" onClick="doExport('#issue127', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue127: Chinese csv export)</a></li>
       <li><a href="#" onClick="doExport('#issue178', {type: 'csv', numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: '\''}}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue 178: negative numbers)</a></li>
+      <li><a href="#" onClick="doExport('#issue81', {type: 'csv', csvSeparator: ';', onCellData: DoOnCsvCellData});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (Issue 103: Export to csv to include leading zero)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'tsv'});"> <img src='icons/txt.png' alt="TSV" style="width:24px"> TSV</a></li>
       <br>
@@ -185,7 +194,7 @@
                                                         });"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
       <li><a href="#" onClick="doExport('#issue53a', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 I: complex table thead rowspan colspan)</a></li>
       <li><a href="#" onClick="doExport('#issue53b', {type: 'excel', ignoreColumn:[3,4]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 II: complex table thead rowspan colspan)</a></li>
-      <li><a href="#" onClick="doExport('#issue81', {type: 'excel', onMsoNumberFormat: DoOnMsoNumberFormat, worksheetName: 'MSO-FORMATS', excelstyles: ['background-color', 'color']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
+      <li><a href="#" onClick="doExport('#issue81', {type: 'excel', numbers: {output: false}, onMsoNumberFormat: DoOnMsoNumberFormat, worksheetName: 'MSO-FORMATS', excelstyles: ['background-color', 'color']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue121', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>

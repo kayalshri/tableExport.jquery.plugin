@@ -75,6 +75,7 @@
         },
         onCellData:        null,
         onCellHtmlData:    null,
+        onIgnoreRow:       null,          // onIgnoreRow($tr, rowIndex): function should return true to not export a row
         onMsoNumberFormat: null,          // Excel 2000 html format only. See readme.md for more information about msonumberformat
         outputMode:        'file',        // 'file', 'string', 'base64' or 'window' (experimental)
         pdfmake: {
@@ -105,6 +106,9 @@
       var trData         = '';
       var colNames       = [];
       var blob;
+      // checkCellVisibilty is used to speed up export of tables with extensive css styling
+      var $hiddenTableElements = [];
+      var checkCellVisibilty = false;
 
       $.extend(true, defaults, options);
 
@@ -396,12 +400,14 @@
         var docDatas = [];
 
         $(el).filter(function () {
-          return $(this).data("tableexport-display") != 'none' &&
-            ($(this).is(':visible') ||
-            $(this).data("tableexport-display") == 'always');
+          return isVisible($(this));
         }).each(function () {
           var $table  = $(this);
           var docData = '';
+
+          $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
+          checkCellVisibilty = $hiddenTableElements.length > 0;
+
           rowIndex    = 0;
           colNames    = GetColumnNames(this);
           $hrows      = $table.find('thead').first().find(defaults.theadSelector);
@@ -547,11 +553,13 @@
         var docData     = '';
 
         $(el).filter(function () {
-          return $(this).data("tableexport-display") != 'none' &&
-            ($(this).is(':visible') ||
-            $(this).data("tableexport-display") == 'always');
+          return isVisible($(this));
         }).each(function () {
           var $table = $(this);
+
+          $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
+          checkCellVisibilty = $hiddenTableElements.length > 0;
+
           rowIndex   = 0;
           colNames   = GetColumnNames(this);
 
@@ -962,8 +970,8 @@
             var rk = '', ro = '';
             var mw = 0;
 
-            $(el).filter(':visible').each(function () {
-              if ( $(this).css('display') != 'none' ) {
+            $(el).each(function () {
+              if ( isVisible($(this)) ) {
                 var w = getPropertyUnitValue($(this).get(0), 'width', 'pt');
 
                 if ( w > mw ) {
@@ -1005,11 +1013,12 @@
 
           if ( typeof teOptions.images != 'undefined' ) {
             $(el).filter(function () {
-              return $(this).data("tableexport-display") != 'none' &&
-                ($(this).is(':visible') ||
-                $(this).data("tableexport-display") == 'always');
+              return isVisible($(this));
             }).each(function () {
               var rowCount = 0;
+
+              $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
+              checkCellVisibilty = $hiddenTableElements.length > 0;
 
               $hrows = $(this).find('thead').find(defaults.theadSelector);
               $(this).find('tbody').each(function () {
@@ -1037,12 +1046,13 @@
 
           loadImages(teOptions, function () {
             $(el).filter(function () {
-              return $(this).data("tableexport-display") != 'none' &&
-                ($(this).is(':visible') ||
-                $(this).data("tableexport-display") == 'always');
+              return isVisible($(this));
             }).each(function () {
               var colKey;
               var rowIndex = 0;
+
+              $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
+              checkCellVisibilty = $hiddenTableElements.length > 0;
 
               colNames = GetColumnNames(this);
 
@@ -1319,94 +1329,138 @@
         return result;
       }
 
-      function isColumnIgnored (rowLength, colIndex) {
-        var result = false;
-        if ( defaults.ignoreColumn.length > 0 ) {
-          if ( $.inArray(colIndex, defaults.ignoreColumn) != -1 ||
-            $.inArray(colIndex - rowLength, defaults.ignoreColumn) != -1 ||
-            (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined' &&
-            $.inArray(colNames[colIndex], defaults.ignoreColumn) != -1) )
-            result = true;
+      function isVisible ($element) {
+        var isCell = typeof $element[0].cellIndex !== 'undefined';
+        var isRow = typeof $element[0].rowIndex !== 'undefined';
+        var isElementVisible = (isCell || isRow) ? isTableElementVisible($element) : $element.is(':visible');
+        var tableexportDisplay = $element.data("tableexport-display");
+
+        if (isCell && tableexportDisplay != 'none' && tableexportDisplay != 'always') {
+          $element = $($element[0].parentNode);
+          isRow = typeof $element[0].rowIndex !== 'undefined';
+          tableexportDisplay = $element.data("tableexport-display");
         }
+        if (isRow && tableexportDisplay != 'none' && tableexportDisplay != 'always') {
+          tableexportDisplay = $element.closest('table').data("tableexport-display");
+        }
+
+        return tableexportDisplay !== 'none' && (isElementVisible == true || tableexportDisplay == 'always');
+      }
+
+      function isTableElementVisible ($element) {
+        var hiddenEls = [];
+
+        if ( checkCellVisibilty ) {
+          hiddenEls = $hiddenTableElements.filter (function () {
+            var found = false;
+
+            if (this.nodeType == $element[0].nodeType) {
+              if (typeof this.rowIndex !== 'undefined' && this.rowIndex == $element[0].rowIndex)
+                found = true;
+              else if (typeof this.cellIndex !== 'undefined' && this.cellIndex == $element[0].cellIndex &&
+                       typeof this.parentNode.rowIndex !== 'undefined' &&
+                       typeof $element[0].parentNode.rowIndex !== 'undefined' &&
+                       this.parentNode.rowIndex == $element[0].parentNode.rowIndex)
+                found = true;
+            }
+            return found;
+          });
+        }
+        return (checkCellVisibilty == false || hiddenEls.length == 0);
+      }
+
+      function isColumnIgnored ($cell, rowLength, colIndex) {
+        var result = false;
+
+        if (isVisible($cell)) {
+          if ( defaults.ignoreColumn.length > 0 ) {
+            if ( $.inArray(colIndex, defaults.ignoreColumn) != -1 ||
+              $.inArray(colIndex - rowLength, defaults.ignoreColumn) != -1 ||
+              (colNames.length > colIndex && typeof colNames[colIndex] != 'undefined' &&
+              $.inArray(colNames[colIndex], defaults.ignoreColumn) != -1) )
+              result = true;
+          }
+        }
+        else
+          result = true;
+
         return result;
       }
 
       function ForEachVisibleCell (tableRow, selector, rowIndex, rowCount, cellcallback) {
-        if ( $.inArray(rowIndex, defaults.ignoreRow) == -1 &&
-          $.inArray(rowIndex - rowCount, defaults.ignoreRow) == -1 ) {
+        if ( typeof (cellcallback) === 'function' ) {
+          var ignoreRow = false;
 
-          var $row = $(tableRow).filter(function () {
-            return $(this).data("tableexport-display") != 'none' &&
-              ($(this).is(':visible') ||
-              $(this).data("tableexport-display") == 'always' ||
-              $(this).closest('table').data("tableexport-display") == 'always');
-          }).find(selector);
+          if (typeof defaults.onIgnoreRow === 'function')
+            ignoreRow = defaults.onIgnoreRow($(tableRow), rowIndex);
 
-          var rowColspan = 0;
+          if (ignoreRow === false &&
+              $.inArray(rowIndex, defaults.ignoreRow) == -1 &&
+              $.inArray(rowIndex - rowCount, defaults.ignoreRow) == -1 &&
+              isVisible($(tableRow))) {
 
-          $row.each(function (colIndex) {
-            if ( $(this).data("tableexport-display") == 'always' ||
-              ($(this).css('display') != 'none' &&
-              $(this).css('visibility') != 'hidden' &&
-              $(this).data("tableexport-display") != 'none') ) {
-              if ( typeof (cellcallback) === "function" ) {
-                var c, Colspan = 1;
-                var r, Rowspan = 1;
-                var rowLength  = $row.length;
+            var $cells = $(tableRow).find(selector);
+            var rowColspan = 0;
 
-                // handle rowspans from previous rows
-                if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
-                  var colCount = colIndex;
-                  for ( c = 0; c <= colCount; c++ ) {
-                    if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
+            $cells.each(function (colIndex) {
+              var $cell = $(this);
+              var c, Colspan = 1;
+              var r, Rowspan = 1;
+              var cellCount  = $cells.length;
+
+              // handle rowspans from previous rows
+              if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
+                var colCount = colIndex;
+                for ( c = 0; c <= colCount; c++ ) {
+                  if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
+                    if ( isColumnIgnored($cell, cellCount, colIndex + rowColspan) === false )
                       cellcallback(null, rowIndex, c);
-                      delete rowspans[rowIndex][c];
-                      colCount++;
-                    }
+                    delete rowspans[rowIndex][c];
+                    colCount++;
                   }
-                  colIndex += rowspans[rowIndex].length;
-                  rowLength += rowspans[rowIndex].length;
                 }
+                colIndex += rowspans[rowIndex].length;
+                cellCount += rowspans[rowIndex].length;
+              }
 
-                if ( $(this).is("[colspan]") ) {
-                  Colspan = parseInt($(this).attr('colspan')) || 1;
+              if ( $cell.is("[colspan]") ) {
+                Colspan = parseInt($cell.attr('colspan')) || 1;
 
-                  rowColspan += Colspan > 0 ? Colspan - 1 : 0;
-                }
+                rowColspan += Colspan > 0 ? Colspan - 1 : 0;
+              }
+              else if ( $cell.is("[rowspan]") )
+                Rowspan = parseInt($cell.attr('rowspan')) || 1;
 
-                if ( $(this).is("[rowspan]") )
-                  Rowspan = parseInt($(this).attr('rowspan')) || 1;
+              if ( isColumnIgnored($cell, cellCount, colIndex + rowColspan) === false ) {
+                // output content of current cell
+                cellcallback(this, rowIndex, colIndex);
 
-                if ( isColumnIgnored(rowLength, colIndex + rowColspan) === false ) {
-                  // output content of current cell
-                  cellcallback(this, rowIndex, colIndex);
+                // handle colspan of current cell
+                for ( c = 1; c < Colspan; c++ )
+                  cellcallback(null, rowIndex, colIndex + c);
+              }
 
-                  // handle colspan of current cell
+              // store rowspan for following rows
+              if ( Rowspan > 1 ) {
+                for ( r = 1; r < Rowspan; r++ ) {
+                  if ( typeof rowspans[rowIndex + r] == 'undefined' )
+                    rowspans[rowIndex + r] = [];
+
+                  rowspans[rowIndex + r][colIndex + rowColspan] = "";
+
                   for ( c = 1; c < Colspan; c++ )
-                    cellcallback(null, rowIndex, colIndex + c);
-                }
-
-                // store rowspan for following rows
-                if ( Rowspan > 1 ) {
-                  for ( r = 1; r < Rowspan; r++ ) {
-                    if ( typeof rowspans[rowIndex + r] == 'undefined' )
-                      rowspans[rowIndex + r] = [];
-
-                    rowspans[rowIndex + r][colIndex + rowColspan] = "";
-
-                    for ( c = 1; c < Colspan; c++ )
-                      rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
-                  }
+                    rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
                 }
               }
-            }
-          });
-          // handle rowspans from previous rows
-          if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
-            for ( var c = 0; c <= rowspans[rowIndex].length; c++ ) {
-              if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
-                cellcallback(null, rowIndex, c);
-                delete rowspans[rowIndex][c];
+            });
+
+            // handle rowspans from previous rows
+            if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
+              for ( var c = 0; c <= rowspans[rowIndex].length; c++ ) {
+                if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
+                  cellcallback(null, rowIndex, c);
+                  delete rowspans[rowIndex][c];
+                }
               }
             }
           }
