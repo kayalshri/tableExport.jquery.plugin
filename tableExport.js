@@ -1,6 +1,8 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
+ * Version 1.9.6
+ *
  * Copyright (c) 2015-2017 hhurz, https://github.com/hhurz
  *
  * Original Work Copyright (c) 2014 Giri Raj
@@ -106,9 +108,8 @@
       var trData         = '';
       var colNames       = [];
       var blob;
-      // checkCellVisibilty is used to speed up export of tables with extensive css styling
       var $hiddenTableElements = [];
-      var checkCellVisibilty = false;
+      var checkCellVisibilty = false;     // used to speed up export of tables with extensive css styling
 
       $.extend(true, defaults, options);
 
