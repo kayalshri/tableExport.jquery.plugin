@@ -54,6 +54,20 @@ Please keep this include order.
 
 
 
+Dependencies
+============
+
+Library | Version
+--------|--------
+[jQuery](https://github.com/jquery/jquery) | >= 1.9.1
+[FileSaver](https://github.com/hhurz/tableExport.jquery.plugin/blob/master/libs/FileSaver/FileSaver.min.js) | >= 1.2.0
+[html2canvas](https://github.com/niklasvh/html2canvas) | >= 0.5.0-beta4
+[jsPDF](https://github.com/MrRio/jsPDF) | 1.1.239 or 1.3.2
+[jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) | 2.0.14 or 2.0.17
+
+
+
+
 Examples
 ========
 
@@ -79,6 +93,7 @@ $('table').tableExport({type:'excel',
 
 ```javascript
 // PDF export using jsPDF only
+
 $('#tableID').tableExport({type:'pdf',
                            jspdf: {orientation: 'p',
                                    margins: {left:20, top:10},
@@ -168,8 +183,13 @@ numbers: html: decimalMark: '.'
                  thousandsSeparator: ','
 onCellData: null
 onCellHtmlData: null
+onIgnoreRow: null
 onMsoNumberFormat: null
 outputMode: 'file'
+pdfmake: enabled: false
+         docDefinition: pageOrientation: 'portrait'
+                        defaultStyle: font: 'Roboto'
+         fonts: {}
 tbodySelector: 'tr'
 tfootSelector: 'tr'
 theadSelector: 'tr'
