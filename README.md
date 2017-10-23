@@ -142,6 +142,7 @@ csvSeparator: ','
 csvUseBOM: true
 displayTableName: false
 escape: false
+excelRTL: false
 excelstyles: []
 excelFileFormat: 'xlshtml'
 fileName: 'tableExport'

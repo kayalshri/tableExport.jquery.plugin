@@ -21,6 +21,7 @@
         displayTableName:  false,
         escape:            false,
         excelFileFormat:   'xlshtml',     // xmlss = XML Spreadsheet 2003 file format (XMLSS), xlshtml = Excel 2000 html format
+        excelRTL:          false,         // true = Set Excel option 'DisplayRightToLeft'
         excelstyles:       [],            // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
         fileName:          'tableExport',
         htmlContent:       false,
@@ -519,10 +520,16 @@
             typeof defaults.worksheetName[j] !== 'undefined' ? defaults.worksheetName[j] :
             'Table ' + (j + 1);
 
-          xmlssDocFile += '<Worksheet ss:Name="' + ssName + '">' +
-            docDatas[j] +
-            '<WorksheetOptions/> ' +
-            '</Worksheet>';
+          xmlssDocFile += '<Worksheet ss:Name="' + ssName + '" ss:RightToLeft="' + (defaults.excelRTL ? '1' : '0') + '">' +
+                            docDatas[j];
+          if (defaults.excelRTL) {
+            xmlssDocFile += '<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"> ' +
+                              '<DisplayRightToLeft/> ' +
+                            '</WorksheetOptions> ';
+          }
+          else
+            xmlssDocFile += '<WorksheetOptions/> ';
+          xmlssDocFile += '</Worksheet>';
         }
 
         xmlssDocFile += '</Workbook>';
@@ -665,7 +672,7 @@
         var docFile = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' + MSDocSchema + ' xmlns="http://www.w3.org/TR/REC-html40">';
         docFile += '<meta http-equiv="content-type" content="application/vnd.ms-' + MSDocType + '; charset=UTF-8">';
         docFile += "<head>";
-        if ( MSDocType === 'excel' ) {
+        if (MSDocType === 'excel') {
           docFile += "<!--[if gte mso 9]>";
           docFile += "<xml>";
           docFile += "<x:ExcelWorkbook>";
@@ -676,6 +683,8 @@
           docFile += "</x:Name>";
           docFile += "<x:WorksheetOptions>";
           docFile += "<x:DisplayGridlines/>";
+          if (defaults.excelRTL)
+            docFile += "<x:DisplayRightToLeft/>";
           docFile += "</x:WorksheetOptions>";
           docFile += "</x:ExcelWorksheet>";
           docFile += "</x:ExcelWorksheets>";
