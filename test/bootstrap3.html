@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/export/bootstrap-table-export.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/extensions/toolbar/bootstrap-table-toolbar.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.css" />
+
+  <script type="text/javaScript">
+
+    function DoOnCellHtmlData(cell, row, col, data) {
+      return data;
+    }
+
+    $(document).ready(function()
+    {
+      var $table = $('#table');
+
+      $table.bootstrapTable('refreshOptions', {
+
+        exportOptions: {onCellHtmlData: DoOnCellHtmlData},
+        onExpandRow: function(index, row, $detail) {
+
+          $detail.html('<table></table>').find('table').bootstrapTable({
+            columns: [{
+              field: 'col3',
+              title: 'Col3'
+            }, {
+              field: 'col4',
+              title: 'Col4'
+            }, {
+              field: 'col5',
+              title: 'Col5'
+            }],
+            data: row.nested,
+            detailView: row.nested[0]['other'] !== undefined,
+            onExpandRow: function(indexb, rowb, $detailb) {
+              $detailb.html('<table></table>').find('table').bootstrapTable({
+                columns: [{
+                  field: 'col6',
+                  title: 'Col6'
+                }, {
+                  field: 'col7',
+                  title: 'Col7'
+                }],
+                data: rowb.other
+              });
+            }
+          });
+
+        }
+
+      });
+
+    });
+
+  </script>
+
+</head>
+<body>
+    <table id="table"
+           data-toggle="table"
+           data-show-export="true"
+           data-pagination="false"
+           data-search="true"
+           data-detail-view="true"
+           data-url="bootstrap3.json">
+      <thead>
+        <tr>
+          <th data-field="col1" data-sortable="true">Col 1</th>
+          <th data-field="col2" data-sortable="true">Col 2</th>
+        </tr>
+      </thead>
+    </table>
+</body>
+</html>
