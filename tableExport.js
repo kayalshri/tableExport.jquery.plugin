@@ -413,21 +413,31 @@
           rowIndex    = 0;
           colNames    = GetColumnNames(this);
           $hrows      = $table.find('thead').first().find(defaults.theadSelector);
-          docData    += '<Table>';
+          docData    += '<ss:Table>';
 
           // Header
-          var cols = 0;
           $hrows.each(function () {
             trData = "";
             ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
               function (cell, row, col) {
                 if ( cell !== null ) {
-                  trData += '<Cell><Data ss:Type="String">' + parseString(cell, row, col) + '</Data></Cell>';
-                  cols++;
+                  var style = "";
+
+                  if ( $(cell).is("[colspan]") ) {
+                    var mAcross = $(cell).attr('colspan') - 1;
+                    if ( mAcross > 0 )
+                      style += ' ss:MergeAcross="' + mAcross + '"';
+                  }
+                  if ( $(cell).is("[rowspan]") ) {
+                    var mDown = $(cell).attr('rowspan') - 1;
+                    if ( mDown > 0 )
+                      style += ' ss:MergeDown="' + mDown + '" ss:StyleID="rs1"';
+                  }
+                  trData += '<ss:Cell' + style + '><ss:Data ss:Type="String">' + parseString(cell, row, col) + '</ss:Data></ss:Cell>';
                 }
               });
             if ( trData.length > 0 )
-              docData += '<Row>' + trData + '</Row>';
+              docData += '<ss:Row>' + trData + '</ss:Row>';
             rowIndex++;
           });
 
@@ -457,22 +467,33 @@
                     if ( number !== false ) {
                       data  = number;
                       type  = "Number";
-                      style = ' ss:StyleID="pct1"';
+                      style += ' ss:StyleID="pct1"';
                     }
                   }
 
                   if ( type !== "Number" )
                     data = data.replace(/\n/g, '<br>');
 
-                  trData += '<Cell' + style + '><Data ss:Type="' + type + '">' + data + '</Data></Cell>';
+                  if ( $(cell).is("[colspan]") ) {
+                    var mAcross = $(cell).attr('colspan') - 1;
+                    if ( mAcross > 0 )
+                      style += ' ss:MergeAcross="' + mAcross + '"';
+                  }
+                  if ( $(cell).is("[rowspan]") ) {
+                    var mDown = $(cell).attr('rowspan') - 1;
+                    if ( mDown > 0 )
+                      style += ' ss:MergeDown="' + mDown + '" ss:StyleID="Normal"';
+                  }
+
+                  trData += '<ss:Cell' + style + '><ss:Data ss:Type="' + type + '">' + data + '</ss:Data></ss:Cell>';
                 }
               });
             if ( trData.length > 0 )
-              docData += '<Row>' + trData + '</Row>';
+              docData += '<ss:Row>' + trData + '</ss:Row>';
             rowIndex++;
           });
 
-          docData += '</Table>';
+          docData += '</ss:Table>';
           docDatas.push(docData);
 
           if ( defaults.consoleLog === true )
@@ -509,7 +530,9 @@
                                     '<NumberFormat/> ' +
                                     '<Protection/> ' +
                                   '</Style> ' +
-                                  '<Style ss:ID="Normal" ss:Name="Normal"/> ' +
+                                  '<Style ss:ID="Normal" ss:Name="Normal"> ' +
+                                  '  <Alignment ss:Vertical="Center"/> ' +
+                                  '</Style> ' +
                                   '<Style ss:ID="pct1"> ' +
                                   '  <NumberFormat ss:Format="Percent"/> ' +
                                   '</Style> ' +
@@ -520,16 +543,16 @@
             typeof defaults.worksheetName[j] !== 'undefined' ? defaults.worksheetName[j] :
             'Table ' + (j + 1);
 
-          xmlssDocFile += '<Worksheet ss:Name="' + ssName + '" ss:RightToLeft="' + (defaults.excelRTL ? '1' : '0') + '">' +
+          xmlssDocFile += '<ss:Worksheet ss:Name="' + ssName + '" ss:RightToLeft="' + (defaults.excelRTL ? '1' : '0') + '">' +
                             docDatas[j];
           if (defaults.excelRTL) {
-            xmlssDocFile += '<WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel"> ' +
+            xmlssDocFile += '<x:WorksheetOptions"> ' +
                               '<DisplayRightToLeft/> ' +
-                            '</WorksheetOptions> ';
+                            '</x:WorksheetOptions> ';
           }
           else
-            xmlssDocFile += '<WorksheetOptions/> ';
-          xmlssDocFile += '</Worksheet>';
+            xmlssDocFile += '<x:WorksheetOptions/> ';
+          xmlssDocFile += '</ss:Worksheet>';
         }
 
         xmlssDocFile += '</Workbook>';
@@ -1820,7 +1843,9 @@
                 else {
                   if ( typeof $(this).html() === 'undefined' )
                     htmlData += $(this).text();
-                  else if ( jQuery().bootstrapTable === undefined || $(this).hasClass('filterControl') !== true )
+                  else if ( jQuery().bootstrapTable === undefined ||
+                    ($(this).hasClass('filterControl') !== true &&
+                     $(cell).parents('.detail-view').length === 0) )
                     htmlData += $(this).html();
                 }
               });
