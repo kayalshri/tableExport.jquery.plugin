@@ -413,10 +413,11 @@
           rowIndex    = 0;
           colNames    = GetColumnNames(this);
           $hrows      = $table.find('thead').first().find(defaults.theadSelector);
-          docData    += '<ss:Table>';
+          docData    += '<Table>';
 
           // Header
           $hrows.each(function () {
+            var ssIndex = 0;
             trData = "";
             ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
               function (cell, row, col) {
@@ -433,11 +434,19 @@
                     if ( mDown > 0 )
                       style += ' ss:MergeDown="' + mDown + '" ss:StyleID="rs1"';
                   }
-                  trData += '<ss:Cell' + style + '><ss:Data ss:Type="String">' + parseString(cell, row, col) + '</ss:Data></ss:Cell>';
+
+                  if ( ssIndex > 0 ) {
+                    style += ' ss:Index="' + (col+ssIndex) + '"';
+                    ssIndex = 0;
+                  }
+
+                  trData += '<Cell' + style + '><Data ss:Type="String">' + parseString(cell, row, col) + '</Data></Cell>';
                 }
+                else
+                  ssIndex++;
               });
             if ( trData.length > 0 )
-              docData += '<ss:Row>' + trData + '</ss:Row>';
+              docData += '<Row>' + trData + '</Row>';
             rowIndex++;
           });
 
@@ -451,6 +460,7 @@
           //    $rows.push.apply($rows, $table.find('tfoot').find(defaults.tfootSelector));
 
           $($rows).each(function () {
+            var ssIndex = 0;
             trData   = "";
             ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
               function (cell, row, col) {
@@ -485,15 +495,22 @@
                       style += ' ss:MergeDown="' + mDown + '" ss:StyleID="Normal"';
                   }
 
-                  trData += '<ss:Cell' + style + '><ss:Data ss:Type="' + type + '">' + data + '</ss:Data></ss:Cell>';
+                  if ( ssIndex > 0 ) {
+                    style += ' ss:Index="' + (col+ssIndex) + '"';
+                    ssIndex = 0;
+                  }
+
+                  trData += '<Cell' + style + '><Data ss:Type="' + type + '">' + data + '</Data></Cell>';
                 }
+                else
+                  ssIndex++;
               });
             if ( trData.length > 0 )
-              docData += '<ss:Row>' + trData + '</ss:Row>';
+              docData += '<Row>' + trData + '</Row>';
             rowIndex++;
           });
 
-          docData += '</ss:Table>';
+          docData += '</Table>';
           docDatas.push(docData);
 
           if ( defaults.consoleLog === true )
