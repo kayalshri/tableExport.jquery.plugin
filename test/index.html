@@ -22,9 +22,10 @@
   <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
     <!--
-    h3 {
+    caption {
       font-size: 1em;
-      font-weight: normal;
+      white-space: nowrap;
+      text-align: left;
     }
 
     .tdrect {
@@ -49,6 +50,7 @@
 
     table  {
       border-collapse: collapse;
+      margin-top: 2em;
     }
 
     table > thead > tr > td,
@@ -87,8 +89,7 @@
         //ignoreRow: [1,11,12,-2],
         //ignoreColumn: [0,-1],
         //pdfmake: {enabled: true},
-        tableName: 'Countries',
-        worksheetName: 'Countries by population'
+        tableName: 'Table name'
       };
 
       $.extend(true, options, params);
@@ -183,6 +184,8 @@
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
+      <li><a href="#" onClick="doExport('#mixspans', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (colspan + rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue93', {type: 'xlsx', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (Issue 93: colspan & rowspan)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
       <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', excelstyles: ['background-color', 'color',
@@ -198,7 +201,11 @@
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue121', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>
-
+      <br>
+      <li><a href="#" onClick="doExport('#mixspans', {type: 'excel', excelFileFormat: 'xmlss'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (colspan + rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue93', {type: 'excel', excelFileFormat: 'xmlss', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (Issue 93: colspan & rowspan)</a></li>
+      <li><a href="#" onClick="doExport('table', {type: 'excel', excelFileFormat: 'xmlss'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (multiple tables)</a></li>
+      <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc'});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'png'});"> <img src='icons/png.png' alt="PNG" style="width:24px"> PNG</a></li>
@@ -381,8 +388,8 @@
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
         <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 164: PDF(Make) don't support rowspan and colspan?)</a></li>
     </ul>
-    <h3>Table with rowspan</h3>
     <table id="rowspans" class="table-striped numformat">
+      <caption>Table with rowspan</caption>
       <thead>
       <tr>
         <th>C1</th>
@@ -414,8 +421,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Table with rowspan and colspan</h3>
     <table id="mixspans" class="table-striped numformat">
+      <caption>Table with rowspan and colspan</caption>
       <thead>
       <tr>
         <th>C1</th>
@@ -453,8 +460,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>issue47: Table with rowspan and colspan</h3>
     <table id="issue47" class="table-striped numformat">
+      <caption>issue47: Table with rowspan and colspan</caption>
       <thead>
         <tr>
           <th colspan="2">Section 1</th>
@@ -493,8 +500,8 @@
         </tr>
       </tbody>
     </table>
-    <h3>Table containing unexportable cells</h3>
     <table id="hiddencols" class="table-striped numformat">
+      <caption>Table containing unexportable cells</caption>
       <thead>
       <tr>
         <th data-tableexport-display="none">C1</th>
@@ -530,8 +537,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Table containing unexportable rows</h3>
     <table id="hiddenrows" class="table-striped">
+      <caption>Table containing unexportable rows</caption>
       <thead>
       <tr>
         <th>C1</th>
@@ -557,8 +564,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Table with invisible but exportable cells</h3>
     <table id="invisiblecols" class="table-striped numformat">
+      <caption>Table with invisible but exportable cells</caption>
       <thead>
       <tr>
         <th>C1</th>
@@ -600,8 +607,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Table with different col alignment</h3>
     <table id="colalignment">
+      <caption>Table with different col alignment</caption>
       <thead>
         <tr>
           <td width="30" aria-hidden="true">&nbsp;</td>
@@ -625,9 +632,9 @@
         </tr>
       </tbody>
     </table>
-    </h3>
-    <h3>Table for column alignment tests</h3>
+    </caption>
     <table id="alignments" class="table-striped">
+      <caption>Table for column alignment tests</caption>
       <thead>
       <tr>
         <th style="width:15ex">C1</th>
@@ -663,9 +670,10 @@
       </tr>
       </tbody>
     </table>
-    <h3>Export hidden table</h3>
-    <p>Before table...</p>
+  
+  <p>Before table...</p>
     <table id="invisible" style="display:none" data-tableexport-display="always">
+      <caption>Export hidden table</caption>
       <thead>
       <tr>
         <th>C1</th>
@@ -686,9 +694,10 @@
       </tr>
       </tbody>
     </table>
-    <p>...behind table</p>
-    <h3>Test option 'excelstyles'</h3>
+  <p>...behind table</p>
+    
     <table id="excelstyles">
+      <caption>Test option 'excelstyles'</caption>
       <thead>
       <tr>
         <th style="border: 2px solid #b60000; font-family: arial; font-size: 18px; font-weight: bold">C1</th>
@@ -714,8 +723,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Table without header</h3>
     <table id="headless" class="table-striped">
+      <caption>Table without header</caption>
       <tbody>
       <tr>
         <td>A</td>
@@ -734,8 +743,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 40: Formatted HTML export problems</h3>
     <table id="issue40">
+      <caption>Issue 40: Formatted HTML export problems</caption>
       <thead>
           <tr>
               <th>
@@ -756,8 +765,8 @@
           </tr>
       </tbody>
     </table>
-    <h3>Issue 41: Colspan attribute is ignored for some formats</h3>
     <table id="issue41">
+      <caption>Issue 41: Colspan attribute is ignored for some formats</caption>
         <thead>
             <tr>
                 <th>Col 1</th><th>Col 2</th>
@@ -777,8 +786,8 @@
             </tr>
         </tbody>
     </table>
-    <h3>Issue 42 I: Incorrect size of cell with multiline text</h3>
     <table id="issue42_1">
+      <caption>Issue 42 I: Incorrect size of cell with multiline text</caption>
         <thead>
             <tr>
                 <th>Title</th>
@@ -799,8 +808,8 @@
             </tr>
         </tbody>
     </table>
-    <h3>Issue 42 II: Incorrect size of cell with multiline text</h3>
     <table id="issue42_2">
+      <caption>Issue 42 II: Incorrect size of cell with multiline text</caption>
         <thead>
             <tr>
                 <th>Long value</th>
@@ -820,8 +829,8 @@
             </tr>
         </tbody>
     </table>
-    <h3>Issue 43: Configuration of PDF page breaks</h3>
     <table id="issue43">
+      <caption>Issue 43: Configuration of PDF page breaks</caption>
         <thead>
             <tr>
                 <th>Title</th>
@@ -846,8 +855,8 @@
             </tr>
         </tbody>
     </table>
-    <h3>Table for testing onCellHtmlData option</h3>
     <table id="issue45" class="table-striped">
+      <caption>Table for testing onCellHtmlData option</caption>
       <thead>
       <tr>
         <th>C1</th>
@@ -875,8 +884,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 53 I: complex table thead rowspan colspan</h3>
     <table id="issue53a">
+      <caption>Issue 53 I: complex table thead rowspan colspan</caption>
       <thead>
         <tr>
           <th rowspan="2">Name</th><th colspan="2">detail1</th>
@@ -903,8 +912,8 @@
         </tr>
       </tbody>
     </table>
-    <h3>Issue 53 II: complex table thead rowspan colspan</h3>
     <table id="issue53b">
+      <caption>Issue 53 II: complex table thead rowspan colspan</caption>
       <tbody>
         <tr>
           <td>col1</td>
@@ -956,8 +965,8 @@
         </tr>
       </tbody>
     </table>
-    <h3>Issue 60: Export a data attribute instead of the TD content</h3>
     <table id="issue60" class="table-striped">
+      <caption>Issue 60: Export a data attribute instead of the TD content</caption>
       <thead>
       <tr>
         <th data-tableexport-value="c1 is the new C1">C1</th>
@@ -983,8 +992,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 51(LB): Extra Table Being Rendered, top row not being rendered correctly</h3>
     <table id="issue51lb">
+      <caption>Issue 51(LB): Extra Table Being Rendered, top row not being rendered correctly</caption>
       <thead>
         <tr>
         <th rowspan="2">ethn1</th>
@@ -1034,8 +1043,8 @@
         </tr>
       </tbody>
     </table>
-    <h3>Issue 81: Export String to excel with rows formatted as text</h3>
     <table id="issue81" class="table-striped">
+      <caption>Issue 81: Export String to excel with rows formatted as text</caption>
       <thead>
       <tr>
         <th>Number as text</th>
@@ -1057,8 +1066,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 93: colspan & rowspan</h3>
     <table id="issue93">
+      <caption>Issue 93: colspan & rowspan</caption>
       <thead>
       <tr>
         <th colspan="2">Region</th>
@@ -1147,8 +1156,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</h3>
     <table id="issue121" class="">
+      <caption>Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</caption>
       <thead>
       <tr>
         <th>column 1</th>
@@ -1178,8 +1187,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 111: Export pdf with images</h3>
     <table id="issue111" class="">
+      <caption>Issue 111: Export pdf with images</caption>
       <thead>
       <tr>
         <th>column 1</th>
@@ -1201,8 +1210,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 127: Chinese csv export</h3>
     <table id="issue127" class="">
+      <caption>Issue 127: Chinese csv export</caption>
       <thead>
       <tr>
         <th>日期</th>
@@ -1231,8 +1240,8 @@
       </tr>
       </tbody>
     </table>
-    <h3>Issue 142: Omit tfoot from output</h3>
     <table id="issue142" class="">
+      <caption>Issue 142: Omit tfoot from output</caption>
       <thead>
           <tr>
               <th>class name</th>
@@ -1256,8 +1265,8 @@
       </tfoot>
     </table>
 
-    <h3>Issue 164: PDF(Make) don't support rowspan and colspan?</h3>
     <table id="issue164" class="">
+      <caption>Issue 164: PDF(Make) don't support rowspan and colspan?</caption>
       <tbody>
         <tr>
           <td rowspan="3">R1-C1</td>
@@ -1277,8 +1286,8 @@
       </tbody>    
     </table>
     
-    <h3>Issue 178: Export String to excel with rows formatted as text</h3>
     <table id="issue178" class="table-striped">
+      <caption>Issue 178: Export String to excel with rows formatted as text</caption>
       <thead>
       <tr>
         <th>Number</th>
@@ -1312,9 +1321,9 @@
       </tbody>
     </table>
 
-    <h3>Countries and dependencies by population (font test)</h3>
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">
+      <caption>Countries and dependencies by population (font test)</caption>
       <thead>
       <tr>
         <th data-field="rank">Rank</th>
@@ -1512,8 +1521,9 @@
       </tr>
       </tbody>
     </table>
-    <h3>Countries and dependencies by population (mass test)</h3>
+
     <table id="wikitable" class="table-striped">
+      <caption>Countries and dependencies by population (mass test)</caption>
       <thead>
       <tr>
         <th data-sort-type="number" class="headerSort" tabindex="0" role="columnheader" title="Sort ascending">Rank</th>
