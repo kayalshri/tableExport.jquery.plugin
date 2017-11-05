@@ -17,17 +17,13 @@
 
   <script type="text/javaScript">
 
-    function DoOnCellHtmlData(cell, row, col, data) {
-      return data;
-    }
-
     $(document).ready(function()
     {
       var $table = $('#table');
 
       $table.bootstrapTable('refreshOptions', {
 
-        exportOptions: {onCellHtmlData: DoOnCellHtmlData},
+        exportOptions: {},
         onExpandRow: function(index, row, $detail) {
 
           $detail.html('<table></table>').find('table').bootstrapTable({
