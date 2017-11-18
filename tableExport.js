@@ -105,9 +105,9 @@
       var $hrows         = [];
       var $rows          = [];
       var rowIndex       = 0;
-      var rowspans       = [];
       var trData         = '';
       var colNames       = [];
+      var ranges         = [];
       var blob;
       var $hiddenTableElements = [];
       var checkCellVisibilty = false;     // used to speed up export of tables with extensive css styling
@@ -120,6 +120,7 @@
 
         var csvData   = "";
         var rowlength = 0;
+        ranges        = [];
         rowIndex      = 0;
 
         function csvString (cell, rowIndex, colIndex) {
@@ -214,7 +215,8 @@
       } else if ( defaults.type == 'sql' ) {
 
         // Header
-        rowIndex   = 0;
+        rowIndex = 0;
+        ranges   = [];
         var tdData = "INSERT INTO `" + defaults.tableName + "` (";
         $hrows     = $(el).find('thead').first().find(defaults.theadSelector);
         $hrows.each(function () {
@@ -269,7 +271,8 @@
 
       } else if ( defaults.type == 'json' ) {
         var jsonHeaderArray = [];
-        $hrows              = $(el).find('thead').first().find(defaults.theadSelector);
+        ranges = [];
+        $hrows = $(el).find('thead').first().find(defaults.theadSelector);
         $hrows.each(function () {
           var jsonArrayTd = [];
 
@@ -332,8 +335,8 @@
         }
 
       } else if ( defaults.type === 'xml' ) {
-
         rowIndex = 0;
+        ranges   = [];
         var xml  = '<?xml version="1.0" encoding="utf-8"?>';
         xml += '<tabledata><fields>';
 
@@ -410,7 +413,7 @@
             ssName = 'Table ' + (docNames.length + 1);
           ssName = ssName.replace(/[\\\/[\]*:?'"]/g,'').substring(0,31).trim();
 
-          docNames.push(ssName);
+          docNames.push($('<div />').text(ssName).html());
 
           $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
           checkCellVisibilty = $hiddenTableElements.length > 0;
@@ -420,7 +423,7 @@
           docData  = '<Table>\r';
 
           function CollectXmlssData ($rows, rowselector, length) {
-            var ranges = [];
+            var spans = [];
 
             $($rows).each(function () {
               var ssIndex = 0;
@@ -452,8 +455,8 @@
                     var colspan = parseInt(cell.getAttribute('colspan'));
                     var rowspan = parseInt(cell.getAttribute('rowspan'));
 
-                    // Skip ranges
-                    ranges.forEach(function (range) {
+                    // Skip spans
+                    spans.forEach(function (range) {
                       if ( rowIndex >= range.s.r && rowIndex <= range.e.r && nCols >= range.s.c && nCols <= range.e.c ) {
                         for ( var i = 0; i <= range.e.c - range.s.c; ++i ) {
                           nCols++;
@@ -466,7 +469,7 @@
                     if ( rowspan || colspan ) {
                       rowspan = rowspan || 1;
                       colspan = colspan || 1;
-                      ranges.push({
+                      spans.push({
                         s: {r: rowIndex, c: nCols},
                         e: {r: rowIndex + rowspan - 1, c: nCols + colspan - 1}
                       });
@@ -623,8 +626,9 @@
           $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
           checkCellVisibilty = $hiddenTableElements.length > 0;
 
-          rowIndex   = 0;
-          colNames   = GetColumnNames(this);
+          rowIndex = 0;
+          ranges   = [];
+          colNames = GetColumnNames(this);
 
           // Header
           docData += '<table><thead>';
@@ -770,9 +774,9 @@
 
       } else if ( defaults.type == 'xlsx' ) {
 
-        var data   = [];
-        var ranges = [];
-        rowIndex   = 0;
+        var data  = [];
+        var spans = [];
+        rowIndex  = 0;
 
         $rows = $(el).find('thead').first().find(defaults.theadSelector);
         $rows.push.apply($rows, collectRows ($(el)));
@@ -788,8 +792,8 @@
                 var colspan = parseInt(cell.getAttribute('colspan'));
                 var rowspan = parseInt(cell.getAttribute('rowspan'));
 
-                // Skip ranges
-                ranges.forEach(function (range) {
+                // Skip span ranges
+                spans.forEach(function (range) {
                   if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cols.length >= range.s.c && cols.length <= range.e.c ) {
                     for ( var i = 0; i <= range.e.c - range.s.c; ++i )
                       cols.push(null);
@@ -800,7 +804,7 @@
                 if ( rowspan || colspan ) {
                   rowspan = rowspan || 1;
                   colspan = colspan || 1;
-                  ranges.push({
+                  spans.push({
                     s: {r: rowIndex, c: cols.length},
                     e: {r: rowIndex + rowspan - 1, c: cols.length + colspan - 1}
                   });
@@ -829,8 +833,8 @@
         var wb = new jx_Workbook(),
             ws = jx_createSheet(data);
 
-        // add ranges to worksheet
-        ws['!merges'] = ranges;
+        // add span ranges to worksheet
+        ws['!merges'] = spans;
 
         // add worksheet to workbook
         wb.SheetNames.push(defaults.worksheetName);
@@ -895,6 +899,7 @@
           var widths = [];
           var body   = [];
           rowIndex   = 0;
+          ranges     = [];
 
           var CollectPdfmakeData = function ($rows, colselector, length) {
             var rlength = 0;
@@ -1069,6 +1074,7 @@
               return isVisible($(this));
             }).each(function () {
               var rowCount = 0;
+              ranges       = [];
 
               $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
               checkCellVisibilty = $hiddenTableElements.length > 0;
@@ -1098,7 +1104,8 @@
               return isVisible($(this));
             }).each(function () {
               var colKey;
-              var rowIndex = 0;
+              rowIndex = 0;
+              ranges   = [];
 
               $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
               checkCellVisibilty = $hiddenTableElements.length > 0;
@@ -1241,10 +1248,9 @@
 
               // collect header and data rows
               teOptions.headerrows = [];
-              $hrows               = $(this).find('thead').find(defaults.theadSelector);
+              $hrows = $(this).find('thead').find(defaults.theadSelector);
               $hrows.each(function () {
                 colKey = 0;
-
                 teOptions.headerrows[rowIndex] = [];
 
                 ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
@@ -1470,68 +1476,50 @@
               isVisible($(tableRow))) {
 
             var $cells = $(tableRow).find(selector);
-            var rowColspan = 0;
+            var cellCount = 0;
 
             $cells.each(function (colIndex) {
               var $cell = $(this);
-              var c, Colspan = 1;
-              var r, Rowspan = 1;
-              var cellCount  = $cells.length;
+              var c;
+              var colspan = parseInt(this.getAttribute('colspan'));
+              var rowspan = parseInt(this.getAttribute('rowspan'));
 
-              // handle rowspans from previous rows
-              if ( typeof rowspans[rowIndex] != 'undefined' && rowspans[rowIndex].length > 0 ) {
-                var colCount = colIndex;
-                for ( c = 0; c <= colCount; c++ ) {
-                  if ( typeof rowspans[rowIndex][c] != 'undefined' ) {
-                    if ( isColumnIgnored($cell, cellCount, colIndex + rowColspan) === false )
-                      cellcallback(null, rowIndex, c);
-                    delete rowspans[rowIndex][c];
-                    colCount++;
-                  }
+              // Skip ranges
+              ranges.forEach(function (range) {
+                if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cellCount >= range.s.c && cellCount <= range.e.c ) {
+                  for ( c = 0; c <= range.e.c - range.s.c; ++c )
+                    cellcallback(null, rowIndex, cellCount++);
                 }
-                colIndex += rowspans[rowIndex].length;
-                cellCount += rowspans[rowIndex].length;
-              }
+              });
 
-              if ( $cell.is("[colspan]") ) {
-                Colspan = parseInt($cell.attr('colspan')) || 1;
-                rowColspan += Colspan > 0 ? Colspan - 1 : 0;
-              }
-
-              if ( $cell.is("[rowspan]") )
-                Rowspan = parseInt($cell.attr('rowspan')) || 1;
-
-              if ( isColumnIgnored($cell, cellCount, colIndex + rowColspan) === false ) {
-                // output content of current cell
-                cellcallback(this, rowIndex, colIndex);
-
-                // handle colspan of current cell
-                for ( c = 1; c < Colspan; c++ )
-                  cellcallback(null, rowIndex, colIndex + c);
-              }
-
-              // store rowspan for following rows
-              if ( Rowspan > 1 ) {
-                for ( r = 1; r < Rowspan; r++ ) {
-                  if ( typeof rowspans[rowIndex + r] === 'undefined' )
-                    rowspans[rowIndex + r] = [];
-                  rowspans[rowIndex + r][colIndex + rowColspan] = "";
-
-                  for ( c = 1; c < Colspan; c++ )
-                    rowspans[rowIndex + r][colIndex + rowColspan - c] = "";
+              if ( isColumnIgnored($cell, $cells.length, colIndex) === false ) {
+                // Handle Row Span
+                if ( rowspan || colspan ) {
+                  rowspan = rowspan || 1;
+                  colspan = colspan || 1;
+                  ranges.push({
+                    s: {r: rowIndex, c: cellCount},
+                    e: {r: rowIndex + rowspan - 1, c: cellCount + colspan - 1}
+                  });
                 }
+
+                // Handle Value
+                cellcallback(this, rowIndex, cellCount++);
               }
+
+              // Handle Colspan
+              if ( colspan )
+                for ( c = 0; c < colspan - 1; ++c )
+                  cellcallback(null, rowIndex, cellCount++);
             });
 
-            // handle rowspans from previous rows
-            if ( typeof rowspans[rowIndex] !== 'undefined' && rowspans[rowIndex].length > 0 ) {
-              for ( var c = 0; c <= rowspans[rowIndex].length; c++ ) {
-                if ( typeof rowspans[rowIndex][c] !== 'undefined' ) {
-                  cellcallback(null, rowIndex, c);
-                  delete rowspans[rowIndex][c];
-                }
+            // Skip ranges
+            ranges.forEach(function (range) {
+              if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cellCount >= range.s.c && cellCount <= range.e.c ) {
+                for ( c = 0; c <= range.e.c - range.s.c; ++c )
+                  cellcallback(null, rowIndex, cellCount++);
               }
-            }
+            });
           }
         }
       }
