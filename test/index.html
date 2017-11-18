@@ -158,6 +158,7 @@
       <li><a href="#" onClick="doExport('#countries', {csvUseBOM: false, type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (without BOM)</a></li>
       <li><a href="#" onClick="doExport('#rowspans', {type: 'csv',numbers: {html: {decimalMark: '.', thousandsSeparator: ','}, output: false}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (rowspan)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (colspan + rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue45', {type: 'csv',numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '', thousandsSeparator: '.'}}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (tableexport-cellformat)</a></li>
       <li><a href="#" onClick="doExport('#issue47', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue47: colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#invisiblecols', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-display="always")</a></li>
       <li><a href="#" onClick="doExport('#issue60', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (data-tableexport-value)</a></li>
@@ -169,7 +170,6 @@
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT</a></li>
       <li><a href="#" onClick="doExport('#invisible', {type: 'txt'});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (hidden table)</a></li>
-      <li><a href="#" onClick="doExport('#issue45', {type: 'txt', onCellHtmlData: DoOnCellHtmlData});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (onCellHtmlData)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'txt', ignoreColumn: [1,3]});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (ignoreColumn by column index)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'txt', ignoreColumn: ['flag','population']});"> <img src='icons/txt.png' alt="TXT" style="width:24px"> TXT (ignoreColumn by column name)</a></li>
       <br>
@@ -881,6 +881,11 @@
         <td><select id="r3s1"><option>option1</option><option>option2</option><option>option3</option></select></td>
         <td>H</td>
         <td>I</td>
+      </tr>
+      <tr>
+        <td>10.10.10.1</td>
+        <td data-tableexport-cellformat="">10.10.10.2</td>
+        <td>10.10,10</td>
       </tr>
       </tbody>
     </table>

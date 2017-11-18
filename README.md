@@ -225,22 +225,30 @@ Optional html data attributes
 =============================
 (can be applied while generating the table that you want to export)
 
-<h3>data-tableexport-display</h3>
+<h4>data-tableexport-cellformat</h4>
 
 ```html
-<table style="display:none;" data-tableexport-display="always">...</table> -> a hidden table will be exported
-
-<td style="display:none;" data-tableexport-display="always">...</td> -> a hidden cell will be exported
-
-<td data-tableexport-display="none">...</td> -> this cell will not be exported
-
-<tr data-tableexport-display="none">...</tr> -> all cells of this row will not be exported
+<td data-tableexport-cellformat="">...</td> -> An empty data value preserves format of cell content. E.g. no number seperator conversion
+                                               
+                                               More cell formats to be come...
 ```
 
-<h3>data-tableexport-msonumberformat</h3>
+<h4>data-tableexport-display</h4>
 
 ```html
-<td data-tableexport-msonumberformat="\@">...</td> -> data value will be used to style excel cells with mso-number-format (Excel 2000 html format only)
+<table style="display:none;" data-tableexport-display="always">...</table> -> A hidden table will be exported
+
+<td style="display:none;" data-tableexport-display="always">...</td> -> A hidden cell will be exported
+
+<td data-tableexport-display="none">...</td> -> This cell will not be exported
+
+<tr data-tableexport-display="none">...</tr> -> All cells of this row will not be exported
+```
+
+<h4>data-tableexport-msonumberformat</h4>
+
+```html
+<td data-tableexport-msonumberformat="\@">...</td> -> Data value will be used to style excel cells with mso-number-format (Excel 2000 html format only)
                                                       Examples:
                                                       "\@"       excel treats cell content alway as text, even numbers
                                                       "0"        excel will display no decimals for numbers
@@ -249,7 +257,7 @@ Optional html data attributes
                                                       "Percent"  excel will display a number as percent with 2 decimals
 ```
 
-<h3>data-tableexport-value</h3>
+<h4>data-tableexport-value</h4>
 
 ```html
 <th data-tableexport-value="export title">title</th> -> "export title" instead of "title" will be exported

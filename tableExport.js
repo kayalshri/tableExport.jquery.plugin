@@ -70,11 +70,10 @@
             decimalMark:        '.',
             thousandsSeparator: ','
           },
-          output:                         // set to false to not format numbers in exported output
-                {
-                  decimalMark:        '.',
-                  thousandsSeparator: ','
-                }
+          output: {                       // set output: false to keep number format in exported output
+            decimalMark:        '.',
+            thousandsSeparator: ','
+          }
         },
         onCellData:        null,
         onCellHtmlData:    null,
@@ -1881,45 +1880,51 @@
             result = $.trim(htmlData);
           }
           else if ( htmlData && htmlData != '' ) {
-            var text   = htmlData.replace(/\n/g, '\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
-            var obj    = $('<div/>').html(text).contents();
-            var number = false;
-            text       = '';
-            $.each(obj.text().split("\u2028"), function (i, v) {
-              if ( i > 0 )
-                text += " ";
-              text += $.trim(v);
-            });
+            var cellFormat = $(cell).data("tableexport-cellformat");
 
-            $.each(text.split("\u2060"), function (i, v) {
-              if ( i > 0 )
-                result += "\n";
-              result += $.trim(v).replace(/\u00AD/g, ""); // remove soft hyphens
-            });
+            if ( cellFormat != '' ) {
+              var text   = htmlData.replace(/\n/g, '\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
+              var obj    = $('<div/>').html(text).contents();
+              var number = false;
+              text       = '';
+              $.each(obj.text().split("\u2028"), function (i, v) {
+                if ( i > 0 )
+                  text += " ";
+                text += $.trim(v);
+              });
 
-            if ( defaults.type == 'json' ||
-              (defaults.type === 'excel' && defaults.excelFileFormat === 'xmlss') ||
-              defaults.numbers.output === false ) {
-              number = parseNumber(result);
+              $.each(text.split("\u2060"), function (i, v) {
+                if ( i > 0 )
+                  result += "\n";
+                result += $.trim(v).replace(/\u00AD/g, ""); // remove soft hyphens
+              });
 
-              if ( number !== false )
-                result = Number(number);
-            }
-            else if ( defaults.numbers.html.decimalMark != defaults.numbers.output.decimalMark ||
-              defaults.numbers.html.thousandsSeparator != defaults.numbers.output.thousandsSeparator ) {
-              number = parseNumber(result);
+              if ( defaults.type == 'json' ||
+                   (defaults.type === 'excel' && defaults.excelFileFormat === 'xmlss') ||
+                    defaults.numbers.output === false ) {
+                number = parseNumber(result);
 
-              if ( number !== false ) {
-                var frac = ("" + number.substr(number < 0 ? 1 : 0)).split('.');
-                if ( frac.length == 1 )
-                  frac[1] = "";
-                var mod = frac[0].length > 3 ? frac[0].length % 3 : 0;
+                if ( number !== false )
+                  result = Number(number);
+              }
+              else if ( defaults.numbers.html.decimalMark != defaults.numbers.output.decimalMark ||
+                        defaults.numbers.html.thousandsSeparator != defaults.numbers.output.thousandsSeparator ) {
+                number = parseNumber(result);
 
-                result = (number < 0 ? "-" : "") +
-                  (defaults.numbers.output.thousandsSeparator ? ((mod ? frac[0].substr(0, mod) + defaults.numbers.output.thousandsSeparator : "") + frac[0].substr(mod).replace(/(\d{3})(?=\d)/g, "$1" + defaults.numbers.output.thousandsSeparator)) : frac[0]) +
-                  (frac[1].length ? defaults.numbers.output.decimalMark + frac[1] : "");
+                if ( number !== false ) {
+                  var frac = ("" + number.substr(number < 0 ? 1 : 0)).split('.');
+                  if ( frac.length == 1 )
+                    frac[1] = "";
+                  var mod = frac[0].length > 3 ? frac[0].length % 3 : 0;
+
+                  result = (number < 0 ? "-" : "") +
+                    (defaults.numbers.output.thousandsSeparator ? ((mod ? frac[0].substr(0, mod) + defaults.numbers.output.thousandsSeparator : "") + frac[0].substr(mod).replace(/(\d{3})(?=\d)/g, "$1" + defaults.numbers.output.thousandsSeparator)) : frac[0]) +
+                    (frac[1].length ? defaults.numbers.output.decimalMark + frac[1] : "");
+                }
               }
             }
+            else
+              result = htmlData;
           }
 
           if ( defaults.escape === true ) {
