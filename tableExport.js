@@ -2094,30 +2094,27 @@
       }
 
       function downloadFile (filename, header, data) {
-
         var ua = window.navigator.userAgent;
-        if ( filename !== false && (ua.indexOf("MSIE ") > 0 || !!ua.match(/Trident.*rv\:11\./)) ) {
-          if ( window.navigator.msSaveOrOpenBlob ) {
-            //noinspection JSUnresolvedFunction
-            window.navigator.msSaveOrOpenBlob(new Blob([data]), filename);
-          }
-          else {
-            // Internet Explorer (<= 9) workaround by Darryl (https://github.com/dawiong/tableExport.jquery.plugin)
-            // based on sampopes answer on http://stackoverflow.com/questions/22317951
-            // ! Not working for json and pdf format !
-            var frame = document.createElement("iframe");
+        if ( filename !== false && window.navigator.msSaveOrOpenBlob ) {
+          //noinspection JSUnresolvedFunction
+          window.navigator.msSaveOrOpenBlob(new Blob([data]), filename);
+        }
+        else if ( filename !== false && (ua.indexOf("MSIE ") > 0 || !!ua.match(/Trident.*rv\:11\./)) ) {
+          // Internet Explorer (<= 9) workaround by Darryl (https://github.com/dawiong/tableExport.jquery.plugin)
+          // based on sampopes answer on http://stackoverflow.com/questions/22317951
+          // ! Not working for json and pdf format !
+          var frame = document.createElement("iframe");
 
-            if ( frame ) {
-              document.body.appendChild(frame);
-              frame.setAttribute("style", "display:none");
-              frame.contentDocument.open("txt/html", "replace");
-              frame.contentDocument.write(data);
-              frame.contentDocument.close();
-              frame.focus();
+          if ( frame ) {
+            document.body.appendChild(frame);
+            frame.setAttribute("style", "display:none");
+            frame.contentDocument.open("txt/html", "replace");
+            frame.contentDocument.write(data);
+            frame.contentDocument.close();
+            frame.focus();
 
-              frame.contentDocument.execCommand("SaveAs", true, filename);
-              document.body.removeChild(frame);
-            }
+            frame.contentDocument.execCommand("SaveAs", true, filename);
+            document.body.removeChild(frame);
           }
         }
         else {
