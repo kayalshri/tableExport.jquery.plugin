@@ -23,6 +23,7 @@
         excelFileFormat:   'xlshtml',     // xmlss = XML Spreadsheet 2003 file format (XMLSS), xlshtml = Excel 2000 html format
         excelRTL:          false,         // true = Set Excel option 'DisplayRightToLeft'
         excelstyles:       [],            // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
+        exportHiddenCells: false,         // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
         fileName:          'tableExport',
         htmlContent:       false,
         ignoreColumn:      [],
@@ -109,7 +110,7 @@
       var ranges         = [];
       var blob;
       var $hiddenTableElements = [];
-      var checkCellVisibilty = false;     // used to speed up export of tables with extensive css styling
+      var checkCellVisibilty = false;
 
       $.extend(true, defaults, options);
 
@@ -414,8 +415,10 @@
 
           docNames.push($('<div />').text(ssName).html());
 
-          $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
-          checkCellVisibilty = $hiddenTableElements.length > 0;
+          if ( defaults.exportHiddenCells === false ) {
+            $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
+            checkCellVisibilty = $hiddenTableElements.length > 0;
+          }
 
           rowIndex = 0;
           colNames = GetColumnNames(this);
@@ -622,8 +625,10 @@
             docName = docName.replace(/[\\\/[\]*:?'"]/g, '').substring(0, 31).trim();
           }
 
-          $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
-          checkCellVisibilty = $hiddenTableElements.length > 0;
+          if ( defaults.exportHiddenCells === false ) {
+            $hiddenTableElements = $table.find("tr, th, td").filter(":hidden");
+            checkCellVisibilty = $hiddenTableElements.length > 0;
+          }
 
           rowIndex = 0;
           ranges   = [];
@@ -1075,8 +1080,10 @@
               var rowCount = 0;
               ranges       = [];
 
-              $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
-              checkCellVisibilty = $hiddenTableElements.length > 0;
+              if ( defaults.exportHiddenCells === false ) {
+                $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
+                checkCellVisibilty = $hiddenTableElements.length > 0;
+              }
 
               $hrows = $(this).find('thead').find(defaults.theadSelector);
               $rows = collectRows ($(this));
@@ -1106,8 +1113,10 @@
               rowIndex = 0;
               ranges   = [];
 
-              $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
-              checkCellVisibilty = $hiddenTableElements.length > 0;
+              if ( defaults.exportHiddenCells === false ) {
+                $hiddenTableElements = $(this).find("tr, th, td").filter(":hidden");
+                checkCellVisibilty = $hiddenTableElements.length > 0;
+              }
 
               colNames = GetColumnNames(this);
 

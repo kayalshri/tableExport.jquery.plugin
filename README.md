@@ -145,6 +145,7 @@ escape: false
 excelRTL: false
 excelstyles: []
 excelFileFormat: 'xlshtml'
+exportHiddenCells: false
 fileName: 'tableExport'
 htmlContent: false
 ignoreColumn: []
