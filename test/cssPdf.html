@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <script type="text/javaScript">
+      function doExport() {
+          $('#pdfstyles').tableExport({type:'pdf',
+                                       jspdf: {orientation: 'p',
+                                               margins: {right: 20, left: 20, top: 30, bottom: 30},
+                                               autotable: {styles: {fillColor: 'inherit',
+                                                                    textColor: 'inherit',
+                                                                    fontStyle: 'inherit'},
+                                                           tableWidth: 'wrap'}}});
+      }
+  </script>
+</head>
+<body>
+<a href="#" onclick="doExport()">Export to PDF</a>
+<table id="pdfstyles">
+  <thead>
+  <tr>
+      <th style="font-family: arial; font-size: 18px; font-weight: bold">C1</th>
+      <th style="font-family: arial; font-size: 18px; font-weight: bold">C2</th>
+      <th style="font-family: arial; font-size: 18px; font-weight: bold">C3</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+      <td style="background-color:red">A</td>
+      <td style="background-color:green">B</td>
+      <td style="background-color:blue">C</td>
+  </tr>
+  <tr>
+      <td style="text-align:left">D</td>
+      <td style="text-align:center">E</td>
+      <td style="text-align:right">F</td>
+  </tr>
+  <tr>
+      <td style="color:green">G</td>
+      <td style="color:blue">H</td>
+      <td style="color:red">I</td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>
