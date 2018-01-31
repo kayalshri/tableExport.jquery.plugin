@@ -1,12 +1,12 @@
 {
     "name": "kayalshri/tableExport.jquery.plugin"
     "description": "Export html table to json, xml, pdf, ...",
-    "keywords": ["bootstrap","table","tablesort","pagination"],
+    "keywords": ["table","export"],
     "type": "component",
     "homepage": "https://github.com/kayalshri/tableExport.jquery.plugin",
     "authors": [
         {
-            "name": "kayalshri",
+            "name": "kayalshri"
         }
     ]
 }
