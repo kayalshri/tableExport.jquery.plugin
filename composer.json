@@ -1,12 +1,15 @@
 {
-    "name": "kayalshri/tableExportJQueryPlugin"
-    "description": "Export html table to json, xml, pdf, ...",
-    "keywords": ["table","export"],
-    "type": "component",
-    "homepage": "https://github.com/kayalshri/tableExport.jquery.plugin",
-    "authors": [
-        {
-            "name": "kayalshri"
-        }
-    ]
+  "name": "kayalshri/tableExportJQueryPlugin",
+  "description": "Export html table to json, xml, pdf, ...",
+  "keywords": [
+    "table",
+    "export"
+  ],
+  "type": "component",
+  "homepage": "https://github.com/kayalshri/tableExport.jquery.plugin",
+  "authors": [
+    {
+      "name": "kayalshri"
+    }
+  ]
 }
