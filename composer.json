@@ -1,5 +1,5 @@
 {
-  "name": "susgo/tableExport.jquery.plugin",
+  "name": "kayalshri/tableExport.jquery.plugin",
   "description": "Export html table to json, xml, pdf, ...",
   "keywords": [
     "table",
