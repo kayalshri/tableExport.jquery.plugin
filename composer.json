@@ -1,5 +1,5 @@
 {
-    "name": "kayalshri/tableExport.jquery.plugin"
+    "name": "kayalshri/tableExportJQueryPlugin"
     "description": "Export html table to json, xml, pdf, ...",
     "keywords": ["table","export"],
     "type": "component",
