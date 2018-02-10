@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>HTML table Export</title>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  <!--
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-  -->
-  <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
-  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <!--[if (!IE)|(gt IE 8)]><!-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <!--<![endif]-->
+  <!--[if lte IE 8]>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
+  <![endif]-->
+  <!--[if (!IE)|(gt IE 8)]><!-->
   <!--
   <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
   <script type="text/javascript" src="../libs/pdfmake/vfs_fonts.js"></script>
   -->
+  <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
   <script type="text/javascript" src="../libs/html2canvas/html2canvas.min.js"></script>
+  <!--<![endif]-->
   <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
     <!--
@@ -92,7 +93,7 @@
         tableName: 'Table name'
       };
 
-      $.extend(true, options, params);
+      jQuery.extend(true, options, params);
 
       $(selector).tableExport(options);
     }
@@ -670,7 +671,7 @@
       </tr>
       </tbody>
     </table>
-  
+
   <p>Before table...</p>
     <table id="invisible" style="display:none" data-tableexport-display="always">
       <caption>Export hidden table</caption>
@@ -695,7 +696,7 @@
       </tbody>
     </table>
   <p>...behind table</p>
-    
+
     <table id="excelstyles">
       <caption>Test option 'excelstyles'</caption>
       <thead>
@@ -1288,9 +1289,9 @@
           <td>R3-C2</td>
           <td>R3-C3</td>
         </tr>
-      </tbody>    
+      </tbody>
     </table>
-    
+
     <table id="issue178" class="table-striped">
       <caption>Issue 178: Export String to excel with rows formatted as text</caption>
       <thead>

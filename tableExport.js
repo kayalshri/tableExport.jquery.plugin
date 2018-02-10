@@ -11,8 +11,7 @@
  **/
 
 (function ($) {
-  $.fn.extend({
-    tableExport: function (options) {
+  $.fn.tableExport = function (options) {
       var defaults = {
         consoleLog:        false,
         csvEnclosure:      '"',
@@ -225,7 +224,6 @@
               tdData += "'" + parseString(cell, row, col) + "',";
             });
           rowIndex++;
-          tdData = $.trim(tdData);
           tdData = $.trim(tdData).substring(0, tdData.length - 1);
         });
         tdData += ") VALUES ";
@@ -411,7 +409,7 @@
             ssName = $table.find('caption').text() || '';
           if ( ! ssName.length )
             ssName = 'Table ' + (docNames.length + 1);
-          ssName = ssName.replace(/[\\\/[\]*:?'"]/g,'').substring(0,31).trim();
+          ssName = $.trim(ssName.replace(/[\\\/[\]*:?'"]/g,'').substring(0,31));
 
           docNames.push($('<div />').text(ssName).html());
 
@@ -458,7 +456,8 @@
                     var rowspan = parseInt(cell.getAttribute('rowspan'));
 
                     // Skip spans
-                    spans.forEach(function (range) {
+                    $.each(spans, function () {
+                      var range = this;
                       if ( rowIndex >= range.s.r && rowIndex <= range.e.r && nCols >= range.s.c && nCols <= range.e.c ) {
                         for ( var i = 0; i <= range.e.c - range.s.c; ++i ) {
                           nCols++;
@@ -622,7 +621,7 @@
 
           if (docName === '') {
             docName = defaults.worksheetName || $table.find('caption').text() || 'Table';
-            docName = docName.replace(/[\\\/[\]*:?'"]/g, '').substring(0, 31).trim();
+            docName = $.trim(docName.replace(/[\\\/[\]*:?'"]/g, '').substring(0, 31));
           }
 
           if ( defaults.exportHiddenCells === false ) {
@@ -782,7 +781,7 @@
         var spans = [];
         rowIndex  = 0;
 
-        $rows = $(el).find('thead').first().find(defaults.theadSelector);
+        $rows = $(el).find('thead').first().find(defaults.theadSelector).toArray();
         $rows.push.apply($rows, collectRows ($(el)));
 
         $($rows).each(function () {
@@ -797,7 +796,8 @@
                 var rowspan = parseInt(cell.getAttribute('rowspan'));
 
                 // Skip span ranges
-                spans.forEach(function (range) {
+                $.each(spans, function () {
+                  var range = this;
                   if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cols.length >= range.s.c && cols.length <= range.e.c ) {
                     for ( var i = 0; i <= range.e.c - range.s.c; ++i )
                       cols.push(null);
@@ -1145,7 +1145,8 @@
                 atOptions.beforePageContent = function (data) {
                   if ( data.pageCount == 1 ) {
                     var all = data.table.rows.concat(data.table.headerRow);
-                    all.forEach(function (row) {
+                    $.each(all, function () {
+                      var row = this;
                       if ( row.height > 0 ) {
                         row.height += (2 - FONT_ROW_RATIO) / 2 * row.styles.fontSize;
                         data.table.height += (2 - FONT_ROW_RATIO) / 2 * row.styles.fontSize;
@@ -1379,11 +1380,11 @@
       function collectRows ($table) {
         var result = [];
         findTablePart($table,'tbody').each(function () {
-          result.push.apply(result, findRows($(this), defaults.tbodySelector));
+          result.push.apply(result, findRows($(this), defaults.tbodySelector).toArray());
         });
         if ( defaults.tfootSelector.length ) {
           findTablePart($table,'tfoot').each(function () {
-            result.push.apply(result, findRows($(this), defaults.tfootSelector));
+            result.push.apply(result, findRows($(this), defaults.tfootSelector).toArray());
           });
         }
         return result;
@@ -1493,7 +1494,8 @@
               var rowspan = parseInt(this.getAttribute('rowspan'));
 
               // Skip ranges
-              ranges.forEach(function (range) {
+              $.each(ranges, function () {
+                var range = this;
                 if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cellCount >= range.s.c && cellCount <= range.e.c ) {
                   for ( c = 0; c <= range.e.c - range.s.c; ++c )
                     cellcallback(null, rowIndex, cellCount++);
@@ -1522,7 +1524,8 @@
             });
 
             // Skip ranges
-            ranges.forEach(function (range) {
+            $.each(ranges, function () {
+              var range = this;
               if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cellCount >= range.s.c && cellCount <= range.e.c ) {
                 for ( c = 0; c <= range.e.c - range.s.c; ++c )
                   cellcallback(null, rowIndex, cellCount++);
@@ -2122,11 +2125,17 @@
           if ( frame ) {
             document.body.appendChild(frame);
             frame.setAttribute("style", "display:none");
-            frame.contentDocument.open("txt/html", "replace");
+            frame.contentDocument.open("txt/plain", "replace");
             frame.contentDocument.write(data);
             frame.contentDocument.close();
-            frame.focus();
+            frame.contentDocument.focus();
 
+            var extension = filename.substr((filename.lastIndexOf('.') +1));
+            switch(extension) {
+              case 'doc': case 'json': case 'png': case 'pdf': case 'xls': case 'xlsx':
+                filename += ".txt";
+                break;
+            }
             frame.contentDocument.execCommand("SaveAs", true, filename);
             document.body.removeChild(frame);
           }
@@ -2228,5 +2237,4 @@
 
       return this;
     }
-  });
 })(jQuery);
