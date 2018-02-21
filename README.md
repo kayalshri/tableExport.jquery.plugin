@@ -234,6 +234,13 @@ Optional html data attributes
                                                More cell formats to be come...
 ```
 
+<h4>data-tableexport-colspan</h4>
+
+```html
+<td colspan="2" data-tableexport-colspan="3">...</td> -> Overwrites the colspan attribute of the table cell during export (Excel 2000 html format only). 
+                                                         This attribute can be used if there follow hidden cells, that will be exported by using the "data-tableexport-display" attribute.
+```
+
 <h4>data-tableexport-display</h4>
 
 ```html
@@ -256,6 +263,13 @@ Optional html data attributes
                                                       "0\.000"   excel displays numbers with 3 decimals
                                                       "0%"       excel will display a number as percent with no decimals
                                                       "Percent"  excel will display a number as percent with 2 decimals
+```
+
+<h4>data-tableexport-rowspan</h4>
+
+```html
+<td rowspan="2" data-tableexport-rowspan="3">...</td> -> Overwrites the rowspan attribute of the table cell during export (Excel 2000 html format only). 
+                                                         This attribute can be used if there follow hidden rows, that will be exported by using the "data-tableexport-display" attribute.
 ```
 
 <h4>data-tableexport-value</h4>

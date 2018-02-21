@@ -202,6 +202,7 @@
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue121', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>
+      <li><a href="#" onClick="doExport('#issue220', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 220: Colspan of hidden columns</a></li>
       <br>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel', excelFileFormat: 'xmlss'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', excelFileFormat: 'xmlss', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (Issue 93: colspan & rowspan)</a></li>
@@ -1324,6 +1325,35 @@
         <td>1000000,50</td>
         <td>-1000000,50</td>
       </tr>
+      </tbody>
+    </table>
+
+    <table id="issue220" class="">
+      <caption>Issue 220: Colspan of hidden columns</caption>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th hidden data-tableexport-display="always">Name</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <th colspan="1" data-tableexport-colspan="2" style="text-align:right">Total of all values:</th>
+          <th>300</th>
+        </tr>
+      </tfoot>
+      <tbody>
+        <tr>
+          <td>123</td>
+          <td hidden data-tableexport-display="always">Name1</td>
+          <td>200</td>
+        </tr>
+        <tr>
+          <td>456</td>
+          <td hidden data-tableexport-display="always">Name2</td>
+          <td>100</td>
+        </tr>
       </tbody>
     </table>
 

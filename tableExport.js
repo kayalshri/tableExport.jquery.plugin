@@ -654,10 +654,19 @@
                   }
                   if ( thstyle !== '' )
                     trData += ' ' + thstyle + '"';
-                  if ( $(cell).is("[colspan]") )
-                    trData += ' colspan="' + $(cell).attr('colspan') + '"';
-                  if ( $(cell).is("[rowspan]") )
-                    trData += ' rowspan="' + $(cell).attr('rowspan') + '"';
+
+                  var tdcolspan = $(cell).data("tableexport-colspan");
+                  if ( typeof tdcolspan == 'undefined' && $(cell).is("[colspan]") )
+                    tdcolspan = $(cell).attr('colspan');
+                  if ( typeof tdcolspan !== 'undefined' && tdcolspan !== '' )
+                    trData += ' colspan="' + tdcolspan + '"';
+                    
+                  var tdrowspan = $(cell).data("tableexport-rowspan");
+                  if ( typeof tdrowspan == 'undefined' && $(cell).is("[rowspan]") )
+                    tdrowspan = $(cell).attr('rowspan');
+                  if ( typeof tdrowspan !== 'undefined' && tdrowspan !== '' )
+                    trData += ' rowspan="' + tdrowspan + '"';
+
                   trData += '>' + parseString(cell, row, col) + '</th>';
                 }
               });
@@ -700,10 +709,18 @@
                   trData += '<td';
                   if ( tdstyle !== '' )
                     trData += ' ' + tdstyle + '"';
-                  if ( $(cell).is("[colspan]") )
-                    trData += ' colspan="' + $(cell).attr('colspan') + '"';
-                  if ( $(cell).is("[rowspan]") )
-                    trData += ' rowspan="' + $(cell).attr('rowspan') + '"';
+
+                  var tdcolspan = $(cell).data("tableexport-colspan");
+                  if ( typeof tdcolspan == 'undefined' && $(cell).is("[colspan]") )
+                    tdcolspan = $(cell).attr('colspan');
+                  if ( typeof tdcolspan !== 'undefined' && tdcolspan !== '' )
+                    trData += ' colspan="' + tdcolspan + '"';
+                    
+                  var tdrowspan = $(cell).data("tableexport-rowspan");
+                  if ( typeof tdrowspan == 'undefined' && $(cell).is("[rowspan]") )
+                    tdrowspan = $(cell).attr('rowspan');
+                  if ( typeof tdrowspan !== 'undefined' && tdrowspan !== '' )
+                    trData += ' rowspan="' + tdrowspan + '"';
 
                   if ( typeof tdvalue === 'string' && tdvalue != '' )
                     tdvalue = tdvalue.replace(/\n/g, '<br>');
