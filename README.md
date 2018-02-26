@@ -22,31 +22,31 @@ Installation
 
 To save the generated export files on client side, include in your html code:
 
-```javascript
+```html
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
 ```
 
 To export the table in XLSX (Excel 2007+ XML Format) format, you need to include additionally:
-```javascript
+```html
 <script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
 ```
 
 To export the table as a PDF file the following includes are required:
 
-```javascript
+```html
 <script type="text/javascript" src="libs/jsPDF/jspdf.min.js"></script>
 <script type="text/javascript" src="libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 ```
 
 To export the table in PNG format, you need to include:
 
-```javascript
+```html
 <script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"></script>
 ```
 
 Regardless of the desired format, finally include:
 
-```javascript
+```html
 <script type="text/javascript" src="tableExport.min.js"></script>
 ```
 
@@ -71,19 +71,19 @@ Library | Version
 Examples
 ========
 
-```javascript
+```
 // CSV format
 
 $('#tableID').tableExport({type:'csv'});
 ```
 
-```javascript
+```
 // Excel 2000 html format
 
 $('#tableID').tableExport({type:'excel'});
 ```
 
-```javascript
+```
 // XML Spreadsheet 2003 file format with multiple worksheet support
 
 $('table').tableExport({type:'excel',
@@ -91,7 +91,7 @@ $('table').tableExport({type:'excel',
                         worksheetName: ['Table 1','Table 2', 'Table 3']});
 ```
 
-```javascript
+```
 // PDF export using jsPDF only
 
 $('#tableID').tableExport({type:'pdf',
@@ -101,7 +101,7 @@ $('#tableID').tableExport({type:'pdf',
                           });
 ```
 
-```javascript
+```
 // PDF format using jsPDF and jsPDF Autotable 
 
 $('#tableID').tableExport({type:'pdf',
@@ -115,7 +115,7 @@ $('#tableID').tableExport({type:'pdf',
                           });
 ```
 
-```javascript
+```
 // PDF format with callback example
 
 function DoCellData(cell, row, col, data) {}
@@ -135,7 +135,7 @@ $('table').tableExport({fileName: sFileName,
 Options (Default settings)
 =======
 
-```javascript
+```
 consoleLog: false
 csvEnclosure: '"'
 csvSeparator: ','
@@ -237,7 +237,7 @@ Optional html data attributes
 <h4>data-tableexport-colspan</h4>
 
 ```html
-<td colspan="2" data-tableexport-colspan="3">...</td> -> Overwrites the colspan attribute of the table cell during export (Excel 2000 html format only). 
+<td colspan="2" data-tableexport-colspan="3">...</td> -> Overwrites the colspan attribute of the table cell during export. 
                                                          This attribute can be used if there follow hidden cells, that will be exported by using the "data-tableexport-display" attribute.
 ```
 
@@ -268,7 +268,7 @@ Optional html data attributes
 <h4>data-tableexport-rowspan</h4>
 
 ```html
-<td rowspan="2" data-tableexport-rowspan="3">...</td> -> Overwrites the rowspan attribute of the table cell during export (Excel 2000 html format only). 
+<td rowspan="2" data-tableexport-rowspan="3">...</td> -> Overwrites the rowspan attribute of the table cell during export. 
                                                          This attribute can be used if there follow hidden rows, that will be exported by using the "data-tableexport-display" attribute.
 ```
 

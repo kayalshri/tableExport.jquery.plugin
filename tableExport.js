@@ -1,14 +1,16 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.9.8
+ * Version 1.9.9
  *
- * Copyright (c) 2015-2017 hhurz, https://github.com/hhurz
+ * Copyright (c) 2015-2018 hhurz, https://github.com/hhurz
  *
  * Original Work Copyright (c) 2014 Giri Raj
  *
  * Licensed under the MIT License
  **/
+
+'use strict';
 
 (function ($) {
   $.fn.tableExport = function (options) {
@@ -122,7 +124,7 @@
         ranges        = [];
         rowIndex      = 0;
 
-        function csvString (cell, rowIndex, colIndex) {
+        var csvString = function (cell, rowIndex, colIndex) {
           var result = '';
 
           if ( cell !== null ) {
@@ -153,7 +155,7 @@
           }
 
           return result;
-        }
+        };
 
         var CollectCsvData = function ($rows, rowselector, length) {
 
@@ -452,8 +454,8 @@
                     if ( type !== "Number" )
                       data = data.replace(/\n/g, '<br>');
 
-                    var colspan = parseInt(cell.getAttribute('colspan'));
-                    var rowspan = parseInt(cell.getAttribute('rowspan'));
+                    var colspan = getColspan (cell);
+                    var rowspan = getRowspan (cell);
 
                     // Skip spans
                     $.each(spans, function () {
@@ -655,16 +657,12 @@
                   if ( thstyle !== '' )
                     trData += ' ' + thstyle + '"';
 
-                  var tdcolspan = $(cell).data("tableexport-colspan");
-                  if ( typeof tdcolspan == 'undefined' && $(cell).is("[colspan]") )
-                    tdcolspan = $(cell).attr('colspan');
-                  if ( typeof tdcolspan !== 'undefined' && tdcolspan !== '' )
+                  var tdcolspan = getColspan (cell);
+                  if ( tdcolspan > 0 )
                     trData += ' colspan="' + tdcolspan + '"';
                     
-                  var tdrowspan = $(cell).data("tableexport-rowspan");
-                  if ( typeof tdrowspan == 'undefined' && $(cell).is("[rowspan]") )
-                    tdrowspan = $(cell).attr('rowspan');
-                  if ( typeof tdrowspan !== 'undefined' && tdrowspan !== '' )
+                  var tdrowspan = getRowspan (cell);
+                  if ( tdrowspan > 0 )
                     trData += ' rowspan="' + tdrowspan + '"';
 
                   trData += '>' + parseString(cell, row, col) + '</th>';
@@ -710,16 +708,12 @@
                   if ( tdstyle !== '' )
                     trData += ' ' + tdstyle + '"';
 
-                  var tdcolspan = $(cell).data("tableexport-colspan");
-                  if ( typeof tdcolspan == 'undefined' && $(cell).is("[colspan]") )
-                    tdcolspan = $(cell).attr('colspan');
-                  if ( typeof tdcolspan !== 'undefined' && tdcolspan !== '' )
+                  var tdcolspan = getColspan (cell);
+                  if ( tdcolspan > 0 )
                     trData += ' colspan="' + tdcolspan + '"';
-                    
-                  var tdrowspan = $(cell).data("tableexport-rowspan");
-                  if ( typeof tdrowspan == 'undefined' && $(cell).is("[rowspan]") )
-                    tdrowspan = $(cell).attr('rowspan');
-                  if ( typeof tdrowspan !== 'undefined' && tdrowspan !== '' )
+
+                  var tdrowspan = getRowspan (cell);
+                  if ( tdrowspan > 0 )
                     trData += ' rowspan="' + tdrowspan + '"';
 
                   if ( typeof tdvalue === 'string' && tdvalue != '' )
@@ -809,8 +803,8 @@
 
                 var cellValue = parseString(cell, row, col);
 
-                var colspan = parseInt(cell.getAttribute('colspan'));
-                var rowspan = parseInt(cell.getAttribute('rowspan'));
+                var colspan = getColspan (cell);
+                var rowspan = getRowspan (cell);
 
                 // Skip span ranges
                 $.each(spans, function () {
@@ -932,8 +926,8 @@
                 function (cell, row, col) {
                   if ( typeof cell !== 'undefined' && cell !== null ) {
 
-                    var colspan = parseInt(cell.getAttribute('colspan'));
-                    var rowspan = parseInt(cell.getAttribute('rowspan'));
+                    var colspan = getColspan (cell);
+                    var rowspan = getRowspan (cell);
 
                     var cellValue = parseString(cell, row, col) || " ";
 
@@ -1507,8 +1501,8 @@
             $cells.each(function (colIndex) {
               var $cell = $(this);
               var c;
-              var colspan = parseInt(this.getAttribute('colspan'));
-              var rowspan = parseInt(this.getAttribute('rowspan'));
+              var colspan = getColspan (this);
+              var rowspan = getRowspan (this);
 
               // Skip ranges
               $.each(ranges, function () {
@@ -2004,8 +1998,8 @@
             color:  rgb2array(getStyle(cell, 'color'), [0, 0, 0]),
             fstyle: f
           },
-          colspan: (parseInt($(cell).attr('colspan')) || 0),
-          rowspan: (parseInt($(cell).attr('rowspan')) || 0)
+          colspan: getColspan (cell),
+          rowspan: getRowspan (cell)
         };
 
         if ( cell !== null ) {
@@ -2017,6 +2011,22 @@
         }
 
         return result;
+      }
+
+      function getColspan (cell) {
+        var result = $(cell).data("tableexport-colspan");
+        if ( typeof result == 'undefined' && $(cell).is("[colspan]") )
+          result = $(cell).attr('colspan');
+
+        return (parseInt(result) || 0);
+      }
+
+      function getRowspan (cell) {
+        var result = $(cell).data("tableexport-rowspan");
+        if ( typeof result == 'undefined' && $(cell).is("[rowspan]") )
+          result = $(cell).attr('rowspan');
+
+        return (parseInt(result) || 0);
       }
 
       // get computed style property
