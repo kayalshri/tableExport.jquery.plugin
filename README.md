@@ -179,6 +179,7 @@ jspdf: orientation: 'p'
                                onAutotableText: null
                                onTable: null
                                outputImages: true
+maxNestedTables: 1
 numbers: html: decimalMark: '.'
                thousandsSeparator: ','
          output: decimalMark: '.',
