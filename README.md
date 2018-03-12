@@ -62,7 +62,7 @@ Library | Version
 [jQuery](https://github.com/jquery/jquery) | >= 1.9.1
 [FileSaver](https://github.com/hhurz/tableExport.jquery.plugin/blob/master/libs/FileSaver/FileSaver.min.js) | >= 1.2.0
 [html2canvas](https://github.com/niklasvh/html2canvas) | >= 0.5.0-beta4
-[jsPDF](https://github.com/MrRio/jsPDF) | 1.1.239 or 1.3.2
+[jsPDF](https://github.com/MrRio/jsPDF) | 1.3.2 - 1.3.4
 [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) | 2.0.14 or 2.0.17
 
 
