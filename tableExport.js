@@ -15,21 +15,22 @@
 (function ($) {
   $.fn.tableExport = function (options) {
     var defaults = {
-      consoleLog:        false,
-      csvEnclosure:      '"',
-      csvSeparator:      ',',
-      csvUseBOM:         true,
-      displayTableName:  false,
-      escape:            false,
-      excelFileFormat:   'xlshtml',     // xmlss = XML Spreadsheet 2003 file format (XMLSS), xlshtml = Excel 2000 html format
-      excelRTL:          false,         // true = Set Excel option 'DisplayRightToLeft'
-      excelstyles:       [],            // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
-      exportHiddenCells: false,         // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
-      fileName:          'tableExport',
-      htmlContent:       false,
-      ignoreColumn:      [],
-      ignoreRow:         [],
-      jsonScope:         'all',         // head, data, all
+      consoleLog:            false,
+      csvEnclosure:          '"',
+      csvSeparator:          ',',
+      csvUseBOM:             true,
+      displayTableName:      false,
+      escape:                false,
+      excelFileFormat:       'xlshtml',     // xmlss = XML Spreadsheet 2003 file format (XMLSS), xlshtml = Excel 2000 html format
+      excelPageOrientation:  'portrait',    // portrait, landscape (xlshtml format only)
+      excelRTL:              false,         // true = Set Excel option 'DisplayRightToLeft'
+      excelstyles:           [],            // e.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
+      exportHiddenCells:     false,         // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
+      fileName:              'tableExport',
+      htmlContent:           false,
+      ignoreColumn:          [],
+      ignoreRow:             [],
+      jsonScope:             'all',         // head, data, all
       jspdf: {
         orientation:  'p',
         unit:         'pt',
@@ -763,7 +764,11 @@
         docFile += "</xml>";
         docFile += "<![endif]-->";
       }
-      docFile += "<style>br {mso-data-placement:same-cell;}</style>";
+      docFile += "<style>";
+      if (defaults.excelPageOrientation !== '')
+        docFile += "@page { size: landscape; mso-page-orientation: " + defaults.excelPageOrientation + "; }";
+      docFile += "br {mso-data-placement:same-cell;}";
+      docFile += "</style>";
       docFile += "</head>";
       docFile += "<body>";
       docFile += docData;

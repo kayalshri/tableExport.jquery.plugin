@@ -142,9 +142,10 @@ csvSeparator: ','
 csvUseBOM: true
 displayTableName: false
 escape: false
+excelFileFormat: 'xlshtml'
+excelPageOrientation: 'portrait'
 excelRTL: false
 excelstyles: []
-excelFileFormat: 'xlshtml'
 exportHiddenCells: false
 fileName: 'tableExport'
 htmlContent: false
