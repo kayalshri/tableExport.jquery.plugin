@@ -765,8 +765,8 @@
         docFile += "<![endif]-->";
       }
       docFile += "<style>";
-      if (defaults.excelPageOrientation !== '')
-        docFile += "@page { size: landscape; mso-page-orientation: " + defaults.excelPageOrientation + "; }";
+      if (defaults.excelPageOrientation === 'landscape')
+        docFile += "@page { size:" + defaults.excelPageOrientation + "; mso-page-orientation:" + defaults.excelPageOrientation + "; }";
       docFile += "br {mso-data-placement:same-cell;}";
       docFile += "</style>";
       docFile += "</head>";
