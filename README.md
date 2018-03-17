@@ -64,6 +64,7 @@ Library | Version
 [html2canvas](https://github.com/niklasvh/html2canvas) | >= 0.5.0-beta4
 [jsPDF](https://github.com/MrRio/jsPDF) | 1.3.2 - 1.3.4
 [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) | 2.0.14 or 2.0.17
+[SheetJS](https://github.com/SheetJS/js-xlsx) | >= 0.12.5
 
 
 
