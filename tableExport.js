@@ -860,10 +860,11 @@
       ws['!merges'] = spans;
 
       // add worksheet to workbook
-      wb.SheetNames.push(defaults.worksheetName);
-      wb.Sheets[defaults.worksheetName] = ws;
+      //wb.SheetNames.push(defaults.worksheetName);
+      //wb.Sheets[defaults.worksheetName] = ws;
+      XLSX.utils.book_append_sheet(wb, ws, defaults.worksheetName);
 
-      var wbout = XLSX.write(wb, {bookType: defaults.type, bookSST: false, type: 'binary'});
+      var wbout = XLSX.write(wb, {type: 'binary', bookType: defaults.type, bookSST: false});
 
       try {
         blob = new Blob([jx_s2ab(wbout)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'});
