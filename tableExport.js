@@ -765,13 +765,24 @@
         docFile += "<![endif]-->";
       }
       docFile += "<style>";
-      if (defaults.excelPageOrientation === 'landscape')
+      if (defaults.excelPageOrientation === 'landscape') {
         docFile += "@page { size:" + defaults.excelPageOrientation + "; mso-page-orientation:" + defaults.excelPageOrientation + "; }";
+        docFile += "@page Section1 {size:595.45pt 841.7pt; margin:1.0in 1.25in 1.0in 1.25in;mso-header-margin:.5in;mso-footer-margin:.5in;mso-paper-source:0;}";
+        docFile += "div.Section1 {page:Section1;}";
+        docFile += "@page Section2 {size:841.7pt 595.45pt;mso-page-orientation:landscape;margin:1.25in 1.0in 1.25in 1.0in;mso-header-margin:.5in;mso-footer-margin:.5in;mso-paper-source:0;}";
+        docFile += "div.Section2 {page:Section2;}";
+      }
       docFile += "br {mso-data-placement:same-cell;}";
       docFile += "</style>";
       docFile += "</head>";
       docFile += "<body>";
+      if (defaults.excelPageOrientation === 'landscape') {
+        docFile += "<div class=\"Section2\">";
+      }
       docFile += docData;
+      if (defaults.excelPageOrientation === 'landscape') {
+        docFile += "</div>";
+      }
       docFile += "</body>";
       docFile += "</html>";
 
