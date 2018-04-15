@@ -43,9 +43,10 @@
 
 </head>
 <body>
-  <a href="#" onclick="$('.pvtTable').tableExport({type:'excel', 
-                                                   excelFileFormat:'xmlss',
-                                                   worksheetName: ['Table 1','Table 2']});">Export to Excel (XML Spreadsheet 2003 file format)</a>
+  <a href="#" onclick="$('.pvtTable').tableExport({type:'excel',
+                                                   mso: {
+                                                     fileFormat: 'xmlss',
+                                                     worksheetName: ['Table 1','Table 2']}});">Export to Excel (XML Spreadsheet 2003 file format)</a>
   <table data-numcols="3" data-numrows="2" class="pvtTable">
     <thead>
       <tr>

@@ -88,8 +88,8 @@ $('#tableID').tableExport({type:'excel'});
 // XML Spreadsheet 2003 file format with multiple worksheet support
 
 $('table').tableExport({type:'excel',
-                        excelFileFormat:'xmlss',
-                        worksheetName: ['Table 1','Table 2', 'Table 3']});
+                        mso: {fileFormat:'xmlss',
+                              worksheetName: ['Table 1','Table 2', 'Table 3']}});
 ```
 
 ```
@@ -137,16 +137,11 @@ Options (Default settings)
 =======
 
 ```
-consoleLog: false
 csvEnclosure: '"'
 csvSeparator: ','
 csvUseBOM: true
 displayTableName: false
 escape: false
-excelFileFormat: 'xlshtml'
-excelPageOrientation: 'portrait'
-excelRTL: false
-excelstyles: []
 exportHiddenCells: false
 fileName: 'tableExport'
 htmlContent: false
@@ -182,6 +177,13 @@ jspdf: orientation: 'p'
                                onTable: null
                                outputImages: true
 maxNestedTables: 1
+mso: fileFormat: 'xlshtml'
+     onMsoNumberFormat: null
+     pageFormat: 'a4'
+     pageOrientation: 'portrait'
+     rtl: false
+     styles: []
+     worksheetName: ''
 numbers: html: decimalMark: '.'
                thousandsSeparator: ','
          output: decimalMark: '.',
@@ -189,7 +191,6 @@ numbers: html: decimalMark: '.'
 onCellData: null
 onCellHtmlData: null
 onIgnoreRow: null
-onMsoNumberFormat: null
 outputMode: 'file'
 pdfmake: enabled: false
          docDefinition: pageOrientation: 'portrait'
@@ -200,7 +201,6 @@ tfootSelector: 'tr'
 theadSelector: 'tr'
 tableName: 'myTableName'
 type: 'csv'
-worksheetName: 'WorksheetName'
 ```
 
 ```ignoreColumn``` can be either an array of indexes (i.e. [0, 2]) or field names (i.e. ["id", "name"]).
@@ -210,9 +210,9 @@ worksheetName: 'WorksheetName'
 
 To disable formatting of numbers in the exported output, which can be useful for csv and excel format, set the option ``` numbers: output ``` to ``` false ```.
 
-Set the option ``` excelFileFormat ``` to ``` 'xmlss' ``` if you want to export in XML Spreadsheet 2003 file format. Use this format if multiple tables should be exported into a single file. Excel 2000 html format is the default excel file format which has better support of exporting table styles.
+Set the option ``` mso.fileFormat ``` to ``` 'xmlss' ``` if you want to export in XML Spreadsheet 2003 file format. Use this format if multiple tables should be exported into a single file. Excel 2000 html format is the default excel file format which has better support of exporting table styles.
 
-The ``` excelstyles ``` option lets you define the css attributes of the original html table cells, that should be taken over when exporting to an excel worksheet (Excel 2000 html format only).
+The ``` mso.styles ``` option lets you define the css attributes of the original html table cells, that should be taken over when exporting to an excel worksheet (Excel 2000 html format only).
 
 To export in XSLX format [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data, but not any styling information of the html table.
 

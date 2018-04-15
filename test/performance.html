@@ -12704,7 +12704,7 @@ img.align-right {
 </p>
 <input onclick="$('#gvData').tableExport({type:'excel', fileName: 'ExportData', escape:'false', ignoreColumn:'[3]'});" id="btnExport1" type="submit" value="Export to MS-Excel">
 
-<input onclick="$('#gvData').tableExport({type:'excel', fileName: 'ExportData', escape:'false', ignoreColumn:'[3]', excelstyles: ['background-color', 'color', 'font-weight', 'border']});" id="btnExport2" type="submit" value="Export to Formatted MS-Excel">
+<input onclick="$('#gvData').tableExport({type:'excel', fileName: 'ExportData', escape:'false', ignoreColumn:'[3]', mso: {styles: ['background-color', 'color', 'font-weight', 'border']}});" id="btnExport2" type="submit" value="Export to Formatted MS-Excel">
 
 <input onclick="$('#gvData').tableExport({type:'txt', fileName: 'ExportData', escape:'false', ignoreColumn:'[3]', });" id="btnExport3" type="submit" value="Export to CSV">
 

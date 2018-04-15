@@ -40,17 +40,16 @@
   <script type="text/javaScript">
 
     function doExport(selector, params) {
-    
+
       var ignoredRows = [];
-    
+
       $(selector + " input:checkbox:not(:checked)").each(function() {
         ignoredRows.push($(this).closest("tr").index()+1);
       });
-      
+
       var options = {
         ignoreRow: ignoredRows,
-        tableName: 'Countries',
-        worksheetName: 'Countries by population'
+        tableName: 'Countries'
       };
 
       $.extend(true, options, params);

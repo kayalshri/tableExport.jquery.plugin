@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>HTML table Export</title>
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
@@ -43,7 +43,10 @@
 
 </head>
 <body>
-  <a href="#" onclick="$('.pvtTable').tableExport({type:'excel', excelstyles:['border-bottom', 'border-top', 'border-left', 'border-right']});">Export to Excel</a>
+  <a href="#" onclick="$('.pvtTable').tableExport({type:'excel',
+                                                   mso: {
+                                                     styles:['border-bottom', 'border-top', 'border-left', 'border-right']
+                                                     }});">Export to Excel</a>
   <table data-numcols="3" data-numrows="2" class="pvtTable">
     <thead>
       <tr>

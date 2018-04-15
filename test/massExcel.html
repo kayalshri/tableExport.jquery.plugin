@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>HTML table Export</title>
-  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <!-- <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script> -->
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../tableExport.js"></script>
@@ -45,8 +45,13 @@
       Table.innerHTML = T.join ("");
 
       $('#export').click(function() {
-        $('#grid').tableExport({type:'excel', excelstyles:['border-bottom', 'border-top', 'border-left', 'border-right']});
-        // $('#grid').tableExport({type:'xlsx', excelstyles:['border-bottom', 'border-top', 'border-left', 'border-right']});
+        $('#grid').tableExport({
+          type:'excel',
+          mso: {
+            styles: ['border-bottom', 'border-top', 'border-left', 'border-right']
+          }
+        });
+        // $('#grid').tableExport({type:'xlsx'});
       });
     });
 
