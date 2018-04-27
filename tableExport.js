@@ -1822,7 +1822,7 @@
 
             if ( w ) {
               if ( cell.styles.overflow === 'linebreak' &&
-                x > cell.textPos.x && (x + w) > (cell.textPos.x + cell.width) ) {
+                   x > cell.textPos.x && (x + w) > (cell.textPos.x + cell.width) ) {
                 var chars = ".,!%*;:=-";
                 if ( chars.indexOf(txt.charAt(0)) >= 0 ) {
                   var s = txt.charAt(0);
@@ -1837,9 +1837,11 @@
                 y += teOptions.doc.internal.getFontSize();
               }
 
-              while ( txt.length && (x + w) > (cell.textPos.x + cell.width) ) {
-                txt = txt.substring(0, txt.length - 1);
-                w   = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
+              if ( cell.styles.overflow !== 'visible' ) {
+                while ( txt.length && (x + w) > (cell.textPos.x + cell.width) ) {
+                  txt = txt.substring(0, txt.length - 1);
+                  w   = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
+                }
               }
 
               teOptions.doc.autoTableText(txt, x, y, style);
