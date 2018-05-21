@@ -166,6 +166,7 @@
       <li><a href="#" onClick="doExport('#issue127', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue127: Chinese csv export)</a></li>
       <li><a href="#" onClick="doExport('#issue178', {type: 'csv', numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: '\''}}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue 178: negative numbers)</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'csv', csvSeparator: ';', onCellData: DoOnCsvCellData});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (Issue 103: Export to csv to include leading zero)</a></li>
+      <li><a href="#" onClick="doExport('#issue230', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue230: CSV injection)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'tsv'});"> <img src='icons/txt.png' alt="TSV" style="width:24px"> TSV</a></li>
       <br>
@@ -1355,6 +1356,34 @@
           <td hidden data-tableexport-display="always">Name2</td>
           <td>100</td>
         </tr>
+      </tbody>
+    </table>
+
+    <table id="issue230" class="">
+      <caption>Issue 230: CSV injection</caption>
+      <thead>
+      <tr>
+        <th>C1</th>
+        <th>C2</th>
+        <th>C3</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>=cmd|' /C calc'!A0</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>2</td>
+        <td>3</td>
+      </tr>
       </tbody>
     </table>
 

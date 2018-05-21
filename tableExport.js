@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.9.11
+ * Version 1.9.12
  *
  * Copyright (c) 2015-2018 hhurz, https://github.com/hhurz
  *
@@ -99,6 +99,7 @@
         },
         fonts: {}
       },
+      preventInjection:    true,
       tbodySelector:       'tr',
       tfootSelector:       'tr',        // Set empty ('') to prevent export of tfoot rows
       theadSelector:       'tr',
@@ -195,7 +196,8 @@
             if ( dataString instanceof Date )
               result = defaults.csvEnclosure + dataString.toLocaleString() + defaults.csvEnclosure;
             else {
-              result = replaceAll(csvValue, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
+              result = preventInjection(csvValue);
+              result = replaceAll(result, defaults.csvEnclosure, defaults.csvEnclosure + defaults.csvEnclosure);
 
               if ( result.indexOf(defaults.csvSeparator) >= 0 || /[\r\n ]/g.test(result) )
                 result = defaults.csvEnclosure + result + defaults.csvEnclosure;
@@ -829,8 +831,10 @@
                                  if ( tdrowspan > 0 )
                                    trData += ' rowspan="' + tdrowspan + '"';
 
-                                 if ( typeof tdvalue === 'string' && tdvalue !== '' )
+                                 if ( typeof tdvalue === 'string' && tdvalue !== '' ) {
+                                   tdvalue = preventInjection(tdvalue);
                                    tdvalue = tdvalue.replace(/\n/g, '<br>');
+                                 }
 
                                  trData += '>' + tdvalue + '</td>';
                                }
@@ -1996,6 +2000,15 @@
       }
 
       return result;
+    }
+
+    function preventInjection (s) {
+      if ( defaults.preventInjection === true ) {
+        var chars = "=+-@";
+        if ( chars.indexOf(s.charAt(0)) >= 0 )
+          return ( "'" + s );
+      }
+      return s;
     }
 
     //noinspection JSUnusedLocalSymbols
