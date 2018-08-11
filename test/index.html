@@ -342,6 +342,7 @@
       <li><a href="#"
              onClick="doExport('#issue43', {type:'pdf',
                                             jspdf: {
+                                              preserveLeadingWS: true,
                                               autotable: {
                                                 styles: {overflow: 'linebreak',
                                                   fontSize: 26,
@@ -841,7 +842,7 @@
             </tr>
         </thead>
         <tbody>
-        <tr><td>row 1<td/><tr/> <tr><td>row 2<td/><tr/> <tr><td>row 3<td/><tr/> <tr><td>row 4<td/><tr/> <tr><td>row 5<td/><tr/>
+        <tr><td>row 1<td/><tr/> <tr><td>&nbsp;row 2<td/><tr/> <tr><td>&nbsp;&nbsp;row 3<td/><tr/> <tr><td>&nbsp;&nbsp;&nbsp;row 4<td/><tr/> <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;row 5<td/><tr/>
         <tr><td>row 6<td/><tr/> <tr><td>row 7<td/><tr/> <tr><td>row 8<td/><tr/> <tr><td>row 9<td/><tr/> <tr><td>row 10<td/><tr/>
         <tr><td>row 11<td/><tr/> <tr><td>row 12<td/><tr/> <tr><td>row 13<td/><tr/> <tr><td>row 14<td/><tr/> <tr><td>row 15<td/><tr/>
         <tr><td>row 16<td/><tr/>

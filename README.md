@@ -192,6 +192,8 @@ onCellData: null
 onCellHtmlData: null
 onIgnoreRow: null
 outputMode: 'file'
+preserve: leadingWS: false
+          trailingWS: false
 pdfmake: enabled: false
          docDefinition: pageOrientation: 'portrait'
                         defaultStyle: font: 'Roboto'

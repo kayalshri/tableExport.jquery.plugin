@@ -99,6 +99,10 @@
         },
         fonts: {}
       },
+      preserve: {
+        leadingWS:         false,       // preserve leading white spaces
+        trailingWS:        false        // preserve trailing white spaces
+      },
       preventInjection:    true,
       tbodySelector:       'tr',
       tfootSelector:       'tr',        // Set empty ('') to prevent export of tfoot rows
@@ -1804,10 +1808,13 @@
 
           while ( tag ) {
             var txt = tag.innerText || tag.textContent || "";
+            var leadingspace = (txt.length && txt[0] === " ") ? " " : "";
+            var trailingspace = (txt.length > 1 && txt[txt.length - 1] === " ") ? " " : "";
 
-            txt = ((txt.length && txt[0] === " ") ? " " : "") +
-              $.trim(txt) +
-              ((txt.length > 1 && txt[txt.length - 1] === " ") ? " " : "");
+            if (defaults.preserve.leadingWS !== true)
+              txt = leadingspace + trimLeft(txt);
+            if (defaults.preserve.trailingWS !== true)
+              txt = trimRight(txt) + trailingspace;
 
             if ( $(tag).is("br") ) {
               x = cell.textPos.x;
@@ -1873,11 +1880,19 @@
     }
 
     function escapeRegExp (string) {
-      return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+      return string == null ? "" : string.toString().replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
 
     function replaceAll (string, find, replace) {
-      return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+      return string == null ? "" : string.toString().replace(new RegExp(escapeRegExp(find), 'g'), replace);
+    }
+
+    function trimLeft (string) {
+      return string == null ? "" : string.toString().replace(/^\s+/, "");
+    }
+
+    function trimRight (string) {
+      return string == null ? "" : string.toString().replace(/\s+$/, "");
     }
 
     function parseNumber (value) {
@@ -1949,17 +1964,28 @@
             var obj    = $('<div/>').html(text).contents();
             var number = false;
             text       = '';
+
             $.each(obj.text().split("\u2028"), function (i, v) {
               if ( i > 0 )
                 text += " ";
-              text += $.trim(v);
+
+              if (defaults.preserve.leadingWS !== true)
+                v = trimLeft(v);
+              text += (defaults.preserve.trailingWS !== true) ? trimRight(v) : v;
             });
 
             $.each(text.split("\u2060"), function (i, v) {
               if ( i > 0 )
                 result += "\n";
-              result += $.trim(v).replace(/\u00AD/g, ""); // remove soft hyphens
+
+              if (defaults.preserve.leadingWS !== true)
+                v = trimLeft(v);
+              if (defaults.preserve.trailingWS !== true)
+                v = trimRight(v);
+              result += v.replace(/\u00AD/g, ""); // remove soft hyphens
             });
+
+            result = result.replace(/\u00A0/g, " "); // replace nbsp's with spaces
 
             if ( defaults.type === 'json' ||
               (defaults.type === 'excel' && defaults.mso.fileFormat === 'xmlss') ||
