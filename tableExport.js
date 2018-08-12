@@ -41,14 +41,15 @@
             textColor:     50,          // Color value or 'inherit' to use css color from html table
             fontStyle:     'normal',    // normal, bold, italic, bolditalic or 'inherit' to use css font-weight and fonst-style from html table
             overflow:      'ellipsize', // visible, hidden, ellipsize or linebreak
-            halign:        'left',      // left, center, right
+            halign:        'inherit',   // left, center, right or 'inherit' to use css horizontal cell alignment from html table
             valign:        'middle'     // top, middle, bottom
           },
           headerStyles: {
             fillColor:     [52, 73, 94],
             textColor:     255,
             fontStyle:     'bold',
-            halign:        'center'
+            halign:        'inherit',   // left, center, right or 'inherit' to use css horizontal header cell alignment from html table
+            valign:        'middle'     // top, middle, bottom
           },
           alternateRowStyles: {
             fillColor:     245
@@ -1238,8 +1239,12 @@
                       cell.styles.rowHeight = rh;
                   }
 
+                  cell.styles.halign = (atOptions.headerStyles.halign === 'inherit') ? 'center' : atOptions.headerStyles.halign;
+                  cell.styles.valign = atOptions.headerStyles.valign;
+
                   if ( typeof col.style !== 'undefined' && col.style.hidden !== true ) {
-                    cell.styles.halign = col.style.align;
+                    if ( atOptions.headerStyles.halign === 'inherit' )
+                      cell.styles.halign = col.style.align;
                     if ( atOptions.styles.fillColor === 'inherit' )
                       cell.styles.fillColor = col.style.bcolor;
                     if ( atOptions.styles.textColor === 'inherit' )
@@ -1256,10 +1261,12 @@
               atOptions.createdCell = function (cell, data) {
                 var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
 
-                if ( typeof rowopt !== 'undefined' &&
-                  typeof rowopt.style !== 'undefined' &&
-                  rowopt.style.hidden !== true ) {
-                  cell.styles.halign = rowopt.style.align;
+                cell.styles.halign = (atOptions.styles.halign === 'inherit') ? 'center' : atOptions.styles.halign;
+                cell.styles.valign = atOptions.styles.valign;
+
+                if ( typeof rowopt !== 'undefined' && typeof rowopt.style !== 'undefined' && rowopt.style.hidden !== true ) {
+                  if ( atOptions.styles.halign === 'inherit' )
+                    cell.styles.halign = rowopt.style.align;
                   if ( atOptions.styles.fillColor === 'inherit' )
                     cell.styles.fillColor = rowopt.style.bcolor;
                   if ( atOptions.styles.textColor === 'inherit' )
