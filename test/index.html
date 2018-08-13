@@ -394,6 +394,10 @@
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
         <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 164: PDF(Make) don't support rowspan and colspan?)</a></li>
+      <li><a href="#" onClick="doExport('#issue121',
+                      {type: 'pdf',
+                        jspdf: {autotable: {preserve: {leadingWS: true, trailingWS: true},tableWidth: 'wrap'}}});">
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 121)</a></li>
     </ul>
     <table id="rowspans" class="table-striped numformat">
       <caption>Table with rowspan</caption>
@@ -1195,7 +1199,13 @@
       </tr>
       <tr>
         <td>C</td>
-        <td> </td>
+        <td><span>Text content</span></td>
+      </tr>
+      <tr>
+        <td>D</td>
+        <td>
+          <span>Text content</span>
+        </td>
       </tr>
       </tbody>
     </table>

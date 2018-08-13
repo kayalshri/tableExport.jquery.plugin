@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.9.13
+ * Version 1.9.14
  *
  * Copyright (c) 2015-2018 hhurz, https://github.com/hhurz
  *
@@ -2035,13 +2035,13 @@
       return result;
     }
 
-    function preventInjection (s) {
-      if ( defaults.preventInjection === true ) {
+    function preventInjection (string) {
+      if ( string.length > 0 && defaults.preventInjection === true ) {
         var chars = "=+-@";
-        if ( chars.indexOf(s.charAt(0)) >= 0 )
-          return ( "'" + s );
+        if ( chars.indexOf(string.charAt(0)) >= 0 )
+          return ( "'" + string );
       }
-      return s;
+      return string;
     }
 
     //noinspection JSUnusedLocalSymbols
