@@ -167,6 +167,7 @@
       <li><a href="#" onClick="doExport('#issue178', {type: 'csv', numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: '\''}}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue 178: negative numbers)</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'csv', csvSeparator: ';', onCellData: DoOnCsvCellData});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (Issue 103: Export to csv to include leading zero)</a></li>
       <li><a href="#" onClick="doExport('#issue230', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue230: CSV injection)</a></li>
+      <li><a href="#" onClick="doExport('#issue121', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue121: new lines)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'tsv'});"> <img src='icons/txt.png' alt="TSV" style="width:24px"> TSV</a></li>
       <br>
@@ -397,7 +398,7 @@
       <li><a href="#" onClick="doExport('#issue121',
                       {type: 'pdf',
                         jspdf: {autotable: {preserve: {leadingWS: true, trailingWS: true},tableWidth: 'wrap'}}});">
-        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 121)</a></li>
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 121: New lines)</a></li>
     </ul>
     <table id="rowspans" class="table-striped numformat">
       <caption>Table with rowspan</caption>

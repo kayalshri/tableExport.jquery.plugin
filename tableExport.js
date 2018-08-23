@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.9.14
+ * Version 1.9.15
  *
  * Copyright (c) 2015-2018 hhurz, https://github.com/hhurz
  *
@@ -1948,6 +1948,8 @@
                 htmlData += $cell.find('input').eq(inputidx++).val();
               else if ( $(this).is("select") )
                 htmlData += $cell.find('select option:selected').eq(selectidx++).text();
+              else if ( $(this).is("br") )
+                htmlData += "<br>";
               else {
                 if ( typeof $(this).html() === 'undefined' )
                   htmlData += $(this).text();
