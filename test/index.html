@@ -167,7 +167,7 @@
       <li><a href="#" onClick="doExport('#issue178', {type: 'csv', numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: '\''}}});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue 178: negative numbers)</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'csv', csvSeparator: ';', onCellData: DoOnCsvCellData});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (Issue 103: Export to csv to include leading zero)</a></li>
       <li><a href="#" onClick="doExport('#issue230', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue230: CSV injection)</a></li>
-      <li><a href="#" onClick="doExport('#issue121', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue121: new lines)</a></li>
+      <li><a href="#" onClick="doExport('#issue124', {type: 'csv'});"> <img src='icons/csv.png' alt="CSV" style="width:24px"> CSV (issue124: Multiple lines)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'tsv'});"> <img src='icons/txt.png' alt="TSV" style="width:24px"> TSV</a></li>
       <br>
@@ -179,11 +179,14 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', ignoreColumn: [2,3]});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (ignore column)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'json', escape: 'true'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (with escape)</a></li>
-      <li><a href="#" onClick="doExport('#rowspans', {type: 'json'});"> <img src='icons/json.png' alt="CSV" style="width:24px"> JSON (rowspan)</a></li>
-      <li><a href="#" onClick="doExport('#issue142', {type: 'json', tfootSelector: ''});"> <img src='icons/json.png' alt="CSV" style="width:24px"> JSON (omit tfoot from output)</a></li>
+      <li><a href="#" onClick="doExport('#rowspans', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue142', {type: 'json', tfootSelector: ''});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (omit tfoot from output)</a></li>
+      <li><a href="#" onClick="doExport('#issue124', {type: 'json'});"> <img src='icons/json.png' alt="JSON" style="width:24px"> JSON (issue124: Multiple lines)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xml'});"> <img src='icons/xml.png' alt="XML" style="width:24px"> XML</a></li>
+      <li><a href="#" onClick="doExport('#issue124', {type: 'xml'});"> <img src='icons/xml.png' alt="XML" style="width:24px"> XML (issue124: Multiple lines)</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
+      <li><a href="#" onClick="doExport('#issue124', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL (issue124: Multiple lines)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
@@ -204,7 +207,7 @@
       <li><a href="#" onClick="doExport('#issue81', {type: 'excel', numbers: {output: false}, onMsoNumberFormat: DoOnMsoNumberFormat, worksheetName: 'MSO-FORMATS', excelstyles: ['background-color', 'color']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7], ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
-      <li><a href="#" onClick="doExport('#issue121', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>
+      <li><a href="#" onClick="doExport('#issue124', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 124: Multiple lines</a></li>
       <li><a href="#" onClick="doExport('#issue220', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 220: Colspan of hidden columns</a></li>
       <br>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel', mso: {fileFormat: 'xmlss'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (colspan + rowspan)</a></li>
@@ -395,10 +398,10 @@
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
         <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 164: PDF(Make) don't support rowspan and colspan?)</a></li>
-      <li><a href="#" onClick="doExport('#issue121',
+      <li><a href="#" onClick="doExport('#issue124',
                       {type: 'pdf',
                         jspdf: {autotable: {preserve: {leadingWS: true, trailingWS: true},tableWidth: 'wrap'}}});">
-        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 121: New lines)</a></li>
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Issue 124: Multiple lines)</a></li>
     </ul>
     <table id="rowspans" class="table-striped numformat">
       <caption>Table with rowspan</caption>
@@ -1173,8 +1176,8 @@
       </tr>
       </tbody>
     </table>
-    <table id="issue121" class="">
-      <caption>Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</caption>
+    <table id="issue124" class="">
+      <caption>Issue 124: Multiple lines</caption>
       <thead>
       <tr>
         <th>column 1</th>
