@@ -1967,7 +1967,7 @@
           var cellFormat = $(cell).data("tableexport-cellformat");
 
           if ( cellFormat !== '' ) {
-            var text   = htmlData.replace(/\n/g, '\u2028').replace(/<br\s*[\/]?>/gi, '\u2060');
+            var text   = htmlData.replace(/\n/g, '\u2028').replace(/(<\s*br([^>]*)>)/gi, '\u2060');
             var obj    = $('<div/>').html(text).contents();
             var number = false;
             text       = '';
