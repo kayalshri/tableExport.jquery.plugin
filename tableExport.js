@@ -1045,9 +1045,7 @@
             saveAs(blob, defaults.fileName + '.pdf');
           }
           catch (e) {
-            downloadFile(defaults.fileName + '.pdf',
-              'data:application/pdf;base64,',
-              buffer);
+            downloadFile(defaults.fileName + '.pdf', 'application/pdf', buffer);
           }
         });
 
@@ -2264,7 +2262,9 @@
 
           if ( typeof data === 'object' ) {
             window.URL = window.URL || window.webkitURL;
-            blobUrl = window.URL.createObjectURL(data);
+            var binaryData = [];
+            binaryData.push(data);
+            blobUrl = window.URL.createObjectURL(new Blob(binaryData, {type: header}));
             DownloadLink.href = blobUrl;
           }
           else if ( header.toLowerCase().indexOf("base64,") >= 0 )
