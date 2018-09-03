@@ -18,6 +18,7 @@
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
   <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+  <script type="text/javascript" src="../libs/es6-promise/es6-promise.auto.min.js"></script>
   <script type="text/javascript" src="../libs/html2canvas/html2canvas.min.js"></script>
   <!--<![endif]-->
   <script type="text/javascript" src="../tableExport.js"></script>
@@ -34,14 +35,14 @@
       background-color:white;
       height:1em;
       width:10em;
-      padding:0px;
+      padding:0;
     }
 
     .tdbar {
       background-color:#d0d0d0;
       height:0.8em;
       margin:0;
-      width:0%;
+      width:0;
     }
 
     .table-striped {
@@ -98,9 +99,12 @@
       $(selector).tableExport(options);
     }
 
+    /**
+     * @return {string}
+     */
     function DoOnCellHtmlData(cell, row, col, data) {
       var result = "";
-      if (data != "") {
+      if (data !== "") {
         var html = $.parseHTML( data );
 
         $.each( html, function() {
@@ -119,7 +123,7 @@
 
     function DoOnCsvCellData(cell, row, col, data) {
       var result = data;
-      if (result != "" && row > 0 && col == 0) {
+      if (result !== "" && row > 0 && col === 0) {
         result = "\x1F" + data;
       }
       return result;
@@ -127,16 +131,19 @@
 
     function DoOnXlsxCellData(cell, row, col, data) {
       var result = data;
-      if (result != "" && (row < 1 || col != 0)) {
-        if ( result == +result )
+      if (result !== "" && (row < 1 || col !== 0)) {
+        if ( result === +result )
           result = +result;
       }
       return result;
     }
 
+    /**
+     * @return {string}
+     */
     function DoOnMsoNumberFormat(cell, row, col) {
       var result = "";
-      if (row > 0 && col == 0)
+      if (row > 0 && col === 0)
         result = "\\@";
       return result;
     }
@@ -211,7 +218,7 @@
       <li><a href="#" onClick="doExport('#issue220', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 220: Colspan of hidden columns</a></li>
       <br>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel', mso: {fileFormat: 'xmlss'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (colspan + rowspan)</a></li>
-      <li><a href="#" onClick="doExport('#issue93', {type: 'excel', mso: {fileFormat: 'xmlss'}}, ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (Issue 93: colspan & rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue93', {type: 'excel', mso: {fileFormat: 'xmlss'}, ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('table', {type: 'excel', mso: {fileFormat: 'xmlss'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (multiple tables)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc', mso: {pageOrientation: 'landscape'}});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
@@ -647,7 +654,6 @@
         </tr>
       </tbody>
     </table>
-    </caption>
     <table id="alignments" class="table-striped">
       <caption>Table for column alignment tests</caption>
       <thead>
@@ -715,9 +721,9 @@
       <caption>Test option 'excelstyles'</caption>
       <thead>
       <tr>
-        <th style="border: 2px solid #b60000; font-family: arial; font-size: 18px; font-weight: bold">C1</th>
-        <th style="border: 2px solid #b60000; font-family: arial; font-size: 18px; font-weight: bold">C2</th>
-        <th style="border: 2px solid #b60000; font-family: arial; font-size: 18px; font-weight: bold">C3</th>
+        <th style="border: 2px solid #b60000; font-family: arial,serif; font-size: 18px; font-weight: bold">C1</th>
+        <th style="border: 2px solid #b60000; font-family: arial,serif; font-size: 18px; font-weight: bold">C2</th>
+        <th style="border: 2px solid #b60000; font-family: arial,serif; font-size: 18px; font-weight: bold">C3</th>
       </tr>
       </thead>
       <tbody>
@@ -852,10 +858,10 @@
             </tr>
         </thead>
         <tbody>
-        <tr><td>row 1<td/><tr/> <tr><td>&nbsp;row 2<td/><tr/> <tr><td>&nbsp;&nbsp;row 3<td/><tr/> <tr><td>&nbsp;&nbsp;&nbsp;row 4<td/><tr/> <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;row 5<td/><tr/>
-        <tr><td>row 6<td/><tr/> <tr><td>row 7<td/><tr/> <tr><td>row 8<td/><tr/> <tr><td>row 9<td/><tr/> <tr><td>row 10<td/><tr/>
-        <tr><td>row 11<td/><tr/> <tr><td>row 12<td/><tr/> <tr><td>row 13<td/><tr/> <tr><td>row 14<td/><tr/> <tr><td>row 15<td/><tr/>
-        <tr><td>row 16<td/><tr/>
+        <tr><td>row 1</td></tr><tr><td>&nbsp;row 2</td></tr> <tr><td>&nbsp;&nbsp;row 3</td></tr> <tr><td>&nbsp;&nbsp;&nbsp;row 4</td></tr> <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;row 5</td></tr>
+        <tr><td>row 6</td></tr><tr><td>row 7</td></tr> <tr><td>row 8</td></tr> <tr><td>row 9</td></tr> <tr><td>row 10</td></tr>
+        <tr><td>row 11</td></tr><tr><td>row 12</td></tr> <tr><td>row 13</td></tr> <tr><td>row 14</td></tr> <tr><td>row 15</td></tr>
+        <tr><td>row 16</td></tr>
             <tr>
                 <td style="margin: 5px">
                     Very long long long long long long long long long long long long long
