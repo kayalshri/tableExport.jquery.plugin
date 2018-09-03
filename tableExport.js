@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.9.16
+ * Version 1.10.0
  *
  * Copyright (c) 2015-2018 hhurz, https://github.com/hhurz
  *
@@ -64,7 +64,6 @@
           }
         }
       },
-      maxNestedTables: 1,               // Max number of nested tables that will be exported. 0 = export all. Default = 1
       mso: {                            // MS Excel and MS Word related options
         fileFormat:        'xlshtml',   // xlshtml = Excel 2000 html format
                                         // xmlss = XML Spreadsheet 2003 file format (XMLSS)
@@ -168,7 +167,6 @@
 
     // Check values of some options
     defaults.mso.pageOrientation = (defaults.mso.pageOrientation.substr(0, 1) === 'l') ? 'landscape' : 'portrait';
-    defaults.maxNestedTables = (defaults.maxNestedTables >= 0 ? defaults.maxNestedTables : 1);
 
     colNames = GetColumnNames(el);
 
@@ -236,8 +234,8 @@
       };
 
       rowlength += CollectCsvData($(el).find('thead').first().find(defaults.theadSelector), 'th,td', rowlength);
-      findTablePart($(el),'tbody').each(function () {
-        rowlength += CollectCsvData(findRows($(this), defaults.tbodySelector), 'td,th', rowlength);
+      findTableElements($(el),'tbody').each(function () {
+        rowlength += CollectCsvData(findTableElements($(this), defaults.tbodySelector), 'td,th', rowlength);
       });
       if ( defaults.tfootSelector.length )
         CollectCsvData($(el).find('tfoot').first().find(defaults.tfootSelector), 'td,th', rowlength);
@@ -272,8 +270,8 @@
       rowIndex = 0;
       ranges   = [];
       var tdData = "INSERT INTO `" + defaults.tableName + "` (";
-      $hrows     = $(el).find('thead').first().find(defaults.theadSelector);
-      $hrows.each(function () {
+      $hrows     = collectHeadRows ($(el));
+      $($hrows).each(function () {
         ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                            function (cell, row, col) {
                              tdData += "'" + parseString(cell, row, col) + "',";
@@ -322,8 +320,8 @@
     } else if ( defaults.type === 'json' ) {
       var jsonHeaderArray = [];
       ranges = [];
-      $hrows = $(el).find('thead').first().find(defaults.theadSelector);
-      $hrows.each(function () {
+      $hrows = collectHeadRows ($(el));
+      $($hrows).each(function () {
         var jsonArrayTd = [];
 
         ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
@@ -388,8 +386,8 @@
       xml += '<tabledata><fields>';
 
       // Header
-      $hrows = $(el).find('thead').first().find(defaults.theadSelector);
-      $hrows.each(function () {
+      $hrows = collectHeadRows ($(el));
+      $($hrows).each(function () {
 
         ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                            function (cell, row, col) {
@@ -551,8 +549,7 @@
           return $rows.length;
         }
 
-        var rowLength = 0;
-        rowLength += CollectXmlssData ($table.find('thead').first().find(defaults.theadSelector), 'th,td', rowLength);
+        var rowLength = CollectXmlssData (collectHeadRows ($table), 'th,td', rowLength);
         CollectXmlssData (collectRows ($table), 'td,th', rowLength);
 
         docData += '</Table>\r';
@@ -652,7 +649,7 @@
       var spans = [];
       rowIndex  = 0;
 
-      $rows = $(el).find('thead').first().find(defaults.theadSelector).toArray();
+      $rows = collectHeadRows ($(el));
       $rows.push.apply($rows, collectRows ($(el)));
 
       $($rows).each(function () {
@@ -757,8 +754,8 @@
 
         // Header
         docData += '<table><thead>';
-        $hrows = $table.find('thead').first().find(defaults.theadSelector);
-        $hrows.each(function () {
+        $hrows = collectHeadRows ($table);
+        $($hrows).each(function () {
           trData = "";
           ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                              function (cell, row, col) {
@@ -1003,7 +1000,7 @@
           return rlength;
         };
 
-        $hrows = $(this).find('thead').first().find(defaults.theadSelector);
+        $hrows = collectHeadRows ($(this));
 
         var colcount = CollectPdfmakeData($hrows, 'th,td', $hrows.length);
 
@@ -1137,17 +1134,13 @@
               checkCellVisibilty = $hiddenTableElements.length > 0;
             }
 
-            $hrows = $(this).find('thead').find(defaults.theadSelector);
+            $hrows = collectHeadRows ($(this));
             $rows = collectRows ($(this));
 
             $($rows).each(function () {
               ForEachVisibleCell(this, 'td,th', $hrows.length + rowCount, $hrows.length + $rows.length,
                                  function (cell) {
-                                   if ( typeof cell !== 'undefined' && cell !== null ) {
-                                     var kids = $(cell).children();
-                                     if ( typeof kids !== 'undefined' && kids.length > 0 )
-                                       collectImages(cell, kids, teOptions);
-                                   }
+                                   collectImages(cell, $(cell).children(), teOptions);
                                  });
               rowCount++;
             });
@@ -1172,9 +1165,9 @@
 
             colNames = GetColumnNames(this);
 
-            teOptions.columns    = [];
-            teOptions.rows       = [];
-            teOptions.rowoptions = {};
+            teOptions.columns = [];
+            teOptions.rows    = [];
+            teOptions.teCells = {};
 
             // onTable: optional callback function for every matching table that can be used
             // to modify the tableExport options or to skip the output of a particular table
@@ -1257,20 +1250,20 @@
             if ( typeof atOptions.createdCell !== 'function' ) {
               // apply some original css styles to pdf table cells
               atOptions.createdCell = function (cell, data) {
-                var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
+                var tecell = teOptions.teCells [data.row.index + ":" + data.column.dataKey];
 
                 cell.styles.halign = (atOptions.styles.halign === 'inherit') ? 'center' : atOptions.styles.halign;
                 cell.styles.valign = atOptions.styles.valign;
 
-                if ( typeof rowopt !== 'undefined' && typeof rowopt.style !== 'undefined' && rowopt.style.hidden !== true ) {
+                if ( typeof tecell !== 'undefined' && typeof tecell.style !== 'undefined' && tecell.style.hidden !== true ) {
                   if ( atOptions.styles.halign === 'inherit' )
-                    cell.styles.halign = rowopt.style.align;
+                    cell.styles.halign = tecell.style.align;
                   if ( atOptions.styles.fillColor === 'inherit' )
-                    cell.styles.fillColor = rowopt.style.bcolor;
+                    cell.styles.fillColor = tecell.style.bcolor;
                   if ( atOptions.styles.textColor === 'inherit' )
-                    cell.styles.textColor = rowopt.style.color;
+                    cell.styles.textColor = tecell.style.color;
                   if ( atOptions.styles.fontStyle === 'inherit' )
-                    cell.styles.fontStyle = rowopt.style.fstyle;
+                    cell.styles.fontStyle = tecell.style.fstyle;
                 }
               };
             }
@@ -1289,25 +1282,37 @@
 
             if ( typeof atOptions.drawCell !== 'function' ) {
               atOptions.drawCell = function (cell, data) {
-                var rowopt = teOptions.rowoptions [data.row.index + ":" + data.column.dataKey];
-                if ( prepareAutoTableText(cell, data, rowopt) ) {
+                var tecell = teOptions.teCells [data.row.index + ":" + data.column.dataKey];
+                var draw2canvas = (typeof tecell !== 'undefined' &&
+                                   typeof tecell.elements !== 'undefined' && tecell.elements.length &&
+                                   tecell.elements[0].hasAttribute("data-tableexport-canvas"));
+                if ( draw2canvas !== true ) {
+                  if ( prepareAutoTableText(cell, data, tecell) ) {
 
-                  teOptions.doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
+                    teOptions.doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
 
-                  if ( typeof rowopt !== 'undefined' && typeof rowopt.kids !== 'undefined' && rowopt.kids.length > 0 ) {
+                    if ( typeof tecell !== 'undefined' &&
+                         typeof tecell.elements !== 'undefined' && tecell.elements.length ) {
 
-                    var dh = cell.height / rowopt.rect.height;
-                    if ( dh > teOptions.dh || typeof teOptions.dh === 'undefined' )
-                      teOptions.dh = dh;
-                    teOptions.dw = cell.width / rowopt.rect.width;
+                      var dh = cell.height / tecell.rect.height;
+                      if ( dh > teOptions.dh || typeof teOptions.dh === 'undefined' )
+                        teOptions.dh = dh;
+                      teOptions.dw = cell.width / tecell.rect.width;
 
-                    var y = cell.textPos.y;
-                    drawAutotableElements(cell, rowopt.kids, teOptions);
-                    cell.textPos.y = y;
-                    drawAutotableText(cell, rowopt.kids, teOptions);
+                      var y = cell.textPos.y;
+                      drawAutotableElements(cell, tecell.elements, teOptions);
+                      cell.textPos.y = y;
+
+                      drawAutotableText(cell, tecell.elements, teOptions);
+                    }
+                    else 
+                      drawAutotableText(cell, {}, teOptions);
                   }
-                  else
-                    drawAutotableText(cell, {}, teOptions);
+                }
+                else {
+                  var container = tecell.elements[0];
+                  var imgId  = $(container).attr("data-tableexport-canvas");
+                  jsPdfDrawImage (cell, container, imgId, teOptions);
                 }
                 return false;
               };
@@ -1315,8 +1320,8 @@
 
             // collect header and data rows
             teOptions.headerrows = [];
-            $hrows = $(this).find('thead').find(defaults.theadSelector);
-            $hrows.each(function () {
+            $hrows = collectHeadRows ($(this));
+            $($hrows).each(function () {
               colKey = 0;
               teOptions.headerrows[rowIndex] = [];
 
@@ -1374,13 +1379,13 @@
                                    }
                                    if ( typeof cell !== 'undefined' && cell !== null ) {
                                      obj = getCellStyles(cell);
-                                     obj.kids = $(cell).children();
-                                     teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
+                                     obj.elements = cell.hasAttribute("data-tableexport-canvas") ? $(cell) : $(cell).children();
+                                     teOptions.teCells [rowCount + ":" + colKey++] = obj;
                                    }
                                    else {
-                                     obj = $.extend(true, {}, teOptions.rowoptions [rowCount + ":" + (colKey - 1)]);
+                                     obj = $.extend(true, {}, teOptions.teCells [rowCount + ":" + (colKey - 1)]);
                                      obj.colspan = -1;
-                                     teOptions.rowoptions [rowCount + ":" + colKey++] = obj;
+                                     teOptions.teCells [rowCount + ":" + colKey++] = obj;
                                    }
 
                                    rowData.push(parseString(cell, row, col));
@@ -1423,43 +1428,32 @@
       }
     }
 
-    /*
-    function FindColObject (objects, colIndex, rowIndex) {
-      var result = null;
-      $.each(objects, function () {
-        if ( this.rowIndex == rowIndex && this.key == colIndex ) {
-          result = this;
-          return false;
-        }
+    function collectHeadRows ($table) {
+      var result = [];
+      findTableElements($table,'thead').each(function () {
+        result.push.apply(result, findTableElements($(this), defaults.theadSelector).toArray());
       });
       return result;
     }
-    */
+
     function collectRows ($table) {
       var result = [];
-      findTablePart($table,'tbody').each(function () {
-        result.push.apply(result, findRows($(this), defaults.tbodySelector).toArray());
+      findTableElements($table,'tbody').each(function () {
+        result.push.apply(result, findTableElements($(this), defaults.tbodySelector).toArray());
       });
       if ( defaults.tfootSelector.length ) {
-        findTablePart($table,'tfoot').each(function () {
-          result.push.apply(result, findRows($(this), defaults.tfootSelector).toArray());
+        findTableElements($table,'tfoot').each(function () {
+          result.push.apply(result, findTableElements($(this), defaults.tfootSelector).toArray());
         });
       }
       return result;
     }
 
-    function findTablePart ($table, type) {
-      var tl = $table.parents('table').length;
-      return $table.find(type).filter (function () {
-        return $(this).closest('table').parents('table').length === tl;
-      });
-    }
-
-    function findRows ($tpart, rowSelector) {
-      return $tpart.find(rowSelector).filter (function () {
-        return (defaults.maxNestedTables === 0 ||
-          ($(this).find('table').length < defaults.maxNestedTables &&
-            $(this).parents('table').length <= defaults.maxNestedTables));
+    function findTableElements ($parent, selector) {
+      var parentSelector = $parent[0].tagName;
+      var parentLevel = $parent.parents(parentSelector).length;
+      return $parent.find(selector).filter (function () {
+        return parentLevel === $(this).closest(parentSelector).parents(parentSelector).length;
       });
     }
 
@@ -1544,7 +1538,7 @@
           $.inArray(rowIndex - rowCount, defaults.ignoreRow) === -1 &&
           isVisible($(tableRow))) {
 
-          var $cells = $(tableRow).find(selector);
+          var $cells = findTableElements($(tableRow), selector);
           var cellCount = 0;
 
           $cells.each(function (colIndex) {
@@ -1591,6 +1585,44 @@
                 cellcallback(null, rowIndex, cellCount++);
             }
           });
+        }
+      }
+    }
+
+    function jsPdfDrawImage (cell, container, imgId, teOptions) {
+      if ( typeof teOptions.images !== 'undefined' ) {
+        var image = teOptions.images[imgId];
+
+        if ( typeof image !== 'undefined' ) {
+          var arCell    = cell.width / cell.height;
+          var arImg     = container.width / container.height;
+          var imgWidth  = cell.width;
+          var imgHeight = cell.height;
+          var px2pt     = 0.264583 * 72 / 25.4;
+          var uy        = 0;
+
+          if ( arImg <= arCell ) {
+            imgHeight = Math.min(cell.height, container.height);
+            imgWidth  = container.width * imgHeight / container.height;
+          }
+          else if ( arImg > arCell ) {
+            imgWidth  = Math.min(cell.width, container.width);
+            imgHeight = container.height * imgWidth / container.width;
+          }
+
+          imgWidth *= px2pt;
+          imgHeight *= px2pt;
+
+          if ( imgHeight < cell.height )
+            uy = (cell.height - imgHeight) / 2;
+
+          try {
+            teOptions.doc.addImage(image.src, cell.textPos.x, cell.y + uy, imgWidth, imgHeight);
+          }
+          catch (e) {
+            // TODO: IE -> convert png to jpeg
+          }
+          cell.textPos.x += imgWidth;
         }
       }
     }
@@ -1662,79 +1694,96 @@
     }
 
     function collectImages (cell, elements, teOptions) {
-      if ( typeof teOptions.images !== 'undefined' ) {
-        elements.each(function () {
-          var kids = $(this).children();
+      if ( typeof cell !== 'undefined' && cell !== null ) {
 
-          if ( $(this).is("img") ) {
-            var hash = strHashCode(this.src);
+        if ( cell.hasAttribute("data-tableexport-canvas") ) {
+          var imgId = new Date().getTime();
+          $(cell).attr("data-tableexport-canvas", imgId);
 
-            teOptions.images[hash] = {
-              url: this.src,
-              src: this.src
-            };
-          }
-
-          if ( typeof kids !== 'undefined' && kids.length > 0 )
-            collectImages(cell, kids, teOptions);
-        });
+          teOptions.images[imgId] = {
+            url: '[data-tableexport-canvas="'+imgId+'"]',
+            src: null
+          };
+        }
+        else if (elements !== 'undefined' && elements != null) {
+          elements.each(function () {
+            if ($(this).is("img")) {
+              var imgId = strHashCode(this.src);
+              teOptions.images[imgId] = {
+                url: this.src,
+                src: this.src
+              };
+            }
+            collectImages(cell, $(this).children(), teOptions);
+          });
+        }
       }
     }
 
     function loadImages (teOptions, callback) {
-      var i;
       var imageCount = 0;
-      var x          = 0;
+      var pendingCount = 0;
 
       function done () {
         callback(imageCount);
       }
 
       function loadImage (image) {
-        if ( !image.url )
-          return;
-        var img         = new Image();
-        imageCount      = ++x;
-        img.crossOrigin = 'Anonymous';
-        img.onerror     = img.onload = function () {
-          if ( img.complete ) {
+        if (image.url) {
+          if (!image.src) {
+            var $imgContainer = $(image.url);
+            if ($imgContainer.length) {
+              imageCount = ++pendingCount;
 
-            if ( img.src.indexOf('data:image/') === 0 ) {
-              img.width  = image.width || img.width || 0;
-              img.height = image.height || img.height || 0;
-            }
-
-            if ( img.width + img.height ) {
-              var canvas = document.createElement("canvas");
-              var ctx    = canvas.getContext("2d");
-
-              canvas.width  = img.width;
-              canvas.height = img.height;
-              ctx.drawImage(img, 0, 0);
-
-              image.src = canvas.toDataURL("image/jpeg");
+              html2canvas($imgContainer[0]).then(function(canvas) {
+                image.src = canvas.toDataURL("image/png");
+                if ( !--pendingCount )
+                  done();
+              });
             }
           }
-          if ( !--x )
-            done();
-        };
-        img.src = image.url;
+          else {
+            var img = new Image();
+            imageCount = ++pendingCount;
+            img.crossOrigin = 'Anonymous';
+            img.onerror = img.onload = function () {
+              if ( img.complete ) {
+
+                if ( img.src.indexOf('data:image/') === 0 ) {
+                  img.width = image.width || img.width || 0;
+                  img.height = image.height || img.height || 0;
+                }
+
+                if ( img.width + img.height ) {
+                  var canvas = document.createElement("canvas");
+                  var ctx = canvas.getContext("2d");
+
+                  canvas.width = img.width;
+                  canvas.height = img.height;
+                  ctx.drawImage(img, 0, 0);
+
+                  image.src = canvas.toDataURL("image/png");
+                }
+              }
+              if ( !--pendingCount )
+                done();
+            };
+            img.src = image.url;
+          }
+        }
       }
 
       if ( typeof teOptions.images !== 'undefined' ) {
-        for ( i in teOptions.images )
+        for ( var i in teOptions.images )
           if ( teOptions.images.hasOwnProperty(i) )
             loadImage(teOptions.images[i]);
       }
 
-      return x || done();
+      return pendingCount || done();
     }
 
     function drawAutotableElements (cell, elements, teOptions) {
       elements.each(function () {
-        var kids = $(this).children();
-        var uy   = 0;
-
         if ( $(this).is("div") ) {
           var bcolor = rgb2array(getStyle(this, 'background-color'), [255, 255, 255]);
           var lcolor = rgb2array(getStyle(this, 'border-top-color'), [0, 0, 0]);
@@ -1742,7 +1791,7 @@
 
           var r  = this.getBoundingClientRect();
           var ux = this.offsetLeft * teOptions.dw;
-          uy = this.offsetTop * teOptions.dh;
+          var uy = this.offsetTop * teOptions.dh;
           var uw = r.width * teOptions.dw;
           var uh = r.height * teOptions.dh;
 
@@ -1752,46 +1801,11 @@
           teOptions.doc.rect(cell.x + ux, cell.y + uy, uw, uh, lwidth ? "FD" : "F");
         }
         else if ( $(this).is("img") ) {
-          if ( typeof teOptions.images !== 'undefined' ) {
-            var hash  = strHashCode(this.src);
-            var image = teOptions.images[hash];
-
-            if ( typeof image !== 'undefined' ) {
-
-              var arCell    = cell.width / cell.height;
-              var arImg     = this.width / this.height;
-              var imgWidth  = cell.width;
-              var imgHeight = cell.height;
-              var px2pt     = 0.264583 * 72 / 25.4;
-
-              if ( arImg <= arCell ) {
-                imgHeight = Math.min(cell.height, this.height);
-                imgWidth  = this.width * imgHeight / this.height;
-              }
-              else if ( arImg > arCell ) {
-                imgWidth  = Math.min(cell.width, this.width);
-                imgHeight = this.height * imgWidth / this.width;
-              }
-
-              imgWidth *= px2pt;
-              imgHeight *= px2pt;
-
-              if ( imgHeight < cell.height )
-                uy = (cell.height - imgHeight) / 2;
-
-              try {
-                teOptions.doc.addImage(image.src, cell.textPos.x, cell.y + uy, imgWidth, imgHeight);
-              }
-              catch (e) {
-                // TODO: IE -> convert png to jpeg
-              }
-              cell.textPos.x += imgWidth;
-            }
-          }
+          var imgId  = strHashCode(this.src);
+          jsPdfDrawImage (cell, this, imgId, teOptions);
         }
 
-        if ( typeof kids !== 'undefined' && kids.length > 0 )
-          drawAutotableElements(cell, kids, teOptions);
+        drawAutotableElements(cell, $(this).children(), teOptions);
       });
     }
 
@@ -1926,9 +1940,12 @@
         var $cell = $(cell);
         var htmlData;
 
-        if ( $cell[0].hasAttribute("data-tableexport-value") ) {
+        if ( $cell[0].hasAttribute("data-tableexport-canvas") ) {
+          htmlData = '';
+        }
+        else if ( $cell[0].hasAttribute("data-tableexport-value") ) {
           htmlData = $cell.data("tableexport-value");
-          htmlData = htmlData ? htmlData + '' : ''
+          htmlData = htmlData ? htmlData + '' : '';
         }
         else {
           htmlData = $cell.html();
