@@ -41,6 +41,8 @@ To export the table as a PDF file the following includes are required:
 To export the table in PNG format, you need to include:
 
 ```html
+<!-- For IE support include es6-promise before html2canvas -->
+<script type="text/javascript" src="libs/es6-promise/es6-promise.auto.min.js"></script>
 <script type="text/javascript" src="libs/html2canvas/html2canvas.min.js"></script>
 ```
 
@@ -60,6 +62,7 @@ Dependencies
 Library | Version
 --------|--------
 [jQuery](https://github.com/jquery/jquery) | >= 1.9.1
+[es6-promise](https://github.com/stefanpenner/es6-promise) | >= 4.2.4
 [FileSaver](https://github.com/hhurz/tableExport.jquery.plugin/blob/master/libs/FileSaver/FileSaver.min.js) | >= 1.2.0
 [html2canvas](https://github.com/niklasvh/html2canvas) | >= 0.5.0-beta4
 [jsPDF](https://github.com/MrRio/jsPDF) | 1.3.2 - 1.3.4
@@ -177,7 +180,6 @@ jspdf: orientation: 'p'
                                onAutotableText: null
                                onTable: null
                                outputImages: true
-maxNestedTables: 1
 mso: fileFormat: 'xlshtml'
      onMsoNumberFormat: null
      pageFormat: 'a4'
