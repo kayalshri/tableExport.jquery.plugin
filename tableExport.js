@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.1
+ * Version 1.10.2
  *
  * Copyright (c) 2015-2018 hhurz, https://github.com/hhurz
  *
@@ -1283,9 +1283,8 @@
             if ( typeof atOptions.drawCell !== 'function' ) {
               atOptions.drawCell = function (cell, data) {
                 var tecell = teOptions.teCells [data.row.index + ":" + data.column.dataKey];
-                var draw2canvas = (typeof tecell !== 'undefined' &&
-                                   typeof tecell.elements !== 'undefined' && tecell.elements.length &&
-                                   tecell.elements[0].hasAttribute("data-tableexport-canvas"));
+                var draw2canvas = (typeof tecell !== 'undefined' && tecell.isCanvas);
+
                 if ( draw2canvas !== true ) {
                   if ( prepareAutoTableText(cell, data, tecell) ) {
 
@@ -1312,6 +1311,9 @@
                 else {
                   var container = tecell.elements[0];
                   var imgId  = $(container).attr("data-tableexport-canvas");
+                  var r = container.getBoundingClientRect();
+                  cell.width = r.width;
+                  cell.height = r.height;
                   jsPdfDrawImage (cell, container, imgId, teOptions);
                 }
                 return false;
@@ -1379,7 +1381,8 @@
                                    }
                                    if ( typeof cell !== 'undefined' && cell !== null ) {
                                      obj = getCellStyles(cell);
-                                     obj.elements = cell.hasAttribute("data-tableexport-canvas") ? $(cell) : $(cell).children();
+                                     obj.isCanvas = cell.hasAttribute("data-tableexport-canvas");
+                                     obj.elements = obj.isCanvas ? $(cell) : $(cell).children();
                                      teOptions.teCells [rowCount + ":" + colKey++] = obj;
                                    }
                                    else {
@@ -1594,20 +1597,21 @@
         var image = teOptions.images[imgId];
 
         if ( typeof image !== 'undefined' ) {
-          var arCell    = cell.width / cell.height;
-          var arImg     = container.width / container.height;
-          var imgWidth  = cell.width;
-          var imgHeight = cell.height;
-          var px2pt     = 0.264583 * 72 / 25.4;
-          var uy        = 0;
+          var r          = container.getBoundingClientRect();
+          var arCell     = cell.width / cell.height;
+          var arImg      = r.width / r.height;
+          var imgWidth   = cell.width;
+          var imgHeight  = cell.height;
+          var px2pt      = 0.264583 * 72 / 25.4;
+          var uy         = 0;
 
           if ( arImg <= arCell ) {
-            imgHeight = Math.min(cell.height, container.height);
-            imgWidth  = container.width * imgHeight / container.height;
+            imgHeight = Math.min(cell.height, r.height);
+            imgWidth  = r.width * imgHeight / r.height;
           }
           else if ( arImg > arCell ) {
-            imgWidth  = Math.min(cell.width, container.width);
-            imgHeight = container.height * imgWidth / container.width;
+            imgWidth  = Math.min(cell.width, r.width);
+            imgHeight = r.height * imgWidth / r.width;
           }
 
           imgWidth *= px2pt;
