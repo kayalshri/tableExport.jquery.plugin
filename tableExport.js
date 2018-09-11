@@ -1114,6 +1114,8 @@
           teOptions.doc = new jsPDF(defaults.jspdf.orientation,
                                     defaults.jspdf.unit,
                                     defaults.jspdf.format);
+          teOptions.wScaleFactor = 1;
+          teOptions.hScaleFactor = 1;
 
           if ( typeof defaults.jspdf.onDocCreated === 'function' )
             defaults.jspdf.onDocCreated(teOptions.doc);
@@ -1293,14 +1295,14 @@
                     if ( typeof tecell !== 'undefined' &&
                          typeof tecell.elements !== 'undefined' && tecell.elements.length ) {
 
-                      var dh = cell.height / tecell.rect.height;
-                      if ( dh > teOptions.dh || typeof teOptions.dh === 'undefined' )
-                        teOptions.dh = dh;
-                      teOptions.dw = cell.width / tecell.rect.width;
+                      var hScale = cell.height / tecell.rect.height;
+                      if ( hScale > teOptions.hScaleFactor )
+                        teOptions.hScaleFactor = hScale;
+                      teOptions.wScaleFactor = cell.width / tecell.rect.width;
 
-                      var y = cell.textPos.y;
+                      var ySave = cell.textPos.y;
                       drawAutotableElements(cell, tecell.elements, teOptions);
-                      cell.textPos.y = y;
+                      cell.textPos.y = ySave;
 
                       drawAutotableText(cell, tecell.elements, teOptions);
                     }
@@ -1312,8 +1314,11 @@
                   var container = tecell.elements[0];
                   var imgId  = $(container).attr("data-tableexport-canvas");
                   var r = container.getBoundingClientRect();
-                  cell.width = r.width;
-                  cell.height = r.height;
+
+                  cell.width = r.width * teOptions.wScaleFactor;
+                  cell.height = r.height * teOptions.hScaleFactor;
+                  data.row.height = cell.height;
+                  
                   jsPdfDrawImage (cell, container, imgId, teOptions);
                 }
                 return false;
@@ -1794,10 +1799,10 @@
           var lwidth = getPropertyUnitValue(this, 'border-top-width', defaults.jspdf.unit);
 
           var r  = this.getBoundingClientRect();
-          var ux = this.offsetLeft * teOptions.dw;
-          var uy = this.offsetTop * teOptions.dh;
-          var uw = r.width * teOptions.dw;
-          var uh = r.height * teOptions.dh;
+          var ux = this.offsetLeft * teOptions.wScaleFactor;
+          var uy = this.offsetTop * teOptions.hScaleFactor;
+          var uw = r.width * teOptions.wScaleFactor;
+          var uh = r.height * teOptions.hScaleFactor;
 
           teOptions.doc.setDrawColor.apply(undefined, lcolor);
           teOptions.doc.setFillColor.apply(undefined, bcolor);
