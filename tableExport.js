@@ -199,7 +199,12 @@
                 $(el).find('thead').find('tr').each(function() {
                     excel += "<tr>";
                     $(this).filter(':visible').find('th').each(function(index,data) {
-                        if ($(this).css('display') != 'none'){
+                        var bIsStateColumn = $(this).attr('data-field') === 'state';
+                        var bIsActionColumn = $(this).attr('data-field') === 'action';
+                        if (bIsStateColumn || bIsActionColumn) {
+                            defaults.ignoreColumn.push(index);
+                        }
+                        if ($(this).css('display') != 'none'  && !bIsActionColumn && !bIsStateColumn){
                             if(defaults.ignoreColumn.indexOf(index) == -1){
                                 excel += "<td>" + parseString($(this))+ "</td>";
                             }
