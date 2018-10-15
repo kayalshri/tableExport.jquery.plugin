@@ -324,11 +324,16 @@
             }
 
             function parseString(data){
-
                 if(defaults.htmlContent == 'true'){
                     content_data = data.html().trim();
                 }else{
-                    content_data = data.text().trim();
+                    if ($(data).find('[data-field-title]').length > 0){
+                        content_data = $(data).find('[data-field-title]').attr('data-field-title');
+                    } else if ($(data).find('span[class=button-text]').length > 0){
+                        content_data = $(data).find('span[class=button-text]').text().trim();
+                    } else {
+                        content_data = data.text().trim();
+                    }
                 }
 
                 if(defaults.escape == 'true'){
