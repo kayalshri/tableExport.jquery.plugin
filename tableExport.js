@@ -103,7 +103,7 @@
         leadingWS:         false,       // preserve leading white spaces
         trailingWS:        false        // preserve trailing white spaces
       },
-      preventInjection:    true,        // Prepend a single quote to cell strings that start with =,+,- or @ to prevent formual injection
+      preventInjection:    true,        // Prepend a single quote to cell strings that start with =,+,- or @ to prevent formula injection
       tbodySelector:       'tr',
       tfootSelector:       'tr',        // Set empty ('') to prevent export of tfoot rows
       theadSelector:       'tr',
