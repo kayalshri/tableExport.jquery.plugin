@@ -195,12 +195,13 @@ onCellData: null
 onCellHtmlData: null
 onIgnoreRow: null
 outputMode: 'file'
-preserve: leadingWS: false
-          trailingWS: false
 pdfmake: enabled: false
          docDefinition: pageOrientation: 'portrait'
                         defaultStyle: font: 'Roboto'
          fonts: {}
+preserve: leadingWS: false
+          trailingWS: false
+preventInjection: true
 tbodySelector: 'tr'
 tfootSelector: 'tr'
 theadSelector: 'tr'
@@ -215,11 +216,15 @@ type: 'csv'
 
 To disable formatting of numbers in the exported output, which can be useful for csv and excel format, set the option ``` numbers: output ``` to ``` false ```.
 
-Set the option ``` mso.fileFormat ``` to ``` 'xmlss' ``` if you want to export in XML Spreadsheet 2003 file format. Use this format if multiple tables should be exported into a single file. Excel 2000 html format is the default excel file format which has better support of exporting table styles.
+Set the option ``` mso.fileFormat ``` to ``` 'xmlss' ``` if you want to export in XML Spreadsheet 2003 file format. Use this format if multiple tables should be exported into a single file. 
+
+Excel 2000 html format is the default excel file format which has better support of exporting table styles.
 
 The ``` mso.styles ``` option lets you define the css attributes of the original html table cells, that should be taken over when exporting to an excel worksheet (Excel 2000 html format only).
 
 To export in XSLX format [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data, but not any styling information of the html table.
+
+Note: There is an option ``` preventInjection ``` (default is enabled) that prevents formula injection when exporting in CSV or Excel format. To achieve that a single quote will be prependend to cell strings that start with =,+,- or @   
 
 For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
 
@@ -266,7 +271,7 @@ Optional html data attributes
 ```html
 <td data-tableexport-msonumberformat="\@">...</td> -> Data value will be used to style excel cells with mso-number-format (Excel 2000 html format only)
                                                       Examples:
-                                                      "\@"       excel treats cell content alway as text, even numbers
+                                                      "\@"       excel treats cell content always as text, even numbers
                                                       "0"        excel will display no decimals for numbers
                                                       "0\.000"   excel displays numbers with 3 decimals
                                                       "0%"       excel will display a number as percent with no decimals
