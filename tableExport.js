@@ -645,75 +645,34 @@
     }
     else if ( defaults.type === 'excel' && defaults.mso.fileFormat === 'xlsx' ) {
 
-      var data  = [];
-      var spans = [];
-      rowIndex  = 0;
+      var docNames = [];
+      var workbook = XLSX.utils.book_new();
 
-      $rows = collectHeadRows ($(el));
-      $rows.push.apply($rows, collectRows ($(el)));
+      // Multiple worksheets and .xlsx file extension #202
 
-      $($rows).each(function () {
-        var cols = [];
-        ForEachVisibleCell(this, 'th,td', rowIndex, $rows.length,
-                           function (cell, row, col) {
-                             if ( typeof cell !== 'undefined' && cell !== null ) {
+      $(el).filter(function () {
+        return isVisible($(this));
+      }).each(function () {
+        var $table = $(this);
+        var ws = XLSX.utils.table_to_sheet(this);
 
-                               var cellValue = parseString(cell, row, col);
+        var sheetName = '';
+        if ( typeof defaults.mso.worksheetName === 'string' && defaults.mso.worksheetName.length )
+          sheetName = defaults.mso.worksheetName + ' ' + (docNames.length + 1);
+        else if ( typeof defaults.mso.worksheetName[docNames.length] !== 'undefined' )
+          sheetName = defaults.mso.worksheetName[docNames.length];
+        if ( ! sheetName.length )
+          sheetName = $table.find('caption').text() || '';
+        if ( ! sheetName.length )
+          sheetName = 'Table ' + (docNames.length + 1);
+        sheetName = $.trim(sheetName.replace(/[\\\/[\]*:?'"]/g,'').substring(0,31));
 
-                               var colspan = getColspan (cell);
-                               var rowspan = getRowspan (cell);
-
-                               // Skip span ranges
-                               $.each(spans, function () {
-                                 var range = this;
-                                 if ( rowIndex >= range.s.r && rowIndex <= range.e.r && cols.length >= range.s.c && cols.length <= range.e.c ) {
-                                   for ( var i = 0; i <= range.e.c - range.s.c; ++i )
-                                     cols.push(null);
-                                 }
-                               });
-
-                               // Handle Row Span
-                               if ( rowspan || colspan ) {
-                                 rowspan = rowspan || 1;
-                                 colspan = colspan || 1;
-                                 spans.push({
-                                              s: {r: rowIndex, c: cols.length},
-                                              e: {r: rowIndex + rowspan - 1, c: cols.length + colspan - 1}
-                                            });
-                               }
-
-                               // Handle Value
-                               if ( typeof defaults.onCellData !== 'function' ) {
-
-                                 // Type conversion
-                                 if ( cellValue !== "" && cellValue === +cellValue )
-                                   cellValue = +cellValue;
-                               }
-                               cols.push(cellValue !== "" ? cellValue : null);
-
-                               // Handle Colspan
-                               if ( colspan )
-                                 for ( var k = 0; k < colspan - 1; ++k )
-                                   cols.push(null);
-                             }
-                           });
-        data.push(cols);
-        rowIndex++;
+        docNames.push(sheetName);
+        XLSX.utils.book_append_sheet(workbook, ws, sheetName);
       });
 
-      //noinspection JSPotentiallyInvalidConstructorUsage
-      var wb = new jx_Workbook(),
-        ws = jx_createSheet(data);
-
-      // add span ranges to worksheet
-      ws['!merges'] = spans;
-
       // add worksheet to workbook
-      //wb.SheetNames.push(defaults.mso.worksheetName);
-      //wb.Sheets[defaults.mso.worksheetName] = ws;
-      XLSX.utils.book_append_sheet(wb, ws, defaults.mso.worksheetName);
-
-      var wbout = XLSX.write(wb, {type: 'binary', bookType: defaults.mso.fileFormat, bookSST: false});
+      var wbout = XLSX.write(workbook, {type: 'binary', bookType: defaults.mso.fileFormat, bookSST: false});
 
       try {
         blob = new Blob([jx_s2ab(wbout)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'});
@@ -1306,7 +1265,7 @@
 
                       drawAutotableText(cell, tecell.elements, teOptions);
                     }
-                    else 
+                    else
                       drawAutotableText(cell, {}, teOptions);
                   }
                 }
@@ -1318,7 +1277,7 @@
                   cell.width = r.width * teOptions.wScaleFactor;
                   cell.height = r.height * teOptions.hScaleFactor;
                   data.row.height = cell.height;
-                  
+
                   jsPdfDrawImage (cell, container, imgId, teOptions);
                 }
                 return false;
