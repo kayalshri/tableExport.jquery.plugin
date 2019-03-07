@@ -191,6 +191,8 @@ numbers: html: decimalMark: '.'
                thousandsSeparator: ','
          output: decimalMark: '.',
                  thousandsSeparator: ','
+onAfterSaveToFile: null
+onBeforeSaveToFile: null
 onCellData: null
 onCellHtmlData: null
 onIgnoreRow: null

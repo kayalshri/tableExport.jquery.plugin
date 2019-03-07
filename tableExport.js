@@ -3,7 +3,7 @@
  *
  * Version 1.10.2
  *
- * Copyright (c) 2015-2018 hhurz, https://github.com/hhurz
+ * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
  * Original Work Copyright (c) 2014 Giri Raj
  *
@@ -85,6 +85,8 @@
           thousandsSeparator: ','
         }
       },
+      onAfterSaveToFile:   null,
+      onBeforeSaveToFile:  null,        // Return false as result to abort save process
       onCellData:          null,
       onCellHtmlData:      null,
       onIgnoreRow:         null,        // onIgnoreRow($tr, rowIndex): function should return true to not export a row
@@ -254,15 +256,12 @@
         return;
       }
 
-      try {
-        blob = new Blob([csvData], {type: "text/" + (defaults.type === 'csv' ? 'csv' : 'plain') + ";charset=utf-8"});
-        saveAs(blob, defaults.fileName + '.' + defaults.type, (defaults.type !== 'csv' || defaults.csvUseBOM === false));
-      }
-      catch (e) {
-        downloadFile(defaults.fileName + '.' + defaults.type,
-          'data:text/' + (defaults.type === 'csv' ? 'csv' : 'plain') + ';charset=utf-8,' + ((defaults.type === 'csv' && defaults.csvUseBOM) ? '\ufeff' : ''),
-          csvData);
-      }
+      saveToFile ( csvData, 
+                   defaults.fileName + '.' + defaults.type, 
+                   "text/" + (defaults.type === 'csv' ? 'csv' : 'plain'), 
+                   "utf-8", 
+                   "", 
+                   (defaults.type === 'csv' && defaults.csvUseBOM) );
 
     } else if ( defaults.type === 'sql' ) {
 
@@ -307,15 +306,7 @@
       if ( defaults.outputMode === 'base64' )
         return base64encode(tdData);
 
-      try {
-        blob = new Blob([tdData], {type: "text/plain;charset=utf-8"});
-        saveAs(blob, defaults.fileName + '.sql');
-      }
-      catch (e) {
-        downloadFile(defaults.fileName + '.sql',
-          'data:application/sql;charset=utf-8,',
-          tdData);
-      }
+      saveToFile ( tdData, defaults.fileName + '.sql', "application/sql", "utf-8", "", false );
 
     } else if ( defaults.type === 'json' ) {
       var jsonHeaderArray = [];
@@ -369,15 +360,7 @@
       if ( defaults.outputMode === 'base64' )
         return base64encode(sdata);
 
-      try {
-        blob = new Blob([sdata], {type: "application/json;charset=utf-8"});
-        saveAs(blob, defaults.fileName + '.json');
-      }
-      catch (e) {
-        downloadFile(defaults.fileName + '.json',
-          'data:application/json;charset=utf-8;base64,',
-          sdata);
-      }
+      saveToFile ( sdata, defaults.fileName + '.json', "application/json", "utf-8", "base64", false );
 
     } else if ( defaults.type === 'xml' ) {
       rowIndex = 0;
@@ -425,15 +408,7 @@
       if ( defaults.outputMode === 'base64' )
         return base64encode(xml);
 
-      try {
-        blob = new Blob([xml], {type: "application/xml;charset=utf-8"});
-        saveAs(blob, defaults.fileName + '.xml');
-      }
-      catch (e) {
-        downloadFile(defaults.fileName + '.xml',
-          'data:application/xml;charset=utf-8;base64,',
-          xml);
-      }
+      saveToFile ( xml, defaults.fileName + '.xml', "application/xml", "utf-8", "base64", false );
     }
     else if ( defaults.type === 'excel' && defaults.mso.fileFormat === 'xmlss' ) {
       var docDatas = [];
@@ -633,15 +608,7 @@
       if ( defaults.outputMode === 'base64' )
         return base64encode(xmlssDocFile);
 
-      try {
-        blob = new Blob([xmlssDocFile], {type: "application/xml;charset=utf-8"});
-        saveAs(blob, defaults.fileName + '.xml');
-      }
-      catch (e) {
-        downloadFile(defaults.fileName + '.xml',
-          'data:application/xml;charset=utf-8;base64,',
-          xmlssDocFile);
-      }
+      saveToFile ( xmlssDocFile, defaults.fileName + '.xml', "application/xml", "utf-8", "base64", false );
     }
     else if ( defaults.type === 'excel' && defaults.mso.fileFormat === 'xlsx' ) {
 
@@ -674,15 +641,10 @@
       // add worksheet to workbook
       var wbout = XLSX.write(workbook, {type: 'binary', bookType: defaults.mso.fileFormat, bookSST: false});
 
-      try {
-        blob = new Blob([jx_s2ab(wbout)], {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8'});
-        saveAs(blob, defaults.fileName + '.' + defaults.mso.fileFormat);
-      }
-      catch (e) {
-        downloadFile(defaults.fileName + '.' + defaults.mso.fileFormat,
-          'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8,',
-          jx_s2ab(wbout));
-      }
+      saveToFile ( jx_s2ab(wbout), 
+                   defaults.fileName + '.' + defaults.mso.fileFormat, 
+                   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
+                   "UTF-8", "", false );
     }
     else if ( defaults.type === 'excel' || defaults.type === 'xls' || defaults.type === 'word' || defaults.type === 'doc' ) {
 
@@ -861,19 +823,9 @@
       if ( defaults.outputMode === 'base64' )
         return base64encode(docFile);
 
-      try {
-        blob = new Blob([docFile], {type: 'application/vnd.ms-' + defaults.type});
-        saveAs(blob, defaults.fileName + '.' + MSDocExt);
-      }
-      catch (e) {
-        downloadFile(defaults.fileName + '.' + MSDocExt,
-          'data:application/vnd.ms-' + MSDocType + ';base64,',
-          docFile);
-      }
+      saveToFile ( docFile, defaults.fileName + '.' + MSDocExt, "application/vnd.ms-" + MSDocType, "", "base64", false );
     }
     else if ( defaults.type === 'png' ) {
-      //html2canvas($(el)[0], {
-      //  onrendered: function (canvas) {
       html2canvas($(el)[0]).then(
         function (canvas) {
 
@@ -896,14 +848,7 @@
             return;
           }
 
-          try {
-            blob = new Blob([buffer], {type: "image/png"});
-            saveAs(blob, defaults.fileName + '.png');
-          }
-          catch (e) {
-            downloadFile(defaults.fileName + '.png', 'data:image/png,', blob);
-          }
-          //}
+          saveToFile ( buffer, defaults.fileName + '.png', "image/png", "", "", false );
         });
 
     } else if ( defaults.type === 'pdf' ) {
@@ -995,14 +940,7 @@
         $.extend(true, pdfMake.fonts, defaults.pdfmake.fonts);
 
         pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
-
-          try {
-            var blob = new Blob([buffer], {type: "application/pdf"});
-            saveAs(blob, defaults.fileName + '.pdf');
-          }
-          catch (e) {
-            downloadFile(defaults.fileName + '.pdf', 'application/pdf', buffer);
-          }
+          saveToFile ( buffer, defaults.fileName + '.pdf', "application/pdf", "", "", false );
         });
 
       }
@@ -2203,6 +2141,32 @@
       return hash;
     }
 
+    function saveToFile (data, fileName, type, charset, encoding, bom) {
+      var saveIt = true;
+      if ( typeof defaults.onBeforeSaveToFile === 'function' ) {
+        saveIt = defaults.onBeforeSaveToFile(data, fileName, type, charset, encoding);
+        if ( typeof saveIt !== 'boolean' )
+          saveIt = true;
+      }
+
+      if (saveIt) {
+        try {
+          blob = new Blob([data], {type: type + ';charset=' + charset});
+          saveAs (blob, fileName, bom === false);
+
+          if ( typeof defaults.onAfterSaveToFile === 'function' )
+            defaults.onAfterSaveToFile(data, fileName);
+        }
+        catch (e) {
+          downloadFile (fileName, 
+                        'data:' + type + 
+                        (charset.length ? ';charset=' + charset : '') +
+                        (encoding.length ? ';' + encoding : '') + ',' + (bom ? '\ufeff' : ''), 
+                        data);
+        }
+      }
+    }
+
     function downloadFile (filename, header, data) {
       var ua = window.navigator.userAgent;
       if ( filename !== false && window.navigator.msSaveOrOpenBlob ) {
@@ -2275,6 +2239,9 @@
             if ( blobUrl )
               window.URL.revokeObjectURL(blobUrl);
             document.body.removeChild(DownloadLink);
+
+            if ( typeof defaults.onAfterSaveToFile === 'function' )
+              defaults.onAfterSaveToFile(data, filename);
           }, 100);
         }
       }

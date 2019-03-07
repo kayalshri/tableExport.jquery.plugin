@@ -91,12 +91,23 @@
         //ignoreRow: [1,11,12,-2],
         //ignoreColumn: [0,-1],
         //pdfmake: {enabled: true},
+        //onBeforeSaveToFile: DoOnBeforeSaveToFile,
+        //onAfterSaveToFile: DoOnAfterSaveToFile,
+
         tableName: 'Table name'
       };
 
       jQuery.extend(true, options, params);
 
       $(selector).tableExport(options);
+    }
+
+    function DoOnBeforeSaveToFile (data, fileName, type, charset, encoding) {
+      alert ( "onBeforeSaveToFile: " + fileName );
+    }
+
+    function DoOnAfterSaveToFile (data, fileName, type, charset, encoding) {
+      alert ( "onAfterSaveToFile: " + fileName );
     }
 
     /**
