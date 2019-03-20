@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.2
+ * Version 1.10.3
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -677,19 +677,23 @@
         docData += '<table><thead>';
         $hrows = collectHeadRows ($table);
         $($hrows).each(function () {
+          var $row = $(this);
           trData = "";
           ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                              function (cell, row, col) {
                                if ( cell !== null ) {
                                  var thstyle = '';
+                                 var cellstyles = document.defaultView.getComputedStyle(cell, null);
+                                 var rowstyles = document.defaultView.getComputedStyle($row[0], null);
+
                                  trData += '<th';
-                                 for ( var styles in defaults.mso.styles ) {
-                                   if ( defaults.mso.styles.hasOwnProperty(styles) ) {
-                                     var thcss = $(cell).css(defaults.mso.styles[styles]);
-                                     if ( thcss !== '' && thcss !== '0px none rgb(0, 0, 0)' && thcss !== 'rgba(0, 0, 0, 0)' ) {
-                                       thstyle += (thstyle === '') ? 'style="' : ';';
-                                       thstyle += defaults.mso.styles[styles] + ':' + thcss;
-                                     }
+                                 for ( var cssStyle in defaults.mso.styles ) {
+                                   var thcss = cellstyles[defaults.mso.styles[cssStyle]];
+                                   if ( thcss === '' )
+                                     thcss = rowstyles[defaults.mso.styles[cssStyle]];
+                                   if ( thcss !== '' && thcss !== '0px none rgb(0, 0, 0)' && thcss !== 'rgba(0, 0, 0, 0)' ) {
+                                     thstyle += (thstyle === '') ? 'style="' : ';';
+                                     thstyle += defaults.mso.styles[cssStyle] + ':' + thcss;
                                    }
                                  }
                                  if ( thstyle !== '' )
@@ -723,6 +727,8 @@
                                  var tdvalue = parseString(cell, row, col);
                                  var tdstyle = '';
                                  var tdcss   = $(cell).data("tableexport-msonumberformat");
+                                 var cellstyles = document.defaultView.getComputedStyle(cell, null);
+                                 var rowstyles = document.defaultView.getComputedStyle($row[0], null);
 
                                  if ( typeof tdcss === 'undefined' && typeof defaults.mso.onMsoNumberFormat === 'function' )
                                    tdcss = defaults.mso.onMsoNumberFormat(cell, row, col);
@@ -731,15 +737,13 @@
                                    tdstyle = 'style="mso-number-format:\'' + tdcss + '\'';
 
                                  for ( var cssStyle in defaults.mso.styles ) {
-                                   if ( defaults.mso.styles.hasOwnProperty(cssStyle) ) {
-                                     tdcss = $(cell).css(defaults.mso.styles[cssStyle]);
-                                     if ( tdcss === '' )
-                                       tdcss = $row.css(defaults.mso.styles[cssStyle]);
+                                   tdcss = cellstyles[defaults.mso.styles[cssStyle]];
+                                   if ( tdcss === '' )
+                                     tdcss = rowstyles[defaults.mso.styles[cssStyle]];
 
-                                     if ( tdcss !== '' && tdcss !== '0px none rgb(0, 0, 0)' && tdcss !== 'rgba(0, 0, 0, 0)' ) {
-                                       tdstyle += (tdstyle === '') ? 'style="' : ';';
-                                       tdstyle += defaults.mso.styles[cssStyle] + ':' + tdcss;
-                                     }
+                                   if ( tdcss !== '' && tdcss !== '0px none rgb(0, 0, 0)' && tdcss !== 'rgba(0, 0, 0, 0)' ) {
+                                     tdstyle += (tdstyle === '') ? 'style="' : ';';
+                                     tdstyle += defaults.mso.styles[cssStyle] + ':' + tdcss;
                                    }
                                  }
                                  trData += '<td';

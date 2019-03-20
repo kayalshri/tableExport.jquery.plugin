@@ -8,78 +8,77 @@
   <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
   <script type="text/javascript" src="../tableExport.js"></script>
   <style type="text/css">
-    <!-- h3 {
-      font-size: 1em;
-      font-weight: normal;
-    }
-
-    .table-striped {
+    .pvtTable, th, td {
       background-color: white;
+      border: 1px solid blue;
     }
 
-    table > thead > tr > td,
-    table > thead > tr > th {
+    .pvtColLabel,
+    .pvtRowLabel {
       background-color: gray;
       color: white;
     }
 
-    .table-striped > tbody > tr:nth-child(2n+1) > td {
+    .pvtTotalLabel,
+    .pvtGrandTotal,
+    .pvtTotal {
+      background-color: green;
+      color: white;
+      border: 1px solid green;
+    }
+
+    .pvtTable > tbody > tr:nth-child(2n+1) > td {
       background-color: #ccdf88;
     }
-
-    .table-striped.numformat > tbody > tr > td {
-      text-align: right;
-      vertical-align: top;
-    }
-
-    .table-striped th.hidden,
-    .table-striped td.hidden {
-      position: absolute;
-      visibility: hidden;
-    }
-
-    -->
   </style>
 
 </head>
 <body>
+  <p>
   <a href="#" onclick="$('.pvtTable').tableExport({type:'excel',
                                                    mso: {
-                                                     styles:['border-bottom', 'border-top', 'border-left', 'border-right']
+                                                     styles:['background-color',
+                                                             'border-top-color', 'border-left-color', 'border-right-color', 'border-bottom-color',
+                                                             'border-top-width', 'border-left-width', 'border-right-width', 'border-bottom-width',
+                                                             'border-top-style', 'border-left-style', 'border-right-style', 'border-bottom-style',
+                                                             'color']
                                                      }});">Export to Excel</a>
-  <table data-numcols="3" data-numrows="2" class="pvtTable">
-    <thead>
-      <tr>
-        <th></th>
-        <th class="pvtColLabel">black</th>
-        <th class="pvtColLabel">hisp</th>
-        <th class="pvtColLabel">other</th>
-        <th class="pvtTotalLabel">Totals</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="pvtRowLabel">no</td>
-        <td data-value="317" class="pvtVal row0 col0">317</td>
-        <td data-value="494" class="pvtVal row0 col1">494</td>
-        <td data-value="2485" class="pvtVal row0 col2">2,485</td>
-        <td data-for="row0" data-value="3296" class="pvtTotal rowTotal">3,296</td>
-      </tr>
-      <tr>
-        <td class="pvtRowLabel">yes</td>
-        <td data-value="187" class="pvtVal row1 col0">187</td>
-        <td data-value="186" class="pvtVal row1 col1">186</td>
-        <td data-value="691" class="pvtVal row1 col2">691</td>
-        <td data-for="row1" data-value="1064" class="pvtTotal rowTotal">1,064</td>
-      </tr>
-      <tr>
-        <td class="pvtTotalLabel">Totals</td>
-        <td data-for="col0" data-value="504" class="pvtTotal colTotal">504</td>
-        <td data-for="col1" data-value="680" class="pvtTotal colTotal">680</td>
-        <td data-for="col2" data-value="3176" class="pvtTotal colTotal">3,176</td>
-        <td data-value="4360" class="pvtGrandTotal">4,360</td>
-      </tr>
-    </tbody>
-  </table>
+  </p>
+  <section>
+    <table class="pvtTable">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="pvtColLabel">black</th>
+          <th class="pvtColLabel">hisp</th>
+          <th class="pvtColLabel">other</th>
+          <th class="pvtTotalLabel">Totals</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pvtRowLabel">no</td>
+          <td class="pvtVal row0 col0">317</td>
+          <td class="pvtVal row0 col1">494</td>
+          <td class="pvtVal row0 col2">2,485</td>
+          <td class="pvtTotal rowTotal">3,296</td>
+        </tr>
+        <tr>
+          <td class="pvtRowLabel">yes</td>
+          <td class="pvtVal row1 col0">187</td>
+          <td class="pvtVal row1 col1">186</td>
+          <td class="pvtVal row1 col2">691</td>
+          <td class="pvtTotal rowTotal">1,064</td>
+        </tr>
+        <tr>
+          <td class="pvtTotalLabel">Totals</td>
+          <td class="pvtTotal colTotal">504</td>
+          <td class="pvtTotal colTotal">680</td>
+          <td class="pvtTotal colTotal">3,176</td>
+          <td class="pvtGrandTotal">4,360</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </body>
 </html>
