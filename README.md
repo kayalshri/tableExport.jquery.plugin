@@ -204,6 +204,8 @@ pdfmake: enabled: false
 preserve: leadingWS: false
           trailingWS: false
 preventInjection: true
+sql: tableEnclosure:  '`'
+     columnEnclosure: '`' 
 tbodySelector: 'tr'
 tfootSelector: 'tr'
 theadSelector: 'tr'

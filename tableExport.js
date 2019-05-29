@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.3
+ * Version 1.10.4
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -106,6 +106,10 @@
         trailingWS:        false        // preserve trailing white spaces
       },
       preventInjection:    true,        // Prepend a single quote to cell strings that start with =,+,- or @ to prevent formula injection
+      sql: {
+        tableEnclosure:     '`',        // If table or column names contain any characters except letters, numbers, and
+        columnEnclosure:    '`'         // underscores usually the name must be delimited by enclosing it in back quotes (`)
+      },
       tbodySelector:       'tr',
       tfootSelector:       'tr',        // Set empty ('') to prevent export of tfoot rows
       theadSelector:       'tr',
@@ -268,12 +272,12 @@
       // Header
       rowIndex = 0;
       ranges   = [];
-      var tdData = "INSERT INTO `" + defaults.tableName + "` (";
+      var tdData = "INSERT INTO " + defaults.sql.tableEnclosure + defaults.tableName + defaults.sql.tableEnclosure + " (";
       $hrows     = collectHeadRows ($(el));
       $($hrows).each(function () {
         ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                            function (cell, row, col) {
-                             tdData += "'" + parseString(cell, row, col) + "',";
+                             tdData += defaults.sql.columnEnclosure + parseString(cell, row, col) + defaults.sql.columnEnclosure + ",";
                            });
         rowIndex++;
         tdData = $.trim(tdData).substring(0, tdData.length - 1);
