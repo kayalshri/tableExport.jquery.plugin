@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.4
+ * Version 1.10.5
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -1883,8 +1883,9 @@
                 if ( typeof $(this).html() === 'undefined' )
                   htmlData += $(this).text();
                 else if ( jQuery().bootstrapTable === undefined ||
-                  ($(this).hasClass('filterControl') !== true &&
-                    $(cell).parents('.detail-view').length === 0) )
+                  ($(this).hasClass('fht-cell') === false &&  // BT 4
+                   $(this).hasClass('filterControl') === false &&
+                   $cell.parents('.detail-view').length === 0) )
                   htmlData += $(this).html();
               }
             });
