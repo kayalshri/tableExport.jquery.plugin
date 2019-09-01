@@ -528,7 +528,7 @@
           return $rows.length;
         }
 
-        var rowLength = CollectXmlssData (collectHeadRows ($table), 'th,td', rowLength);
+        var rowLength = CollectXmlssData (collectHeadRows ($table), 'th,td', 0);
         CollectXmlssData (collectRows ($table), 'td,th', rowLength);
 
         docData += '</Table>\r';
@@ -616,7 +616,7 @@
     }
     else if ( defaults.type === 'excel' && defaults.mso.fileFormat === 'xlsx' ) {
 
-      var docNames = [];
+      var sheetNames = [];
       var workbook = XLSX.utils.book_new();
 
       // Multiple worksheets and .xlsx file extension #202
@@ -629,16 +629,16 @@
 
         var sheetName = '';
         if ( typeof defaults.mso.worksheetName === 'string' && defaults.mso.worksheetName.length )
-          sheetName = defaults.mso.worksheetName + ' ' + (docNames.length + 1);
-        else if ( typeof defaults.mso.worksheetName[docNames.length] !== 'undefined' )
-          sheetName = defaults.mso.worksheetName[docNames.length];
+          sheetName = defaults.mso.worksheetName + ' ' + (sheetNames.length + 1);
+        else if ( typeof defaults.mso.worksheetName[sheetNames.length] !== 'undefined' )
+          sheetName = defaults.mso.worksheetName[sheetNames.length];
         if ( ! sheetName.length )
           sheetName = $table.find('caption').text() || '';
         if ( ! sheetName.length )
-          sheetName = 'Table ' + (docNames.length + 1);
+          sheetName = 'Table ' + (sheetNames.length + 1);
         sheetName = $.trim(sheetName.replace(/[\\\/[\]*:?'"]/g,'').substring(0,31));
 
-        docNames.push(sheetName);
+        sheetNames.push(sheetName);
         XLSX.utils.book_append_sheet(workbook, ws, sheetName);
       });
 
@@ -730,7 +730,7 @@
                                if ( cell !== null ) {
                                  var tdvalue = parseString(cell, row, col);
                                  var tdstyle = '';
-                                 var tdcss   = $(cell).data("tableexport-msonumberformat");
+                                 var tdcss   = $(cell).attr("data-tableexport-msonumberformat");
                                  var cellstyles = document.defaultView.getComputedStyle(cell, null);
                                  var rowstyles = document.defaultView.getComputedStyle($row[0], null);
 
@@ -1385,15 +1385,15 @@
       var isCell = typeof $element[0].cellIndex !== 'undefined';
       var isRow = typeof $element[0].rowIndex !== 'undefined';
       var isElementVisible = (isCell || isRow) ? isTableElementVisible($element) : $element.is(':visible');
-      var tableexportDisplay = $element.data("tableexport-display");
+      var tableexportDisplay = $element.attr("data-tableexport-display");
 
       if (isCell && tableexportDisplay !== 'none' && tableexportDisplay !== 'always') {
         $element = $($element[0].parentNode);
         isRow = typeof $element[0].rowIndex !== 'undefined';
-        tableexportDisplay = $element.data("tableexport-display");
+        tableexportDisplay = $element.attr("data-tableexport-display");
       }
       if (isRow && tableexportDisplay !== 'none' && tableexportDisplay !== 'always') {
-        tableexportDisplay = $element.closest('table').data("tableexport-display");
+        tableexportDisplay = $element.closest('table').attr("data-tableexport-display");
       }
 
       return tableexportDisplay !== 'none' && (isElementVisible === true || tableexportDisplay === 'always');
@@ -1858,7 +1858,7 @@
           htmlData = '';
         }
         else if ( $cell[0].hasAttribute("data-tableexport-value") ) {
-          htmlData = $cell.data("tableexport-value");
+          htmlData = $cell.attr("data-tableexport-value");
           htmlData = htmlData ? htmlData + '' : '';
         }
         else {
@@ -1896,7 +1896,7 @@
           result = $.trim(htmlData);
         }
         else if ( htmlData && htmlData !== '' ) {
-          var cellFormat = $(cell).data("tableexport-cellformat");
+          var cellFormat = $(cell).attr("data-tableexport-cellformat");
 
           if ( cellFormat !== '' ) {
             var text   = htmlData.replace(/\n/g, '\u2028').replace(/(<\s*br([^>]*)>)/gi, '\u2060');
@@ -1967,13 +1967,13 @@
       return result;
     }
 
-    function preventInjection (string) {
-      if ( string.length > 0 && defaults.preventInjection === true ) {
+    function preventInjection (str) {
+      if ( str.length > 0 && defaults.preventInjection === true ) {
         var chars = "=+-@";
-        if ( chars.indexOf(string.charAt(0)) >= 0 )
-          return ( "'" + string );
+        if ( chars.indexOf(str.charAt(0)) >= 0 )
+          return ( "'" + str );
       }
-      return string;
+      return str;
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -2027,7 +2027,7 @@
     }
 
     function getColspan (cell) {
-      var result = $(cell).data("tableexport-colspan");
+      var result = $(cell).attr("data-tableexport-colspan");
       if ( typeof result === 'undefined' && $(cell).is("[colspan]") )
         result = $(cell).attr('colspan');
 
@@ -2035,7 +2035,7 @@
     }
 
     function getRowspan (cell) {
-      var result = $(cell).data("tableexport-rowspan");
+      var result = $(cell).attr("data-tableexport-rowspan");
       if ( typeof result === 'undefined' && $(cell).is("[rowspan]") )
         result = $(cell).attr('rowspan');
 
@@ -2086,7 +2086,7 @@
         return getUnitValue(target.parentElement, numeric, unit);
       }
       return 0;
-    }
+  }
 
     function jx_Workbook () {
       if ( !(this instanceof jx_Workbook) ) {
@@ -2194,7 +2194,7 @@
           frame.contentDocument.open("txt/plain", "replace");
           frame.contentDocument.write(data);
           frame.contentDocument.close();
-          frame.contentDocument.focus();
+          frame.contentWindow.focus();
 
           var extension = filename.substr((filename.lastIndexOf('.') +1));
           switch(extension) {
