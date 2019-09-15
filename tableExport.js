@@ -625,7 +625,7 @@
         return isVisible($(this));
       }).each(function () {
         var $table = $(this);
-        var ws = XLSX.utils.table_to_sheet(this);
+        var ws = xlsxTableToSheet(this);
 
         var sheetName = '';
         if ( typeof defaults.mso.worksheetName === 'string' && defaults.mso.worksheetName.length )
@@ -645,7 +645,7 @@
       // add worksheet to workbook
       var wbout = XLSX.write(workbook, {type: 'binary', bookType: defaults.mso.fileFormat, bookSST: false});
 
-      saveToFile ( jx_s2ab(wbout), 
+      saveToFile ( xlsxWorkbookToArrayBuffer(wbout),
                    defaults.fileName + '.' + defaults.mso.fileFormat, 
                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
                    "UTF-8", "", false );
@@ -687,17 +687,20 @@
                              function (cell, row, col) {
                                if ( cell !== null ) {
                                  var thstyle = '';
-                                 var cellstyles = document.defaultView.getComputedStyle(cell, null);
-                                 var rowstyles = document.defaultView.getComputedStyle($row[0], null);
 
                                  trData += '<th';
-                                 for ( var cssStyle in defaults.mso.styles ) {
-                                   var thcss = cellstyles[defaults.mso.styles[cssStyle]];
-                                   if ( thcss === '' )
-                                     thcss = rowstyles[defaults.mso.styles[cssStyle]];
-                                   if ( thcss !== '' && thcss !== '0px none rgb(0, 0, 0)' && thcss !== 'rgba(0, 0, 0, 0)' ) {
-                                     thstyle += (thstyle === '') ? 'style="' : ';';
-                                     thstyle += defaults.mso.styles[cssStyle] + ':' + thcss;
+                                 if ( defaults.mso.styles.length ) {
+                                   var cellstyles = document.defaultView.getComputedStyle(cell, null);
+                                   var rowstyles = document.defaultView.getComputedStyle($row[0], null);
+
+                                   for ( var cssStyle in defaults.mso.styles ) {
+                                     var thcss = cellstyles[defaults.mso.styles[cssStyle]];
+                                     if ( thcss === '' )
+                                       thcss = rowstyles[defaults.mso.styles[cssStyle]];
+                                     if ( thcss !== '' && thcss !== '0px none rgb(0, 0, 0)' && thcss !== 'rgba(0, 0, 0, 0)' ) {
+                                       thstyle += (thstyle === '') ? 'style="' : ';';
+                                       thstyle += defaults.mso.styles[cssStyle] + ':' + thcss;
+                                     }
                                    }
                                  }
                                  if ( thstyle !== '' )
@@ -731,8 +734,6 @@
                                  var tdvalue = parseString(cell, row, col);
                                  var tdstyle = '';
                                  var tdcss   = $(cell).attr("data-tableexport-msonumberformat");
-                                 var cellstyles = document.defaultView.getComputedStyle(cell, null);
-                                 var rowstyles = document.defaultView.getComputedStyle($row[0], null);
 
                                  if ( typeof tdcss === 'undefined' && typeof defaults.mso.onMsoNumberFormat === 'function' )
                                    tdcss = defaults.mso.onMsoNumberFormat(cell, row, col);
@@ -740,16 +741,22 @@
                                  if ( typeof tdcss !== 'undefined' && tdcss !== '' )
                                    tdstyle = 'style="mso-number-format:\'' + tdcss + '\'';
 
-                                 for ( var cssStyle in defaults.mso.styles ) {
-                                   tdcss = cellstyles[defaults.mso.styles[cssStyle]];
-                                   if ( tdcss === '' )
-                                     tdcss = rowstyles[defaults.mso.styles[cssStyle]];
+                                 if ( defaults.mso.styles.length ) {
+                                   var cellstyles = document.defaultView.getComputedStyle(cell, null);
+                                   var rowstyles = document.defaultView.getComputedStyle($row[0], null);
 
-                                   if ( tdcss !== '' && tdcss !== '0px none rgb(0, 0, 0)' && tdcss !== 'rgba(0, 0, 0, 0)' ) {
-                                     tdstyle += (tdstyle === '') ? 'style="' : ';';
-                                     tdstyle += defaults.mso.styles[cssStyle] + ':' + tdcss;
+                                   for ( var cssStyle in defaults.mso.styles ) {
+                                     tdcss = cellstyles[defaults.mso.styles[cssStyle]];
+                                     if ( tdcss === '' )
+                                       tdcss = rowstyles[defaults.mso.styles[cssStyle]];
+
+                                     if ( tdcss !== '' && tdcss !== '0px none rgb(0, 0, 0)' && tdcss !== 'rgba(0, 0, 0, 0)' ) {
+                                       tdstyle += (tdstyle === '') ? 'style="' : ';';
+                                       tdstyle += defaults.mso.styles[cssStyle] + ':' + tdcss;
+                                     }
                                    }
                                  }
+
                                  trData += '<td';
                                  if ( tdstyle !== '' )
                                    trData += ' ' + tdstyle + '"';
@@ -1382,8 +1389,8 @@
     }
 
     function isVisible ($element) {
-      var isCell = typeof $element[0].cellIndex !== 'undefined';
       var isRow = typeof $element[0].rowIndex !== 'undefined';
+      var isCell = isRow === false && typeof $element[0].cellIndex !== 'undefined';
       var isElementVisible = (isCell || isRow) ? isTableElementVisible($element) : $element.is(':visible');
       var tableexportDisplay = $element.attr("data-tableexport-display");
 
@@ -1447,9 +1454,10 @@
           ignoreRow = defaults.onIgnoreRow($(tableRow), rowIndex);
 
         if (ignoreRow === false &&
-          $.inArray(rowIndex, defaults.ignoreRow) === -1 &&
-          $.inArray(rowIndex - rowCount, defaults.ignoreRow) === -1 &&
-          isVisible($(tableRow))) {
+            (defaults.ignoreRow.length === 0 ||
+             ($.inArray(rowIndex, defaults.ignoreRow) === -1 &&
+              $.inArray(rowIndex - rowCount, defaults.ignoreRow) === -1)) &&
+            isVisible($(tableRow))) {
 
           var $cells = findTableElements($(tableRow), selector);
           var cellCount = 0;
@@ -2086,57 +2094,150 @@
         return getUnitValue(target.parentElement, numeric, unit);
       }
       return 0;
-  }
-
-    function jx_Workbook () {
-      if ( !(this instanceof jx_Workbook) ) {
-        //noinspection JSPotentiallyInvalidConstructorUsage
-        return new jx_Workbook();
-      }
-      this.SheetNames = [];
-      this.Sheets     = {};
     }
 
-    function jx_s2ab (s) {
+    function xlsxWorkbookToArrayBuffer (s) {
       var buf  = new ArrayBuffer(s.length);
       var view = new Uint8Array(buf);
       for ( var i = 0; i !== s.length; ++i ) view[i] = s.charCodeAt(i) & 0xFF;
       return buf;
     }
 
-    function jx_datenum (v, date1904) {
-      if ( date1904 ) v += 1462;
-      var epoch = Date.parse(v);
-      return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
+    function xlsxTableToSheet(table) {
+      var ws = ({});
+      var rows = table.getElementsByTagName('tr');
+      var sheetRows = 10000000;
+      var range = {s:{r:0,c:0},e:{r:0,c:0}};
+      var merges = [], midx = 0;
+      var rowinfo = [];
+      var _R = 0, R = 0, _C, C, RS, CS;
+      var elt;
+      for(; _R < rows.length && R < sheetRows; ++_R) {
+        var row = rows[_R];
+
+        var ignoreRow = false;
+        if (typeof defaults.onIgnoreRow === 'function')
+          ignoreRow = defaults.onIgnoreRow($(row), _R);
+
+        if (!(ignoreRow === false &&
+            $.inArray(rowIndex, defaults.ignoreRow) === -1 &&
+            $.inArray(rowIndex - rowCount, defaults.ignoreRow) === -1 &&
+            isVisible($(row)))) {
+          continue;
+        }
+
+        var elts = (row.children);
+        var _CLength = 0;
+        for(_C = 0; _C < elts.length; ++_C) {
+          elt = elts[_C];
+          CS = +getColspan(elt) || 1;
+          _CLength += CS;
+        }
+
+        var CSOffset = 0;
+        for(_C = C = 0; _C < elts.length; ++_C) {
+          elt = elts[_C];
+          CS = +getColspan(elt) || 1;
+
+          var col = _C + CSOffset;
+          if (isColumnIgnored($(elt), _CLength, col + (col < C ? C-col : 0)))
+            continue;
+          CSOffset += CS-1;
+
+          for(midx = 0; midx < merges.length; ++midx) {
+            var m = merges[midx];
+            if(m.s.c == C && m.s.r <= R && R <= m.e.r) {
+              C = m.e.c+1;
+              midx = -1;
+            }
+          }
+
+          if((RS = +getRowspan(elt))>0 || CS>1)
+            merges.push({s:{r:R,c:C},e:{r:R + (RS||1) - 1, c:C + CS - 1}});
+
+          var v = parseString(elt,_R,_C + CSOffset);
+          var o = {t:'s', v:v};
+          var _t = elt.getAttribute("t") || "";
+          if(v != null) {
+            if(v.length == 0) o.t = _t || 'z';
+            else if(v.trim().length == 0 || _t == "s"){}
+            else if(v === 'TRUE')            o = {t:'b', v:true};
+            else if(v === 'FALSE')           o = {t:'b', v:false};
+            else if(!isNaN(xlsxToNumber(v))) o = {t:'n', v:xlsxToNumber(v)};
+            else if(!isNaN(xlsxToDate(v).getDate())) {
+              o = ({t:'d', v:xlsxParseDate(v)});
+              o.z = "yyyymmdd";
+            }
+          }
+          ws[xlsxEncodeCell({c:C, r:R})] = o;
+          if(range.e.c < C)
+            range.e.c = C;
+          C += CS;
+        }
+        ++R;
+      }
+      if(merges.length) ws['!merges'] = merges;
+      if(rowinfo.length) ws['!rows'] = rowinfo;
+      range.e.r = R - 1;
+      ws['!ref'] = xlsxEncodeRange(range);
+      if(R >= sheetRows)
+        ws['!fullref'] = xlsxEncodeRange((range.e.r = rows.length-_R+R-1,range));
+      return ws;
     }
 
-    function jx_createSheet (data) {
-      var ws    = {};
-      var range = {s: {c: 10000000, r: 10000000}, e: {c: 0, r: 0}};
-      for ( var R = 0; R !== data.length; ++R ) {
-        for ( var C = 0; C !== data[R].length; ++C ) {
-          if ( range.s.r > R ) range.s.r = R;
-          if ( range.s.c > C ) range.s.c = C;
-          if ( range.e.r < R ) range.e.r = R;
-          if ( range.e.c < C ) range.e.c = C;
-          var cell = {v: data[R][C]};
-          if ( cell.v === null ) continue;
-          var cell_ref = XLSX.utils.encode_cell({c: C, r: R});
-
-          if ( typeof cell.v === 'number' ) cell.t = 'n';
-          else if ( typeof cell.v === 'boolean' ) cell.t = 'b';
-          else if ( cell.v instanceof Date ) {
-            cell.t = 'n';
-            cell.z = XLSX.SSF._table[14];
-            cell.v = jx_datenum(cell.v);
-          }
-          else cell.t = 's';
-          ws[cell_ref] = cell;
-        }
+    function xlsxEncodeRow(row) { return "" + (row + 1); }
+    function xlsxEncodeCol(col) { var s=""; for(++col; col; col=Math.floor((col-1)/26)) s = String.fromCharCode(((col-1)%26) + 65) + s; return s; }
+    function xlsxEncodeCell(cell) { return xlsxEncodeCol(cell.c) + xlsxEncodeRow(cell.r); }
+    function xlsxEncodeRange(cs,ce) {
+      if(typeof ce === 'undefined' || typeof ce === 'number') {
+        return xlsxEncodeRange(cs.s, cs.e);
       }
+      if(typeof cs !== 'string') cs = xlsxEncodeCell((cs));
+      if(typeof ce !== 'string') ce = xlsxEncodeCell((ce));
+      return cs === ce ? cs : cs + ":" + ce;
+    }
 
-      if ( range.s.c < 10000000 ) ws['!ref'] = XLSX.utils.encode_range(range);
-      return ws;
+    function xlsxToNumber(s) {
+      var v = Number(s);
+      if(!isNaN(v)) return v;
+      var wt = 1;
+      var ss = s.replace(/([\d]),([\d])/g,"$1$2").replace(/[$]/g,"").replace(/[%]/g, function() { wt *= 100; return "";});
+      if(!isNaN(v = Number(ss))) return v / wt;
+      ss = ss.replace(/[(](.*)[)]/,function($$, $1) { wt = -wt; return $1;});
+      if(!isNaN(v = Number(ss))) return v / wt;
+      return v;
+    }
+
+    function xlsxToDate(s) {
+      var o = new Date(s), n = new Date(NaN);
+      var y = o.getFullYear(), m = o.getMonth(), d = o.getDate();
+      if(isNaN(d)) return n;
+      if(y < 0 || y > 8099) return n;
+      if((m > 0 || d > 1) && y != 101) return o;
+      if(s.toLowerCase().match(/jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/)) return o;
+      if(s.match(/[^-0-9:,\/\\]/)) return n;
+      return o;
+    }
+
+    function xlsxParseDate(str, fixdate) {
+      var good_pd_date = new Date('2017-02-19T19:06:09.000Z');
+      if(isNaN(good_pd_date.getFullYear())) good_pd_date = new Date('2/19/17');
+      var d = new Date(str);
+      if(good_pd_date.getFullYear() === 2017) {
+        if(fixdate > 0) d.setTime(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
+        else if(fixdate < 0) d.setTime(d.getTime() - d.getTimezoneOffset() * 60 * 1000);
+        return d;
+      }
+      if(str instanceof Date) return str;
+      if(good_pd_date.getFullYear() === 1917 && !isNaN(d.getFullYear())) {
+        var s = d.getFullYear();
+        if(str.indexOf("" + s) > -1) return d;
+        d.setFullYear(d.getFullYear() + 100); return d;
+      }
+      var n = str.match(/\d+/g)||["2017","2","19","0","0","0"];
+      var out = new Date(+n[0], +n[1] - 1, +n[2], (+n[3]||0), (+n[4]||0), (+n[5]||0));
+      if(str.indexOf("Z") > -1) out = new Date(out.getTime() - out.getTimezoneOffset() * 60 * 1000);
+      return out;
     }
 
     function strHashCode (str) {

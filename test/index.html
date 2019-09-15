@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html>
+<!--suppress JSNonStrictModeUsed -->
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>HTML table Export</title>
@@ -132,6 +133,9 @@
       return result;
     }
 
+    /**
+     * @return {string}
+     */
     function DoOnCsvCellData(cell, row, col, data) {
       var result = data;
       if (result !== "" && row > 0 && col === 0) {
@@ -140,6 +144,9 @@
       return result;
     }
 
+    /**
+     * @return {number}
+     */
     function DoOnXlsxCellData(cell, row, col, data) {
       var result = data;
       if (result !== "" && (row < 1 || col !== 0)) {
@@ -210,6 +217,7 @@
       <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'xlsx', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (Issue 93: colspan & rowspan)</a></li>
+      <li><a href="#" onClick="doExport('table', {type: 'excel', mso: {fileFormat: 'xlsx'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (multiple tables)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel', mso: {pageOrientation: 'landscape'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (landscape)</a></li>
@@ -1242,15 +1250,15 @@
       <tbody>
       <tr>
         <td>A</td>
-        <td><img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTmz5uo5mCCab-mCxueyW6nvEv-Y8AVI58Y2WYmwwVGrCBhKFFMxg"/></td>
+        <td><img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTmz5uo5mCCab-mCxueyW6nvEv-Y8AVI58Y2WYmwwVGrCBhKFFMxg" alt=""/></td>
       </tr>
       <tr>
         <td>B</td>
-        <td><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEber0z-4l7590XFfg_pRTX3Gl6-sYLmLIrrSNKn2tbHTeHf8F"/></td>
+        <td><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEber0z-4l7590XFfg_pRTX3Gl6-sYLmLIrrSNKn2tbHTeHf8F" alt=""/></td>
       </tr>
       <tr>
         <td>C</td>
-        <td><img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSBnkKvffHqzj3INyaZNxS7DXnd9xdquGBzLJHDqWijAhbpLTrI"/></td>
+        <td><img src="https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcSBnkKvffHqzj3INyaZNxS7DXnd9xdquGBzLJHDqWijAhbpLTrI" alt=""/></td>
       </tr>
       </tbody>
     </table>
@@ -1424,7 +1432,7 @@
 
       <!-- Source: http://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population -->
     <table id="countries" class="table-striped">
-      <caption>Countries and dependencies by population (font test)</caption>
+      <caption>Font test: Countries and dependencies by population</caption>
       <thead>
       <tr>
         <th data-field="rank">Rank</th>
@@ -1624,7 +1632,7 @@
     </table>
 
     <table id="wikitable" class="table-striped">
-      <caption>Countries and dependencies by population (mass test)</caption>
+      <caption>Mass test: Countries and dependencies by population</caption>
       <thead>
       <tr>
         <th data-sort-type="number" class="headerSort" tabindex="0" role="columnheader" title="Sort ascending">Rank</th>
