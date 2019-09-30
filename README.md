@@ -61,13 +61,13 @@ Dependencies
 
 Library | Version
 --------|--------
-[jQuery](https://github.com/jquery/jquery) | >= 1.9.1
-[es6-promise](https://github.com/stefanpenner/es6-promise) | >= 4.2.4
-[FileSaver](https://github.com/hhurz/tableExport.jquery.plugin/blob/master/libs/FileSaver/FileSaver.min.js) | >= 1.2.0
-[html2canvas](https://github.com/niklasvh/html2canvas) | >= 0.5.0-beta4
+[jQuery](https://github.com/jquery/jquery) | \>= 1.9.1
+[es6-promise](https://github.com/stefanpenner/es6-promise) | \>= 4.2.4
+[FileSaver](https://github.com/hhurz/tableExport.jquery.plugin/blob/master/libs/FileSaver/FileSaver.min.js) | \>= 1.2.0
+[html2canvas](https://github.com/niklasvh/html2canvas) | \>= 0.5.0-beta4
 [jsPDF](https://github.com/MrRio/jsPDF) | 1.3.2 - 1.3.4
 [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) | 2.0.14 or 2.0.17
-[SheetJS](https://github.com/SheetJS/js-xlsx) | >= 0.12.5
+[SheetJS](https://github.com/SheetJS/js-xlsx) | \>= 0.12.5
 
 
 
@@ -143,6 +143,7 @@ Options (Default settings)
 csvEnclosure: '"'
 csvSeparator: ','
 csvUseBOM: true
+date: html: 'dd/mm/yyyy'
 displayTableName: false
 escape: false
 exportHiddenCells: false
@@ -187,6 +188,8 @@ mso: fileFormat: 'xlshtml'
      rtl: false
      styles: []
      worksheetName: ''
+     xslx: formatId: date: 14
+                     numbers: 2
 numbers: html: decimalMark: '.'
                thousandsSeparator: ','
          output: decimalMark: '.',
@@ -274,12 +277,27 @@ Optional html data attributes
 
 ```html
 <td data-tableexport-msonumberformat="\@">...</td> -> Data value will be used to style excel cells with mso-number-format (Excel 2000 html format only)
-                                                      Examples:
-                                                      "\@"       excel treats cell content always as text, even numbers
-                                                      "0"        excel will display no decimals for numbers
-                                                      "0\.000"   excel displays numbers with 3 decimals
-                                                      "0%"       excel will display a number as percent with no decimals
-                                                      "Percent"  excel will display a number as percent with 2 decimals
+                                                      Format                      Description
+                                                      ===================================================================================
+                                                      "\@"                        Excel treats cell content always as text, even numbers
+                                                      "0"                         Excel will display no decimals for numbers
+                                                      "0\.000"                    Excel displays numbers with 3 decimals
+                                                      "0%"                        Excel will display a number as percent with no decimals
+                                                      "Percent"                   Excel will display a number as percent with 2 decimals
+                                                      "\#\,\#\#0\.000"            Comma with 3 decimals
+                                                      "mm\/dd\/yy"                Date7
+                                                      "mmmm\ d\,\ yyyy"           Date9
+                                                      "m\/d\/yy\ h\:mm\ AM\/PM"   D -T AMPM
+                                                      "Short Date"                01/03/1998
+                                                      "Medium Date"               01-mar-98
+                                                      "d\-mmm\-yyyy"              01-mar-1998
+                                                      "Short Time"                5:16
+                                                      "Medium Time"               5:16 am
+                                                      "Long Time"                 5:16:21:00
+                                                      "0\.E+00"                   Scientific Notation
+                                                      "\#\ ???\/???"              Fractions - up to 3 digits
+                                                      "\0022£\0022\#\,\#\#0\.00"  £12.76
+                                                      "\#\,\#\#0\.00_ \;\[Red\]\-\#\,\#\#0\.00\ "  2 decimals, negative red numbers
 ```
 
 <h4>data-tableexport-rowspan</h4>
@@ -295,6 +313,44 @@ Optional html data attributes
 <th data-tableexport-value="export title">title</th> -> "export title" instead of "title" will be exported
 
 <td data-tableexport-value="export content">content</td> -> "export content" instead of "content" will be exported
+```
+
+<h4>data-tableexport-xlsxformatid</h4>
+
+```html
+<td data-tableexport-xlsxformatid="14">...</td> -> The data value represents a format id that will be used to format the content of a cell in Excel. This data attribute overwrites the default setting of defaults.mso.xslx.formatId. 
+                                                   This attribute is for Excel 2007 Office Open XML format only.
+                                                   
+                                                   Format id           Description
+                                                   ===============================================
+                                                   "1"                 0
+                                                   "2"                 0.00
+                                                   "3"                 #,##0
+                                                   "4"                 #,##0.00
+                                                   "9"                 0%
+                                                   "10"                0.00%
+                                                   "11"                0.00E+00
+                                                   "12"                # ?/?
+                                                   "13"                # ??/??
+                                                   "14"                m/d/yy (will be localized by Excel)
+                                                   "15"                d-mmm-yy
+                                                   "16"                d-mmm
+                                                   "17"                mmm-yy
+                                                   "18"                h:mm AM/PM
+                                                   "19"                h:mm:ss AM/PM
+                                                   "20"                h:mm
+                                                   "21"                h:mm:ss
+                                                   "22"                m/d/yy h:mm
+                                                   "37"                #,##0 ;(#,##0)
+                                                   "38"                #,##0 ;[Red](#,##0)
+                                                   "39"                #,##0.00;(#,##0.00)
+                                                   "40"                #,##0.00;[Red](#,##0.00)
+                                                   "45"                mm:ss
+                                                   "46"                [h]:mm:ss
+                                                   "47"                mmss.0
+                                                   "48"                ##0.0E+0
+                                                   "49"                @
+                                                   "56"                上午/下午 hh時mm分ss秒
 ```
 
 Excel Notes

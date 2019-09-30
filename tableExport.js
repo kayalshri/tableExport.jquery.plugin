@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.7
+ * Version 1.10.8
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -15,47 +15,50 @@
 (function ($) {
   $.fn.tableExport = function (options) {
     var defaults = {
-      csvEnclosure:        '"',
-      csvSeparator:        ',',
-      csvUseBOM:           true,
-      displayTableName:    false,
-      escape:              false,
-      exportHiddenCells:   false,       // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
-      fileName:            'tableExport',
-      htmlContent:         false,
-      ignoreColumn:        [],
-      ignoreRow:           [],
-      jsonScope:           'all',       // head, data, all
+      csvEnclosure:       '"',
+      csvSeparator:       ',',
+      csvUseBOM:          true,
+      date: {
+        html:             'dd/mm/yyyy'  // Date format in html source. Supported placeholders: dd, mm, yy, yyyy and a arbitrary single separator character
+      },
+      displayTableName:   false,
+      escape:             false,
+      exportHiddenCells:  false,        // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
+      fileName:           'tableExport',
+      htmlContent:        false,
+      ignoreColumn:       [],
+      ignoreRow:          [],
+      jsonScope:          'all',        // One of 'head', 'data', 'all'
       jspdf: {                          // jsPDF / jsPDF-AutoTable related options
-        orientation:       'p',
-        unit:              'pt',
-        format:            'a4',        // One of jsPDF page formats or 'bestfit' for autmatic paper format selection
-        margins:           {left: 20, right: 10, top: 10, bottom: 10},
-        onDocCreated:      null,
+        orientation:      'p',
+        unit:             'pt',
+        format:           'a4',         // One of jsPDF page formats or 'bestfit' for automatic paper format selection
+        margins:          {left: 20, right: 10, top: 10, bottom: 10},
+        onDocCreated:     null,
         autotable: {
           styles: {
-            cellPadding:   2,
-            rowHeight:     12,
-            fontSize:      8,
-            fillColor:     255,         // Color value or 'inherit' to use css background-color from html table
-            textColor:     50,          // Color value or 'inherit' to use css color from html table
-            fontStyle:     'normal',    // normal, bold, italic, bolditalic or 'inherit' to use css font-weight and fonst-style from html table
-            overflow:      'ellipsize', // visible, hidden, ellipsize or linebreak
-            halign:        'inherit',   // left, center, right or 'inherit' to use css horizontal cell alignment from html table
-            valign:        'middle'     // top, middle, bottom
+            cellPadding:  2,
+            rowHeight:    12,
+            fontSize:     8,
+            fillColor:    255,          // Color value or 'inherit' to use css background-color from html table
+            textColor:    50,           // Color value or 'inherit' to use css color from html table
+            fontStyle:    'normal',     // 'normal', 'bold', 'italic', 'bolditalic' or 'inherit' to use css font-weight and font-style from html table
+            overflow:     'ellipsize',  // 'visible', 'hidden', 'ellipsize' or 'linebreak'
+            halign:       'inherit',    // 'left', 'center', 'right' or 'inherit' to use css horizontal cell alignment from html table
+            valign:       'middle'      // 'top', 'middle', or 'bottom'
           },
           headerStyles: {
-            fillColor:     [52, 73, 94],
-            textColor:     255,
-            fontStyle:     'bold',
-            halign:        'inherit',   // left, center, right or 'inherit' to use css horizontal header cell alignment from html table
-            valign:        'middle'     // top, middle, bottom
+            fillColor:    [52, 73, 94],
+            textColor:    255,
+            fontStyle:    'bold',
+            halign:       'inherit',    // 'left', 'center', 'right' or 'inherit' to use css horizontal header cell alignment from html table
+            valign:       'middle'      // 'top', 'middle', or 'bottom'
           },
           alternateRowStyles: {
             fillColor:     245
           },
           tableExport: {
-            doc:               null,    // jsPDF doc object. If set, an already created doc will be used to export to
+            doc:               null,    // jsPDF doc object. If set, an already created doc object will be used to export to
             onAfterAutotable:  null,
             onBeforeAutotable: null,
             onAutotableText:   null,
@@ -65,24 +68,30 @@
         }
       },
       mso: {                            // MS Excel and MS Word related options
-        fileFormat:        'xlshtml',   // xlshtml = Excel 2000 html format
-                                        // xmlss = XML Spreadsheet 2003 file format (XMLSS)
-                                        // xlsx = Excel 2007 Office Open XML format
+        fileFormat:        'xlshtml',   // 'xlshtml' = Excel 2000 html format
+                                        // 'xmlss' = XML Spreadsheet 2003 file format (XMLSS)
+                                        // 'xlsx' = Excel 2007 Office Open XML format
         onMsoNumberFormat: null,        // Excel 2000 html format only. See readme.md for more information about msonumberformat
         pageFormat:        'a4',        // Page format used for page orientation
         pageOrientation:   'portrait',  // portrait, landscape (xlshtml format only)
         rtl:               false,       // true = Set worksheet option 'DisplayRightToLeft'
         styles:            [],          // E.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
-        worksheetName:     ''
+        worksheetName:     '',
+        xslx: {                         // Specific Excel 2007 XML format settings:
+          formatId: {                   // xlsx format id used to format excel cells. See readme.md : data-tableexport-xlsxformatid
+            date:          14,          // 'm/d/yy'
+            numbers:       2            // '0.00'
+          }
+        }
       },
       numbers: {
         html: {
-          decimalMark:        '.',
-          thousandsSeparator: ','
+          decimalMark:        '.',      // Decimal mark in html source
+          thousandsSeparator: ','       // Thousands separator in html source
         },
-        output: {                       // Use 'output: false' to keep number format in exported output
-          decimalMark:        '.',
-          thousandsSeparator: ','
+        output: {                       // Set 'output: false' to keep number format of html source in resulting output
+          decimalMark:        '.',      // Decimal mark in resulting output
+          thousandsSeparator: ','       // Thousands separator in resulting output
         }
       },
       onAfterSaveToFile:   null,
@@ -96,7 +105,7 @@
         docDefinition: {
           pageOrientation: 'portrait',  // 'portrait' or 'landscape'
           defaultStyle: {
-            font:          'Roboto'     // Default is 'Roboto', for arabic font set this option to 'Mirza' and include mirza_fonts.js
+            font:          'Roboto'     // Default is 'Roboto', for an arabic font set this option to 'Mirza' and include mirza_fonts.js
           }
         },
         fonts: {}
@@ -114,7 +123,7 @@
       tfootSelector:       'tr',        // Set empty ('') to prevent export of tfoot rows
       theadSelector:       'tr',
       tableName:           'Table',
-      type:                'csv'        // 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
+      type:                'csv'        // Export format: 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
     };
 
     var pageFormats = { // Size in pt of various paper formats. Adopted from jsPDF.
@@ -173,6 +182,35 @@
 
     // Check values of some options
     defaults.mso.pageOrientation = (defaults.mso.pageOrientation.substr(0, 1) === 'l') ? 'landscape' : 'portrait';
+    defaults.date.html = defaults.date.html || '';
+
+    if ( defaults.date.html.length ) {
+      var patt = [];
+      patt['dd'] = '(3[01]|[12][0-9]|0?[1-9])';
+      patt['mm'] = '(1[012]|0?[1-9])';
+      patt['yyyy'] = '((?:1[6-9]|2[0-2])\\d{2})';
+      patt['yy'] = '(\\d{2})';
+
+      var separator = defaults.date.html.match(/[^a-zA-Z0-9]/)[0];
+      var formatItems = defaults.date.html.toLowerCase().split(separator);
+      defaults.date.regex = '^\\s*';
+      defaults.date.regex += patt[formatItems[0]];
+      defaults.date.regex += '(.)'; // separator group
+      defaults.date.regex += patt[formatItems[1]];
+      defaults.date.regex += '\\2'; // identical separator group
+      defaults.date.regex += patt[formatItems[2]];
+      defaults.date.regex += '\\s*$';
+
+      // '^\\s*(3[01]|[12][0-9]|0?[1-9])(.)(1[012]|0?[1-9])\\2((?:1[6-9]|2[0-2])\\d{2})\\s*$'
+
+      defaults.date.pattern = new RegExp(defaults.date.regex, 'g');
+      var f = formatItems.indexOf("dd")+1;
+      defaults.date.match_d = f + (f > 1 ? 1 : 0);
+      f = formatItems.indexOf("mm")+1;
+      defaults.date.match_m = f + (f > 1 ? 1 : 0);
+      f = (formatItems.indexOf("yyyy") || formatItems.indexOf("yy"))+1;
+      defaults.date.match_y = f + (f > 1 ? 1 : 0);
+    }
 
     colNames = GetColumnNames(el);
 
@@ -1836,6 +1874,25 @@
       return string == null ? "" : string.toString().replace(/\s+$/, "");
     }
 
+    function parseDate(s) {
+      var match = defaults.date.pattern.exec(s);
+
+      if (match == null)
+        return false;
+
+      var y = +match[defaults.date.match_y];
+      if(y < 0 || y > 8099) return false;
+      var m = match[defaults.date.match_m]*1;
+      var d = match[defaults.date.match_d]*1;
+      if(isNaN(d)) return false;
+
+      var o = new Date(y, m - 1, d);
+      if (o.getFullYear() === y && o.getMonth() === (m - 1) && o.getDate() === d)
+        return o;
+      else
+        return false;
+    }
+
     function parseNumber (value) {
       value = value || "0";
       value = replaceAll(value, defaults.numbers.html.thousandsSeparator, '');
@@ -1855,8 +1912,9 @@
       return value;
     }
 
-    function parseString (cell, rowIndex, colIndex) {
+    function parseString (cell, rowIndex, colIndex, cellInfo) {
       var result = '';
+      var cellType = 'text';
 
       if ( cell !== null ) {
         var $cell = $(cell);
@@ -1939,8 +1997,10 @@
               defaults.numbers.output === false ) {
               number = parseNumber(result);
 
-              if ( number !== false )
+              if ( number !== false ) {
+                cellType = 'number';
                 result = Number(number);
+              }
             }
             else if ( defaults.numbers.html.decimalMark !== defaults.numbers.output.decimalMark ||
               defaults.numbers.html.thousandsSeparator !== defaults.numbers.output.thousandsSeparator ) {
@@ -1952,6 +2012,7 @@
                   frac[1] = "";
                 var mod = frac[0].length > 3 ? frac[0].length % 3 : 0;
 
+                cellType = 'number';
                 result = (number < 0 ? "-" : "") +
                   (defaults.numbers.output.thousandsSeparator ? ((mod ? frac[0].substr(0, mod) + defaults.numbers.output.thousandsSeparator : "") + frac[0].substr(mod).replace(/(\d{3})(?=\d)/g, "$1" + defaults.numbers.output.thousandsSeparator)) : frac[0]) +
                   (frac[1].length ? defaults.numbers.output.decimalMark + frac[1] : "");
@@ -1968,9 +2029,12 @@
         }
 
         if ( typeof defaults.onCellData === 'function' ) {
-          result = defaults.onCellData($cell, rowIndex, colIndex, result);
+          result = defaults.onCellData($cell, rowIndex, colIndex, result, cellType);
         }
       }
+
+      if (cellInfo !== undefined)
+        cellInfo.type = cellType;
 
       return result;
     }
@@ -2155,18 +2219,43 @@
           if((RS = +getRowspan(elt))>0 || CS>1)
             merges.push({s:{r:R,c:C},e:{r:R + (RS||1) - 1, c:C + CS - 1}});
 
-          var v = parseString(elt,_R,_C + CSOffset);
+          var cellInfo = { type: '' };
+          var v = parseString(elt,_R,_C + CSOffset, cellInfo);
           var o = {t:'s', v:v};
-          var _t = elt.getAttribute("t") || "";
+          var xlsxfid = $(elt).attr("data-tableexport-xlsxformatid") || 0;
+          var _t = 's';
+
+          if (cellInfo.type === 'number' ||
+              (xlsxfid > 0 && xlsxfid < 14) ||
+              (xlsxfid > 36 && xlsxfid < 41) ||
+              xlsxfid === 48)
+            _t = 'n';
+          else if (cellInfo.type === 'date' ||
+                   (xlsxfid > 13 && xlsxfid < 37) ||
+                   (xlsxfid > 44 && xlsxfid < 48) ||
+                   xlsxfid === 56)
+            _t = 'd';
+
+          var ft = XLSX.SSF.get_table();
+
           if(v != null) {
-            if(v.length == 0) o.t = _t || 'z';
-            else if(v.trim().length == 0 || _t == "s"){}
-            else if(v === 'TRUE')            o = {t:'b', v:true};
-            else if(v === 'FALSE')           o = {t:'b', v:false};
-            else if(!isNaN(xlsxToNumber(v))) o = {t:'n', v:xlsxToNumber(v)};
-            else if(!isNaN(xlsxToDate(v).getDate())) {
-              o = ({t:'d', v:xlsxParseDate(v)});
-              o.z = "yyyymmdd";
+            if(v.length === 0)
+              o.t = _t || 'z';
+            else if(v.trim().length === 0 || _t === "s") {
+              }
+            else if(v === 'TRUE')
+              o = {t:'b', v:true};
+            else if(v === 'FALSE')
+              o = {t:'b', v:false};
+            else if(_t === "n" || !isNaN(xlsxToNumber(v))) {
+              xlsxfid = xlsxfid || defaults.mso.xslx.formatId.numbers;
+              o = {t:'n', v:xlsxToNumber(v)};
+              o.z = xlsxfid > 0 ? ft[xlsxfid] : '0.00';
+            }
+            else if(_t === "d" || parseDate(v) !== false) {
+              xlsxfid = xlsxfid || defaults.mso.xslx.formatId.date;
+              o = ({t:'d', v:parseDate(v)});
+              o.z = xlsxfid > 0 ? ft[xlsxfid] : 'm/d/yy';
             }
           }
           ws[xlsxEncodeCell({c:C, r:R})] = o;
@@ -2206,38 +2295,6 @@
       ss = ss.replace(/[(](.*)[)]/,function($$, $1) { wt = -wt; return $1;});
       if(!isNaN(v = Number(ss))) return v / wt;
       return v;
-    }
-
-    function xlsxToDate(s) {
-      var o = new Date(s), n = new Date(NaN);
-      var y = o.getFullYear(), m = o.getMonth(), d = o.getDate();
-      if(isNaN(d)) return n;
-      if(y < 0 || y > 8099) return n;
-      if((m > 0 || d > 1) && y != 101) return o;
-      if(s.toLowerCase().match(/jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/)) return o;
-      if(s.match(/[^-0-9:,\/\\]/)) return n;
-      return o;
-    }
-
-    function xlsxParseDate(str, fixdate) {
-      var good_pd_date = new Date('2017-02-19T19:06:09.000Z');
-      if(isNaN(good_pd_date.getFullYear())) good_pd_date = new Date('2/19/17');
-      var d = new Date(str);
-      if(good_pd_date.getFullYear() === 2017) {
-        if(fixdate > 0) d.setTime(d.getTime() + d.getTimezoneOffset() * 60 * 1000);
-        else if(fixdate < 0) d.setTime(d.getTime() - d.getTimezoneOffset() * 60 * 1000);
-        return d;
-      }
-      if(str instanceof Date) return str;
-      if(good_pd_date.getFullYear() === 1917 && !isNaN(d.getFullYear())) {
-        var s = d.getFullYear();
-        if(str.indexOf("" + s) > -1) return d;
-        d.setFullYear(d.getFullYear() + 100); return d;
-      }
-      var n = str.match(/\d+/g)||["2017","2","19","0","0","0"];
-      var out = new Date(+n[0], +n[1] - 1, +n[2], (+n[3]||0), (+n[4]||0), (+n[5]||0));
-      if(str.indexOf("Z") > -1) out = new Date(out.getTime() - out.getTimezoneOffset() * 60 * 1000);
-      return out;
     }
 
     function strHashCode (str) {

@@ -214,6 +214,7 @@
       <li><a href="#" onClick="doExport('#issue124', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL (issue124: Multiple lines)</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
+      <li><a href="#" onClick="doExport('#rowspans', {type: 'excel', mso: {fileFormat: 'xlsx'}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX data types</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'xlsx', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (Issue 93: colspan & rowspan)</a></li>
@@ -436,6 +437,9 @@
         <th>C1</th>
         <th>C2</th>
         <th>C3</th>
+        <th>C4</th>
+        <th>C5</th>
+        <th>C6</th>
       </tr>
       </thead>
       <tbody>
@@ -443,6 +447,9 @@
         <td>1.101</td>
         <td>2</td>
         <td>30,000</td>
+        <td>01/31/2018</td>
+        <td>31/01/2017</td>
+        <td>31.01.2019</td>
       </tr>
       <tr>
         <td rowspan="3">1</td>
