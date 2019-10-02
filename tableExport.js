@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.8
+ * Version 1.10.9
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -1875,8 +1875,9 @@
     }
 
     function parseDate(s) {
-      var match = defaults.date.pattern.exec(s);
+      defaults.date.pattern.lastIndex = 0;
 
+      var match = defaults.date.pattern.exec(s);
       if (match == null)
         return false;
 
