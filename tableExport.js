@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.9
+ * Version 1.10.10
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -1896,8 +1896,10 @@
 
     function parseNumber (value) {
       value = value || "0";
-      value = replaceAll(value, defaults.numbers.html.thousandsSeparator, '');
-      value = replaceAll(value, defaults.numbers.html.decimalMark, '.');
+      if ('' !== defaults.numbers.html.thousandsSeparator)
+        value = replaceAll(value, defaults.numbers.html.thousandsSeparator, '');
+      if ('.' !== defaults.numbers.html.decimalMark)
+        value = replaceAll(value, defaults.numbers.html.decimalMark, '.');
 
       return typeof value === "number" || jQuery.isNumeric(value) !== false ? value : false;
     }
@@ -2248,9 +2250,9 @@
               o = {t:'b', v:true};
             else if(v === 'FALSE')
               o = {t:'b', v:false};
-            else if(_t === "n" || !isNaN(xlsxToNumber(v))) {
+            else if(_t === "n" || !isNaN(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
+              o = {t:'n', v:xlsxToNumber(v, defaults.numbers.output)};
               xlsxfid = xlsxfid || defaults.mso.xslx.formatId.numbers;
-              o = {t:'n', v:xlsxToNumber(v)};
               o.z = xlsxfid > 0 ? ft[xlsxfid] : '0.00';
             }
             else if(_t === "d" || parseDate(v) !== false) {
@@ -2287,11 +2289,16 @@
       return cs === ce ? cs : cs + ":" + ce;
     }
 
-    function xlsxToNumber(s) {
+    function xlsxToNumber(s, numbersFormat) {
       var v = Number(s);
       if(!isNaN(v)) return v;
       var wt = 1;
-      var ss = s.replace(/([\d]),([\d])/g,"$1$2").replace(/[$]/g,"").replace(/[%]/g, function() { wt *= 100; return "";});
+      var ss = s;
+      if ('' !== numbersFormat.thousandsSeparator)
+        ss = ss.replace(new RegExp('([\\d])' + numbersFormat.thousandsSeparator + '([\\d])','g'),"$1$2");
+      if ('.' !== numbersFormat.decimalMark)
+        ss = ss.replace(new RegExp('([\\d])' + numbersFormat.decimalMark + '([\\d])','g'),"$1.$2");
+      ss = ss.replace(/[$]/g,"").replace(/[%]/g, function() { wt *= 100; return "";});
       if(!isNaN(v = Number(ss))) return v / wt;
       ss = ss.replace(/[(](.*)[)]/,function($$, $1) { wt = -wt; return $1;});
       if(!isNaN(v = Number(ss))) return v / wt;
