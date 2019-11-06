@@ -21,8 +21,8 @@
       date: {
         html:             'dd/mm/yyyy'  // Date format in html source. Supported placeholders: dd, mm, yy, yyyy and a arbitrary single separator character
       },
-      displayTableName:   false,
-      escape:             false,
+      displayTableName:   false,        // Deprecated
+      escape:             false,        // Deprecated
       exportHiddenCells:  false,        // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
       fileName:           'tableExport',
       htmlContent:        false,
@@ -78,9 +78,9 @@
         styles:            [],          // E.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
         worksheetName:     '',
         xslx: {                         // Specific Excel 2007 XML format settings:
-          formatId: {                   // xlsx format id used to format excel cells. See readme.md : data-tableexport-xlsxformatid
-            date:          14,          // 'm/d/yy'
-            numbers:       2            // '0.00'
+          formatId: {                   // XLSX format (id) used to format excel cells. See readme.md: data-tableexport-xlsxformatid
+            date:          14,          // formatId or format string (e.g. 'm/d/yy') or function (cell, row, col) {return formatId;}
+            numbers:       2            // formatId or format string (e.g. '0.00') or function (cell, row, col) {return formatId;}
           }
         }
       },
@@ -2179,6 +2179,8 @@
       var rowinfo = [];
       var _R = 0, R = 0, _C, C, RS, CS;
       var elt;
+      var ssfTable = XLSX.SSF.get_table();
+
       for(; _R < rows.length && R < sheetRows; ++_R) {
         var row = rows[_R];
 
@@ -2225,40 +2227,46 @@
           var cellInfo = { type: '' };
           var v = parseString(elt,_R,_C + CSOffset, cellInfo);
           var o = {t:'s', v:v};
-          var xlsxfid = $(elt).attr("data-tableexport-xlsxformatid") || 0;
-          var _t = 's';
+          var _t = '';
+          var ssfId = parseInt($(elt).attr("data-tableexport-xlsxformatid") || 0);
 
-          if (cellInfo.type === 'number' ||
-              (xlsxfid > 0 && xlsxfid < 14) ||
-              (xlsxfid > 36 && xlsxfid < 41) ||
-              xlsxfid === 48)
+          if (ssfId === 0 &&
+              typeof defaults.mso.xslx.formatId.numbers === 'function')
+            ssfId = defaults.mso.xslx.formatId.numbers($(elt),_R,_C + CSOffset);
+
+          if (ssfId === 49 || ssfId === '@')
+            _t = 's';
+          else if (cellInfo.type === 'number' ||
+                   (ssfId > 0 && ssfId < 14) || (ssfId > 36 && ssfId < 41) || ssfId === 48)
             _t = 'n';
           else if (cellInfo.type === 'date' ||
-                   (xlsxfid > 13 && xlsxfid < 37) ||
-                   (xlsxfid > 44 && xlsxfid < 48) ||
-                   xlsxfid === 56)
+                   (ssfId > 13 && ssfId < 37) || (ssfId > 44 && ssfId < 48) || ssfId === 56)
             _t = 'd';
-
-          var ft = XLSX.SSF.get_table();
 
           if(v != null) {
             if(v.length === 0)
               o.t = _t || 'z';
-            else if(v.trim().length === 0 || _t === "s") {
-              }
+            else if(v.trim().length === 0 || _t === 's') {
+            }
             else if(v === 'TRUE')
               o = {t:'b', v:true};
             else if(v === 'FALSE')
               o = {t:'b', v:false};
             else if(_t === "n" || !isNaN(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
-              o = {t:'n', v:xlsxToNumber(v, defaults.numbers.output)};
-              xlsxfid = xlsxfid || defaults.mso.xslx.formatId.numbers;
-              o.z = xlsxfid > 0 ? ft[xlsxfid] : '0.00';
+              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
+                ssfId = defaults.mso.xslx.formatId.numbers;
+              o = {t:'n',
+                   v:xlsxToNumber(v, defaults.numbers.output),
+                   z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : '0.00')
+                  };
             }
             else if(_t === "d" || parseDate(v) !== false) {
-              xlsxfid = xlsxfid || defaults.mso.xslx.formatId.date;
-              o = ({t:'d', v:parseDate(v)});
-              o.z = xlsxfid > 0 ? ft[xlsxfid] : 'm/d/yy';
+              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.date !== 'function')
+                ssfId = defaults.mso.xslx.formatId.date;
+              o = {t:'d',
+                   v:parseDate(v),
+                   z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : 'm/d/yy')
+                  };
             }
           }
           ws[xlsxEncodeCell({c:C, r:R})] = o;
