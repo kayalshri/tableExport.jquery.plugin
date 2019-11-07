@@ -144,8 +144,8 @@ csvEnclosure: '"'
 csvSeparator: ','
 csvUseBOM: true
 date: html: 'dd/mm/yyyy'
-displayTableName: false
-escape: false
+displayTableName: false  (Deprecated)
+escape: false  (Deprecated)
 exportHiddenCells: false
 fileName: 'tableExport'
 htmlContent: false
