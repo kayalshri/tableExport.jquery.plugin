@@ -200,7 +200,6 @@
       defaults.date.regex += '\\2'; // identical separator group
       defaults.date.regex += patt[formatItems[2]];
       defaults.date.regex += '\\s*$';
-      
       // e.g. '^\\s*(3[01]|[12][0-9]|0?[1-9])(.)(1[012]|0?[1-9])\\2((?:1[6-9]|2[0-2])\\d{2})\\s*$'
 
       defaults.date.pattern = new RegExp(defaults.date.regex, 'g');
