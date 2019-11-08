@@ -200,15 +200,14 @@
       defaults.date.regex += '\\2'; // identical separator group
       defaults.date.regex += patt[formatItems[2]];
       defaults.date.regex += '\\s*$';
-
-      // '^\\s*(3[01]|[12][0-9]|0?[1-9])(.)(1[012]|0?[1-9])\\2((?:1[6-9]|2[0-2])\\d{2})\\s*$'
+      // e.g. '^\\s*(3[01]|[12][0-9]|0?[1-9])(.)(1[012]|0?[1-9])\\2((?:1[6-9]|2[0-2])\\d{2})\\s*$'
 
       defaults.date.pattern = new RegExp(defaults.date.regex, 'g');
       var f = formatItems.indexOf("dd")+1;
       defaults.date.match_d = f + (f > 1 ? 1 : 0);
       f = formatItems.indexOf("mm")+1;
       defaults.date.match_m = f + (f > 1 ? 1 : 0);
-      f = (formatItems.indexOf("yyyy") || formatItems.indexOf("yy"))+1;
+      f = (formatItems.indexOf("yyyy") >= 0 ? formatItems.indexOf("yyyy") : formatItems.indexOf("yy"))+1;
       defaults.date.match_y = f + (f > 1 ? 1 : 0);
     }
 
@@ -2233,6 +2232,10 @@
           if (ssfId === 0 &&
               typeof defaults.mso.xslx.formatId.numbers === 'function')
             ssfId = defaults.mso.xslx.formatId.numbers($(elt),_R,_C + CSOffset);
+
+          if (ssfId === 0 &&
+              typeof defaults.mso.xslx.formatId.date === 'function')
+            ssfId = defaults.mso.xslx.formatId.date($(elt),_R,_C + CSOffset);
 
           if (ssfId === 49 || ssfId === '@')
             _t = 's';
