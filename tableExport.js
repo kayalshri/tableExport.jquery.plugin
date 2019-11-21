@@ -2347,8 +2347,8 @@
           downloadFile (fileName, 
                         'data:' + type + 
                         (charset.length ? ';charset=' + charset : '') +
-                        (encoding.length ? ';' + encoding : '') + ',' + (bom ? '\ufeff' : ''), 
-                        data);
+                        (encoding.length ? ';' + encoding : '') + ',', 
+                        (bom ? '\ufeff' : '') + data);
         }
       }
     }
