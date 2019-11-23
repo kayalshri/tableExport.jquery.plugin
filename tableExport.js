@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.10
+ * Version 1.10.11
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -26,6 +26,7 @@
       exportHiddenCells:  false,        // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
       fileName:           'tableExport',
       htmlContent:        false,
+      htmlHyperlink:      'content',    // Export the cell 'content' or the 'href' link of an <a> tag. Will be ignored if onCellHtmlHyperlink is defined
       ignoreColumn:       [],
       ignoreRow:          [],
       jsonScope:          'all',        // One of 'head', 'data', 'all'
@@ -79,8 +80,8 @@
         worksheetName:     '',
         xslx: {                         // Specific Excel 2007 XML format settings:
           formatId: {                   // XLSX format (id) used to format excel cells. See readme.md: data-tableexport-xlsxformatid
-            date:          14,          // formatId or format string (e.g. 'm/d/yy') or function (cell, row, col) {return formatId;}
-            numbers:       2            // formatId or format string (e.g. '0.00') or function (cell, row, col) {return formatId;}
+            date:          14,          // formatId or format string (e.g. 'm/d/yy') or function(cell, row, col) {return formatId}
+            numbers:       2            // formatId or format string (e.g. '\"T\"\ #0.00') or function(cell, row, col) {return formatId}
           }
         }
       },
@@ -94,11 +95,12 @@
           thousandsSeparator: ','       // Thousands separator in resulting output
         }
       },
-      onAfterSaveToFile:   null,
-      onBeforeSaveToFile:  null,        // Return false as result to abort save process
-      onCellData:          null,
-      onCellHtmlData:      null,
-      onIgnoreRow:         null,        // onIgnoreRow($tr, rowIndex): function should return true to not export a row
+      onAfterSaveToFile:   null,        // function(data, fileName)
+      onBeforeSaveToFile:  null,        // saveIt = function(data, fileName, type, charset, encoding): Return false to abort save process
+      onCellData:          null,        // cellText = function($cell, row, col, href, cellText, cellType)
+      onCellHtmlData:      null,        // cellText = function($cell, row, col, htmlContent)
+      onCellHtmlHyperlink: null,        // cellText = function($cell, row, col, href, cellText)
+      onIgnoreRow:         null,        // ignoreRow = function($tr, row): Return true to prevent export of the row
       outputMode:          'file',      // 'file', 'string', 'base64' or 'window' (experimental)
       pdfmake: {
         enabled:           false,       // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
@@ -1955,16 +1957,27 @@
                    $(this).hasClass('filterControl') === false &&
                    $cell.parents('.detail-view').length === 0) )
                   htmlData += $(this).html();
+
+                if ( $(this).is("a") ) {
+                  var href = $cell.find('a').attr('href') || '';
+                  if ( typeof defaults.onCellHtmlHyperlink === 'function' )
+                    result = defaults.onCellHtmlHyperlink($cell, rowIndex, colIndex, href, htmlData);
+                  else if ( defaults.htmlHyperlink === 'href' )
+                    result = href;
+                  else // 'content'
+                    result = htmlData;
+                  htmlData = '';
+                }
               }
             });
           }
         }
 
-        if ( defaults.htmlContent === true ) {
+        if ( htmlData && htmlData !== '' && defaults.htmlContent === true ) {
           result = $.trim(htmlData);
         }
         else if ( htmlData && htmlData !== '' ) {
-          var cellFormat = $(cell).attr("data-tableexport-cellformat");
+          var cellFormat = $cell.attr("data-tableexport-cellformat");
 
           if ( cellFormat !== '' ) {
             var text   = htmlData.replace(/\n/g, '\u2028').replace(/(<\s*br([^>]*)>)/gi, '\u2060');
@@ -2251,11 +2264,13 @@
               o.t = _t || 'z';
             else if(v.trim().length === 0 || _t === 's') {
             }
+            else if (cellInfo.type === 'function')
+              o = {f: v};
             else if(v === 'TRUE')
               o = {t:'b', v:true};
             else if(v === 'FALSE')
               o = {t:'b', v:false};
-            else if(_t === "n" || !isNaN(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
+            else if(_t === 'n' || !isNaN(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
               if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
                 ssfId = defaults.mso.xslx.formatId.numbers;
               o = {t:'n',
@@ -2263,13 +2278,17 @@
                    z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : '0.00')
                   };
             }
-            else if(_t === "d" || parseDate(v) !== false) {
+            else if(_t === 'd' || parseDate(v) !== false) {
               if (ssfId === 0 && typeof defaults.mso.xslx.formatId.date !== 'function')
                 ssfId = defaults.mso.xslx.formatId.date;
               o = {t:'d',
                    v:parseDate(v),
                    z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : 'm/d/yy')
                   };
+            }
+            else if(_t === '' && $(elt).find('a').length) {
+              v = defaults.htmlHyperlink !== 'href' ? v : '';
+              o = {f: '=HYPERLINK("' + $(elt).find('a').attr('href') + (v.length ? '","' + v : '') + '")'};
             }
           }
           ws[xlsxEncodeCell({c:C, r:R})] = o;
@@ -2348,7 +2367,7 @@
                         'data:' + type + 
                         (charset.length ? ';charset=' + charset : '') +
                         (encoding.length ? ';' + encoding : '') + ',', 
-                        (bom ? '\ufeff' : '') + data);
+                        (bom ? ('\ufeff' + data) : data));
         }
       }
     }

@@ -149,6 +149,7 @@ escape: false  (Deprecated)
 exportHiddenCells: false
 fileName: 'tableExport'
 htmlContent: false
+htmlHyperlink: 'content'
 ignoreColumn: []
 ignoreRow: []
 jsonScope: 'all'
@@ -198,6 +199,7 @@ onAfterSaveToFile: null
 onBeforeSaveToFile: null
 onCellData: null
 onCellHtmlData: null
+onCellHtmlHyperlink: null
 onIgnoreRow: null
 outputMode: 'file'
 pdfmake: enabled: false

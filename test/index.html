@@ -177,7 +177,8 @@
   </section>
   <section>
     <ul>
-      <li><a href="#" onClick="doExport('#countries', {type: 'csv',numbers: {html: {decimalMark: '.',
+      <li><a href="#" onClick="doExport('#countries', {type: 'csv',htmlHyperlink: 'href',
+                                                                   numbers: {html: {decimalMark: '.',
                                                                                     thousandsSeparator: ','},
                                                                              output: {decimalMark: ',',
                                                                                       thousandsSeparator: ''}}
@@ -214,15 +215,15 @@
       <li><a href="#" onClick="doExport('#countries', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL</a></li>
       <li><a href="#" onClick="doExport('#issue124', {type: 'sql'});"> <img src='icons/sql.png' alt="SQL" style="width:24px"> SQL (issue124: Multiple lines)</a></li>
       <br>
-      <li><a href="#" onClick="doExport('#countries', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'xlsx', htmlHyperlink: 'content'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
       <li><a href="#" onClick="doExport('#rowspans', {type: 'excel', mso: {fileFormat: 'xlsx'}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX data types</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'xlsx', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('table', {type: 'excel', mso: {fileFormat: 'xlsx'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (multiple tables)</a></li>
       <br>
-      <li><a href="#" onClick="doExport('#countries', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
-      <li><a href="#" onClick="doExport('#countries', {type: 'excel', mso: {pageOrientation: 'landscape'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (landscape)</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'excel', htmlHyperlink: 'href'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
+      <li><a href="#" onClick="doExport('#countries', {type: 'excel', htmlHyperlink: 'content', mso: {pageOrientation: 'landscape'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (landscape)</a></li>
       <li><a href="#" onClick="doExport('#excelstyles', {type: 'excel', mso: {styles: ['background-color', 'color',
                                                                                          'border-bottom-color', 'border-bottom-style', 'border-bottom-width',
                                                                                          'border-top-color', 'border-top-style', 'border-top-width',
@@ -1450,6 +1451,7 @@
         <th data-field="date">Date</th>
         <th data-field="world">% of world</th>
         <th data-field="language">Language</th>
+        <th data-field="wiki">Wiki</th>
       </tr>
       </thead>
       <tbody>
@@ -1461,6 +1463,7 @@
         <td>March 14, 2015</td>
         <td>18.9%</td>
         <td>中文</td>
+        <td><a href="https://en.wikipedia.org/wiki/China" rel="nofollow">China</a></td>
       </tr>
       <tr>
         <td>2</td>
@@ -1470,6 +1473,7 @@
         <td>March 14, 2015</td>
         <td>17.5%</td>
         <td>हिन्दी</td>
+        <td></td>
       </tr>
       <tr>
         <td>3</td>
@@ -1479,6 +1483,7 @@
         <td>March 14, 2015</td>
         <td>4.43%</td>
         <td>English</td>
+        <td><a href="https://en.wikipedia.org/wiki/United_States" rel="nofollow">United States</a></td>
       </tr>
       <tr>
         <td>4</td>
@@ -1488,6 +1493,7 @@
         <td>July 1, 2015</td>
         <td>3.53%</td>
         <td></td>
+        <td><a href="https://en.wikipedia.org/wiki/Indonesia" rel="nofollow">Indonesia</a></td>
       </tr>
       <tr>
         <td>5</td>
@@ -1496,6 +1502,7 @@
         <td>204,014,000</td>
         <td>March 14, 2015</td>
         <td>2.82%</td>
+        <td></td>
         <td></td>
       </tr>
       <tr>
@@ -1506,6 +1513,7 @@
         <td>March 14, 2015</td>
         <td>2.62%</td>
         <td></td>
+        <td></td>
       </tr>
       <tr>
         <td>7</td>
@@ -1514,6 +1522,7 @@
         <td>183,523,000</td>
         <td>July 1, 2015</td>
         <td>2.54%</td>
+        <td></td>
         <td></td>
       </tr>
       <tr>
@@ -1524,6 +1533,7 @@
         <td>March 14, 2015</td>
         <td>2.18%</td>
         <td></td>
+        <td></td>
       </tr>
       <tr>
         <td>9</td>
@@ -1533,6 +1543,7 @@
         <td>January 1, 2015</td>
         <td>2.02%</td>
         <td>Русский</td>
+        <td></td>
       </tr>
       <tr>
         <td>10</td>
@@ -1542,9 +1553,10 @@
         <td>February 1, 2015</td>
         <td>1.76%</td>
         <td>日本語</td>
+        <td></td>
       </tr>
       <tr>
-        <td colspan="7">&nbsp;</td>
+        <td colspan="8">&nbsp;</td>
       </tr>
       <tr>
         <td>11</td>
@@ -1553,6 +1565,7 @@
         <td>121,005,815</td>
         <td>July 1, 2015</td>
         <td>1.67%</td>
+        <td></td>
         <td></td>
       </tr>
       <tr>
@@ -1563,6 +1576,7 @@
         <td>March 14, 2015</td>
         <td>1.4%</td>
         <td></td>
+        <td></td>
       </tr>
       <tr>
         <td>13</td>
@@ -1572,6 +1586,7 @@
         <td>July 1, 2014</td>
         <td>1.25%</td>
         <td>Tiếng Việt</td>
+        <td></td>
       </tr>
       <tr>
         <td>14</td>
@@ -1580,6 +1595,7 @@
         <td>90,076,012</td>
         <td>July 1, 2015</td>
         <td>1.25%</td>
+        <td></td>
         <td></td>
       </tr>
       <tr>
@@ -1590,6 +1606,7 @@
         <td>March 14, 2015</td>
         <td>1.22%</td>
         <td></td>
+        <td></td>
       </tr>
       <tr>
         <td>16</td>
@@ -1599,6 +1616,7 @@
         <td>June 30, 2014</td>
         <td>1.12%</td>
         <td>Deutsch</td>
+        <td></td>
       </tr>
       <tr>
         <td>17</td>
@@ -1607,6 +1625,7 @@
         <td>78,184,800</td>
         <td>March 14, 2015</td>
         <td>1.08%</td>
+        <td></td>
         <td></td>
       </tr>
       <tr>
@@ -1617,6 +1636,7 @@
         <td>December 31, 2014</td>
         <td>1.07%</td>
         <td>Türkçe</td>
+        <td></td>
       </tr>
       <tr>
         <td>19</td>
@@ -1625,6 +1645,7 @@
         <td>71,246,000</td>
         <td>July 1, 2015</td>
         <td>0.99%</td>
+        <td></td>
         <td></td>
       </tr>
       <tr>
@@ -1635,6 +1656,7 @@
         <td>February 1, 2015</td>
         <td>0.91%</td>
         <td>Français</td>
+        <td></td>
       </tr>
       </tbody>
     </table>
