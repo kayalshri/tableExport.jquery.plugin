@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.11
+ * Version 1.10.12
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
  *
@@ -2240,24 +2240,31 @@
           var v = parseString(elt,_R,_C + CSOffset, cellInfo);
           var o = {t:'s', v:v};
           var _t = '';
-          var ssfId = parseInt($(elt).attr("data-tableexport-xlsxformatid") || 0);
+          var cellFormat = $(elt).attr("data-tableexport-cellformat");
 
-          if (ssfId === 0 &&
-              typeof defaults.mso.xslx.formatId.numbers === 'function')
-            ssfId = defaults.mso.xslx.formatId.numbers($(elt),_R,_C + CSOffset);
+          if ( cellFormat !== '' )
+          {
+            var ssfId = parseInt($(elt).attr("data-tableexport-xlsxformatid") || 0);
 
-          if (ssfId === 0 &&
-              typeof defaults.mso.xslx.formatId.date === 'function')
-            ssfId = defaults.mso.xslx.formatId.date($(elt),_R,_C + CSOffset);
+            if (ssfId === 0 &&
+                typeof defaults.mso.xslx.formatId.numbers === 'function')
+              ssfId = defaults.mso.xslx.formatId.numbers($(elt),_R,_C + CSOffset);
 
-          if (ssfId === 49 || ssfId === '@')
+            if (ssfId === 0 &&
+                typeof defaults.mso.xslx.formatId.date === 'function')
+              ssfId = defaults.mso.xslx.formatId.date($(elt),_R,_C + CSOffset);
+
+            if (ssfId === 49 || ssfId === '@')
+              _t = 's';
+            else if (cellInfo.type === 'number' ||
+                     (ssfId > 0 && ssfId < 14) || (ssfId > 36 && ssfId < 41) || ssfId === 48)
+              _t = 'n';
+            else if (cellInfo.type === 'date' ||
+                     (ssfId > 13 && ssfId < 37) || (ssfId > 44 && ssfId < 48) || ssfId === 56)
+              _t = 'd';
+          }
+          else
             _t = 's';
-          else if (cellInfo.type === 'number' ||
-                   (ssfId > 0 && ssfId < 14) || (ssfId > 36 && ssfId < 41) || ssfId === 48)
-            _t = 'n';
-          else if (cellInfo.type === 'date' ||
-                   (ssfId > 13 && ssfId < 37) || (ssfId > 44 && ssfId < 48) || ssfId === 56)
-            _t = 'd';
 
           if(v != null) {
             if(v.length === 0)
