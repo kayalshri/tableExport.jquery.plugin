@@ -3,9 +3,9 @@
  *
  * Version 1.10.12
  *
- * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz
+ * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
- * Original Work Copyright (c) 2014 Giri Raj
+ * Based on https://github.com/kayalshri/tableExport.jquery.plugin
  *
  * Licensed under the MIT License
  **/
@@ -2242,7 +2242,7 @@
           var _t = '';
           var cellFormat = $(elt).attr("data-tableexport-cellformat");
 
-          if ( cellFormat !== '' )
+          if (cellFormat !== '')
           {
             var ssfId = parseInt($(elt).attr("data-tableexport-xlsxformatid") || 0);
 
@@ -2277,25 +2277,28 @@
               o = {t:'b', v:true};
             else if(v === 'FALSE')
               o = {t:'b', v:false};
-            else if(_t === 'n' || !isNaN(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
-              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
-                ssfId = defaults.mso.xslx.formatId.numbers;
-              o = {t:'n',
-                   v:xlsxToNumber(v, defaults.numbers.output),
-                   z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : '0.00')
-                  };
-            }
-            else if(_t === 'd' || parseDate(v) !== false) {
-              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.date !== 'function')
-                ssfId = defaults.mso.xslx.formatId.date;
-              o = {t:'d',
-                   v:parseDate(v),
-                   z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : 'm/d/yy')
-                  };
-            }
             else if(_t === '' && $(elt).find('a').length) {
               v = defaults.htmlHyperlink !== 'href' ? v : '';
               o = {f: '=HYPERLINK("' + $(elt).find('a').attr('href') + (v.length ? '","' + v : '') + '")'};
+            }
+            else if(_t === 'n' || !isNaN(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
+              var vn = xlsxToNumber(v, defaults.numbers.output);
+              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
+                ssfId = defaults.mso.xslx.formatId.numbers;
+              if (!isNaN(vn) || !isNaN(v))
+                o = {t:'n',
+                     v:(!isNaN(vn) ? vn : v),
+                     z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : '0.00')
+                    };
+            }
+            else if(_t === 'd' || parseDate(v) !== false) {
+              var vd = parseDate(v);
+              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.date !== 'function')
+                ssfId = defaults.mso.xslx.formatId.date;
+              o = {t:'d',
+                   v:(vd !== false ? vd : v),
+                   z:(typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : 'm/d/yy')
+                  };
             }
           }
           ws[xlsxEncodeCell({c:C, r:R})] = o;

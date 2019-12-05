@@ -217,6 +217,7 @@
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'xlsx', htmlHyperlink: 'content'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX</a></li>
       <li><a href="#" onClick="doExport('#rowspans', {type: 'excel', mso: {fileFormat: 'xlsx'}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX data types</a></li>
+      <li><a href="#" onClick="doExport('#issue45', {type: 'xlsx',numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: ''}}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (tableexport-cellformat)</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'xlsx', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (Issue 93: colspan & rowspan)</a></li>
@@ -935,6 +936,11 @@
         <td>10.10.10.1</td>
         <td data-tableexport-cellformat="">10.10.10.2</td>
         <td>10.10,10</td>
+      </tr>
+      <tr>
+        <td data-tableexport-cellformat="">10.10.10.1</td>
+        <td data-tableexport-cellformat="">10.10.10.2</td>
+        <td data-tableexport-cellformat="">10.10,10</td>
       </tr>
       </tbody>
     </table>
