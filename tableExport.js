@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.12
+ * Version 1.10.13
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -19,14 +19,14 @@
       csvSeparator:       ',',
       csvUseBOM:          true,
       date: {
-        html:             'dd/mm/yyyy'  // Date format in html source. Supported placeholders: dd, mm, yy, yyyy and a arbitrary single separator character
+        html:             'dd/mm/yyyy'  // Date format used in html source. Supported placeholders: dd, mm, yy, yyyy and a arbitrary single separator character
       },
       displayTableName:   false,        // Deprecated
       escape:             false,        // Deprecated
       exportHiddenCells:  false,        // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
       fileName:           'tableExport',
       htmlContent:        false,
-      htmlHyperlink:      'content',    // Export the cell 'content' or the 'href' link of an <a> tag. Will be ignored if onCellHtmlHyperlink is defined
+      htmlHyperlink:      'content',    // Export the 'content' or the 'href' link of <a> tags unless onCellHtmlHyperlink is not defined
       ignoreColumn:       [],
       ignoreRow:          [],
       jsonScope:          'all',        // One of 'head', 'data', 'all'
@@ -97,9 +97,9 @@
       },
       onAfterSaveToFile:   null,        // function(data, fileName)
       onBeforeSaveToFile:  null,        // saveIt = function(data, fileName, type, charset, encoding): Return false to abort save process
-      onCellData:          null,        // cellText = function($cell, row, col, href, cellText, cellType)
-      onCellHtmlData:      null,        // cellText = function($cell, row, col, htmlContent)
-      onCellHtmlHyperlink: null,        // cellText = function($cell, row, col, href, cellText)
+      onCellData:          null,        // Text to export = function($cell, row, col, href, cellText, cellType)
+      onCellHtmlData:      null,        // Text to export = function($cell, row, col, htmlContent)
+      onCellHtmlHyperlink: null,        // Text to export = function($cell, row, col, href, cellText)
       onIgnoreRow:         null,        // ignoreRow = function($tr, row): Return true to prevent export of the row
       outputMode:          'file',      // 'file', 'string', 'base64' or 'window' (experimental)
       pdfmake: {
@@ -118,8 +118,8 @@
       },
       preventInjection:    true,        // Prepend a single quote to cell strings that start with =,+,- or @ to prevent formula injection
       sql: {
-        tableEnclosure:     '`',        // If table or column names contain any characters except letters, numbers, and
-        columnEnclosure:    '`'         // underscores usually the name must be delimited by enclosing it in back quotes (`)
+        tableEnclosure:     '`',        // If table name or column names contain any characters except letters, numbers, and
+        columnEnclosure:    '`'         // underscores, usually the name must be delimited by enclosing it in back quotes (`)
       },
       tbodySelector:       'tr',
       tfootSelector:       'tr',        // Set empty ('') to prevent export of tfoot rows
