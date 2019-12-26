@@ -1961,11 +1961,11 @@
                 if ( $(this).is("a") ) {
                   var href = $cell.find('a').attr('href') || '';
                   if ( typeof defaults.onCellHtmlHyperlink === 'function' )
-                    result = defaults.onCellHtmlHyperlink($cell, rowIndex, colIndex, href, htmlData);
+                    result += defaults.onCellHtmlHyperlink($cell, rowIndex, colIndex, href, htmlData);
                   else if ( defaults.htmlHyperlink === 'href' )
-                    result = href;
+                    result += href;
                   else // 'content'
-                    result = htmlData;
+                    result += htmlData;
                   htmlData = '';
                 }
               }
