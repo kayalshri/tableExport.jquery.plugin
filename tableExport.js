@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.13
+ * Version 1.10.14
  *
  * Copyright (c) 2015-2019 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -316,7 +316,10 @@
       $($hrows).each(function () {
         ForEachVisibleCell(this, 'th,td', rowIndex, $hrows.length,
                            function (cell, row, col) {
-                             tdData += defaults.sql.columnEnclosure + parseString(cell, row, col) + defaults.sql.columnEnclosure + ",";
+                             var colName = parseString(cell, row, col) || '';
+                             if ( colName.indexOf(defaults.sql.columnEnclosure) > -1 )
+                               colName = replaceAll(colName.toString(), defaults.sql.columnEnclosure, defaults.sql.columnEnclosure + defaults.sql.columnEnclosure);
+                             tdData += defaults.sql.columnEnclosure + colName + defaults.sql.columnEnclosure + ",";
                            });
         rowIndex++;
         tdData = $.trim(tdData).substring(0, tdData.length - 1);
@@ -329,7 +332,10 @@
         trData = "";
         ForEachVisibleCell(this, 'td,th', rowIndex, $hrows.length + $rows.length,
                            function (cell, row, col) {
-                             trData += "'" + parseString(cell, row, col) + "',";
+                             var dataString = parseString(cell, row, col) || '';
+                             if ( dataString.indexOf("'") > -1 )
+                               dataString = replaceAll(dataString.toString(), "'", "''");
+                             trData += "'" + dataString + "',";
                            });
         if ( trData.length > 3 ) {
           tdData += "(" + trData;
