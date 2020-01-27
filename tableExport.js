@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.14
+ * Version 1.10.15
  *
  * Copyright (c) 2015-2020 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -1867,7 +1867,7 @@
       if (y < 0 || y > 8099) return false;
       var m = match[defaults.date.match_m] * 1;
       var d = match[defaults.date.match_d] * 1;
-      if (isNaN(d)) return false;
+      if (!isFinite(d)) return false;
 
       var o = new Date(y, m - 1, d, 0, 0, 0);
       if (o.getFullYear() === y && o.getMonth() === (m - 1) && o.getDate() === d)
@@ -2253,14 +2253,14 @@
             else if (_t === '' && $(elt).find('a').length) {
               v = defaults.htmlHyperlink !== 'href' ? v : '';
               o = {f: '=HYPERLINK("' + $(elt).find('a').attr('href') + (v.length ? '","' + v : '') + '")'};
-            } else if (_t === 'n' || !isNaN(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
+            } else if (_t === 'n' || isFinite(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
               var vn = xlsxToNumber(v, defaults.numbers.output);
               if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
                 ssfId = defaults.mso.xslx.formatId.numbers;
-              if (!isNaN(vn) || !isNaN(v))
+              if (isFinite(vn) || isFinite(v))
                 o = {
                   t: 'n',
-                  v: (!isNaN(vn) ? vn : v),
+                  v: (isFinite(vn) ? vn : v),
                   z: (typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : '0.00')
                 };
             } else if ((vd = parseDateUTC(v)) !== false || _t === 'd') {
@@ -2310,7 +2310,7 @@
 
     function xlsxToNumber (s, numbersFormat) {
       var v = Number(s);
-      if (!isNaN(v)) return v;
+      if (isFinite(v)) return v;
       var wt = 1;
       var ss = s;
       if ('' !== numbersFormat.thousandsSeparator)
@@ -2321,12 +2321,12 @@
         wt *= 100;
         return '';
       });
-      if (!isNaN(v = Number(ss))) return v / wt;
+      if (isFinite(v = Number(ss))) return v / wt;
       ss = ss.replace(/[(](.*)[)]/, function ($$, $1) {
         wt = -wt;
         return $1;
       });
-      if (!isNaN(v = Number(ss))) return v / wt;
+      if (isFinite(v = Number(ss))) return v / wt;
       return v;
     }
 
