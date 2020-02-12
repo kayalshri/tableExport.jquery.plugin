@@ -201,6 +201,8 @@ onCellData: null
 onCellHtmlData: null
 onCellHtmlHyperlink: null
 onIgnoreRow: null
+onTableExportBegin: null
+onTableExportEnd: null
 outputMode: 'file'
 pdfmake: enabled: false
          docDefinition: pageOrientation: 'portrait'

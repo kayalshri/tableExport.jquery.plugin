@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.15
+ * Version 1.10.16
  *
  * Copyright (c) 2015-2020 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -101,6 +101,8 @@
       onCellHtmlData:      null,        // Text to export = function($cell, row, col, htmlContent)
       onCellHtmlHyperlink: null,        // Text to export = function($cell, row, col, href, cellText)
       onIgnoreRow:         null,        // ignoreRow = function($tr, row): Return true to prevent export of the row
+      onTableExportBegin:  null,        // function() - called when export starts
+      onTableExportEnd:    null,        // function() - called when export ends
       outputMode:          'file',      // 'file', 'string', 'base64' or 'window' (experimental)
       pdfmake: {
         enabled:           false,       // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
@@ -214,6 +216,9 @@
     }
 
     colNames = GetColumnNames(el);
+
+    if (typeof defaults.onTableExportBegin === 'function')
+      defaults.onTableExportBegin();
 
     if (defaults.type === 'csv' || defaults.type === 'tsv' || defaults.type === 'txt') {
 
@@ -393,7 +398,7 @@
         rowIndex++;
       });
 
-      var sdata = '';
+      var sdata;
 
       if (defaults.jsonScope === 'head')
         sdata = JSON.stringify(jsonHeaderArray);
@@ -2494,6 +2499,9 @@
       }
       return output;
     }
+
+    if (typeof defaults.onTableExportEnd === 'function')
+      defaults.onTableExportEnd();
 
     return this;
   };
