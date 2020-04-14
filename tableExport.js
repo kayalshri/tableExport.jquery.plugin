@@ -2179,13 +2179,14 @@
         if (typeof defaults.onIgnoreRow === 'function')
           ignoreRow = defaults.onIgnoreRow($(row), _R);
 
-        if (!(ignoreRow === false &&
-          $.inArray(rowIndex, defaults.ignoreRow) === -1 &&
-          $.inArray(rowIndex - rowCount, defaults.ignoreRow) === -1 &&
-          isVisible($(row)))) {
+        if (ignoreRow === true ||
+            (defaults.ignoreRow.length !== 0 &&
+             ($.inArray(_R, defaults.ignoreRow) !== -1 ||
+              $.inArray(_R - rows.length, defaults.ignoreRow) !== -1)) ||
+            isVisible($(row)) === false) {
           continue;
-        }
-
+        } 
+        
         var elts = (row.children);
         var _CLength = 0;
         for (_C = 0; _C < elts.length; ++_C) {
