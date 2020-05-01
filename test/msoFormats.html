@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML table Export</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
+    <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+    <script type="text/javascript" src="../tableExport.js"></script>
+    <script type="text/javaScript">'use strict';
+
+      function doExport(mode) {
+        if (mode == 1)
+          $('#excelstyles').tableExport({
+              type:'excel'
+            }
+          );
+        else if (mode == 2)
+          $('#excelstyles').tableExport({
+              type:'excel',
+              mso: { fileFormat: 'xlsx' }
+          });
+      }
+    </script>
+</head>
+<body>
+<a href="#" onclick="doExport(1)">Export to Excel html</a><br>
+<a href="#" onclick="doExport(2)">Export to XLSX</a>
+<table id="excelstyles">
+    <thead>
+    <tr>
+        <th style="font-family: arial; font-size: 18px; font-weight: bold">description</th>
+        <th style="font-family: arial; font-size: 18px; font-weight: bold">data</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>NO Decimals</td>
+      <td data-tableexport-msonumberformat="0" data-tableexport-xlsxformatid="1">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>3 Decimals</td>
+      <td data-tableexport-msonumberformat="0\.000" data-tableexport-xlsxformatid="2">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>Comma with 3 dec</td>
+      <td data-tableexport-msonumberformat="\#\,\#\#0\.000" data-tableexport-xlsxformatid="4">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>Date7</td>
+      <td data-tableexport-msonumberformat="mm\/dd\/yy" data-tableexport-xlsxformatid="14">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>Date9</td>
+      <td data-tableexport-msonumberformat="mmmm\ d\,\ yyyy" data-tableexport-xlsxformatid="15">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>D -T AMPM</td>
+      <td data-tableexport-msonumberformat="m\/d\/yy\ h\:mm\ AM\/PM" data-tableexport-xlsxformatid="22">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>01/03/1998</td>
+      <td data-tableexport-msonumberformat="Short Date" data-tableexport-xlsxformatid="14">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>01-mar-98</td>
+      <td data-tableexport-msonumberformat="Medium Date" data-tableexport-xlsxformatid="15">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>01-mar-1998</td>
+      <td data-tableexport-msonumberformat="d\-mmm\-yyyy" data-tableexport-xlsxformatid="15">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>5:16</td>
+      <td data-tableexport-msonumberformat="Short Time" data-tableexport-xlsxformatid="20">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>5:16 am</td>
+      <td data-tableexport-msonumberformat="Medium Time" data-tableexport-xlsxformatid="18">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>5:16:21:00</td>
+      <td data-tableexport-msonumberformat="Long Time" data-tableexport-xlsxformatid="21">31/08/2018</td>
+    </tr>
+    <tr>
+      <td>Percent - two decimals</td>
+      <td data-tableexport-msonumberformat="Percent" data-tableexport-xlsxformatid="10">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>Percent - no decimals</td>
+      <td data-tableexport-msonumberformat="0%" data-tableexport-xlsxformatid="9">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>Scientific Notation</td>
+      <td data-tableexport-msonumberformat="0\.E+00" data-tableexport-xlsxformatid="11">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>Text</td>
+      <td data-tableexport-msonumberformat="\@" data-tableexport-xlsxformatid="49">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>Fractions - up to 3 digits (312/943)</td>
+      <td data-tableexport-msonumberformat="\#\ ???\/???" data-tableexport-xlsxformatid="13">135780584</td>
+    </tr>
+    <tr>
+      <td>£12.76</td>
+      <td data-tableexport-msonumberformat="\0022£\0022\#\,\#\#0\.00" data-tableexport-xlsxformatid="37">135780584.123456</td>
+    </tr>
+    <tr>
+      <td>2 decimals, negative red numbers</td>
+      <td data-tableexport-msonumberformat="\#\,\#\#0\.00_ \;\[Red\]\-\#\,\#\#0\.00\ " data-tableexport-xlsxformatid="40">-13578.12</td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>

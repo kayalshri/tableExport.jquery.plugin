@@ -1,0 +1,62 @@
+<html>
+<body>
+<div>hello</div>
+<div className='country-essential-info'>
+  title
+  <div id='essential-info-table'>
+    <table
+        id='tableID'
+        width='100%'
+        marginTop='1rem'
+        borderCollapse='collapse'
+        borderSpacing='0'
+    >
+      <tbody>
+      <tr key='1'>
+        <th rowSpan='2'>
+          header1
+        </th>
+        <th rowSpan='2'>
+          header2
+        </th>
+        <th rowSpan='2'>
+          header3
+        </th>
+        <th rowSpan='2'>
+          header4
+        </th>
+        <th rowSpan='1' colSpan='2'>
+          header5
+        </th>
+      </tr>
+      <tr key='2'>
+        <th>
+          header5LowLeft
+        </th>
+        <th>
+          header5LowRight
+        </th>
+      </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+<script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
+<script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
+<script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+<script type="text/javascript" src="../tableExport.js"></script>
+<script type="text/javascript">
+    $('#tableID').tableExport({
+      type: 'pdf',
+      jspdf: {
+        orientation: 'p',
+        margins: {left: 20, top: 10},
+        autotable: false
+      }
+    });
+</script>
+</html>

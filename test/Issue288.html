@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <script type="text/javaScript">'use strict';
+
+  function doExport () {
+    $('#tab_isee').tableExport({
+      type: 'excel',
+      date: {html: 'dd/mm/yyyy'},
+      mso: {fileFormat: 'xlsx'},
+      xslx: {formatId: {date: 14, numbers: 2}},
+      numbers: {html: {decimalMark: ',', thousandsSeparator: '.'},
+        output: {decimalMark: '.', thousandsSeparator: ''}}
+    });
+  }
+  </script>
+</head>
+<body>
+<a href="#" onclick="doExport()">Export to XLSX</a>
+<table class="table table-hover" id="tab_isee">
+<thead>
+  <tr>
+    <th>N. Rapp.</th>
+    <th>Rapporto</th>
+    <th>Consulente</th>
+    <th>Dt. Inizio Rapp.</th>
+    <th>Dt. Fine Rapp.</th>
+    <th>SocietÃ </th>
+    <th>Prodotto</th>
+    <th>Tipo</th>
+    <th>N. contratto</th>
+    <th>N. Portaf.</th>
+    <th>Dt. stipula Contr.</th>
+    <th>Dt. recesso Contr.</th>
+    <th>Patrimonio</th>
+    <th>Isin</th>
+    <th>Qta</th>
+    <th>Dep.</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td data-tableexport-cellformat="">5496</td>
+    <td>(1.Intest)</td>
+    <td>00001 Consultinvest Investimenti Sim Spa - cl. diretti</td>
+    <td data-tableexport-xlsxformatid="14" nowrap="">01/02/2006</td>
+    <td data-tableexport-xlsxformatid="14" nowrap="">03/03/2015</td>
+    <td>Amundi Sgr Spa</td>
+    <td>Seconda Pensione Sicurezza</td>
+    <td>Fondi Pensione</td>
+    <td data-tableexport-cellformat="">1500262194</td>
+    <td data-tableexport-cellformat="">341827</td>
+    <td data-tableexport-xlsxformatid="14" nowrap="">11/06/2007</td>
+    <td data-tableexport-xlsxformatid="14" nowrap="">01/04/2008</td>
+    <td>0</td>
+    <td></td>
+    <td>0</td>
+    <td></td>
+  </tr>
+</tbody></table>
+</body>
+</html>
