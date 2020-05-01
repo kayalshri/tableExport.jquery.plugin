@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.17
+ * Version 1.10.18
  *
  * Copyright (c) 2015-2020 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -1332,6 +1332,9 @@
                     };
                     teOptions.columns.push(obj);
                   }
+
+                  rowData.push(parseString(cell, row, col));
+
                   if (typeof cell !== 'undefined' && cell !== null) {
                     obj = getCellStyles(cell);
                     obj.isCanvas = cell.hasAttribute('data-tableexport-canvas');
@@ -1342,8 +1345,6 @@
                     obj.colspan = -1;
                     teOptions.teCells [rowCount + ':' + colKey++] = obj;
                   }
-
-                  rowData.push(parseString(cell, row, col));
                 });
               if (rowData.length) {
                 teOptions.rows.push(rowData);
@@ -1914,11 +1915,14 @@
         } else if ($cell[0].hasAttribute('data-tableexport-value')) {
           htmlData = $cell.attr('data-tableexport-value');
           htmlData = htmlData ? htmlData + '' : '';
+          $cell.html(htmlData);
         } else {
           htmlData = $cell.html();
 
-          if (typeof defaults.onCellHtmlData === 'function')
+          if (typeof defaults.onCellHtmlData === 'function') {
             htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
+            $cell.html(htmlData);
+          }
           else if (htmlData !== '') {
             var html = $.parseHTML(htmlData);
             var inputidx = 0;
@@ -1926,12 +1930,15 @@
 
             htmlData = '';
             $.each(html, function () {
-              if ($(this).is('input'))
+              if ($(this).is('input')) {
                 htmlData += $cell.find('input').eq(inputidx++).val();
-              else if ($(this).is('select'))
+              }
+              else if ($(this).is('select')) {
                 htmlData += $cell.find('select option:selected').eq(selectidx++).text();
-              else if ($(this).is('br'))
+              }
+              else if ($(this).is('br')) {
                 htmlData += '<br>';
+              }
               else {
                 if (typeof $(this).html() === 'undefined')
                   htmlData += $(this).text();
@@ -2025,6 +2032,7 @@
 
         if (typeof defaults.onCellData === 'function') {
           result = defaults.onCellData($cell, rowIndex, colIndex, result, cellType);
+          $cell.html(result);
         }
       }
 
