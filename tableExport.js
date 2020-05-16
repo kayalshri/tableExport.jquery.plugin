@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.18
+ * Version 1.10.19
  *
  * Copyright (c) 2015-2020 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -1243,7 +1243,8 @@
                     teOptions.doc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
 
                     if (typeof tecell !== 'undefined' &&
-                      typeof tecell.elements !== 'undefined' && tecell.elements.length) {
+                        (typeof tecell.hasUserDefText === 'undefined' || tecell.hasUserDefText !== true) &&
+                        typeof tecell.elements !== 'undefined' && tecell.elements.length) {
 
                       var hScale = cell.height / tecell.rect.height;
                       if (hScale > teOptions.hScaleFactor)
@@ -1339,6 +1340,10 @@
                     obj = getCellStyles(cell);
                     obj.isCanvas = cell.hasAttribute('data-tableexport-canvas');
                     obj.elements = obj.isCanvas ? $(cell) : $(cell).children();
+
+                    if(typeof $(cell).data('teUserDefText') !== 'undefined')
+                      obj.hasUserDefText = true;
+
                     teOptions.teCells [rowCount + ':' + colKey++] = obj;
                   } else {
                     obj = $.extend(true, {}, teOptions.teCells [rowCount + ':' + (colKey - 1)]);
@@ -1910,18 +1915,20 @@
         var $cell = $(cell);
         var htmlData;
 
+        $cell.removeData('teUserDefText');
+
         if ($cell[0].hasAttribute('data-tableexport-canvas')) {
           htmlData = '';
         } else if ($cell[0].hasAttribute('data-tableexport-value')) {
           htmlData = $cell.attr('data-tableexport-value');
           htmlData = htmlData ? htmlData + '' : '';
-          $cell.html(htmlData);
+          $cell.data('teUserDefText', 1);
         } else {
           htmlData = $cell.html();
 
           if (typeof defaults.onCellHtmlData === 'function') {
             htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
-            $cell.html(htmlData);
+            $cell.data('teUserDefText', 1);
           }
           else if (htmlData !== '') {
             var html = $.parseHTML(htmlData);
@@ -2032,7 +2039,7 @@
 
         if (typeof defaults.onCellData === 'function') {
           result = defaults.onCellData($cell, rowIndex, colIndex, result, cellType);
-          $cell.html(result);
+          $cell.data('teUserDefText', 1);
         }
       }
 
