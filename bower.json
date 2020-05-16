@@ -1,6 +1,6 @@
 {
   "name": "tableexport.jquery.plugin",
-  "version": "1.10.18",
+  "version": "1.10.19",
   "description": "html table export",
   "main": "tableExport.js",
   "authors": [
