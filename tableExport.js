@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.19
+ * Version 1.10.20
  *
  * Copyright (c) 2015-2020 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -1868,6 +1868,9 @@
     }
 
     function parseDateUTC (s) {
+      if (defaults.date.html.length === 0)
+        return false;
+
       defaults.date.pattern.lastIndex = 0;
 
       var match = defaults.date.pattern.exec(s);
@@ -2263,9 +2266,10 @@
             var vd;
 
             if (v.length === 0)
-              o.t = _t || 'z';
+              o.t = 'z';
             else if (v.trim().length === 0 || _t === 's') {
-            } else if (cellInfo.type === 'function')
+            }
+            else if (cellInfo.type === 'function')
               o = {f: v};
             else if (v === 'TRUE')
               o = {t: 'b', v: true};
@@ -2274,7 +2278,8 @@
             else if (_t === '' && $(elt).find('a').length) {
               v = defaults.htmlHyperlink !== 'href' ? v : '';
               o = {f: '=HYPERLINK("' + $(elt).find('a').attr('href') + (v.length ? '","' + v : '') + '")'};
-            } else if (_t === 'n' || isFinite(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
+            }
+            else if (_t === 'n' || isFinite(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
               var vn = xlsxToNumber(v, defaults.numbers.output);
               if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
                 ssfId = defaults.mso.xslx.formatId.numbers;
@@ -2284,7 +2289,8 @@
                   v: (isFinite(vn) ? vn : v),
                   z: (typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : '0.00')
                 };
-            } else if ((vd = parseDateUTC(v)) !== false || _t === 'd') {
+            }
+            else if ((vd = parseDateUTC(v)) !== false || _t === 'd') {
               if (ssfId === 0 && typeof defaults.mso.xslx.formatId.date !== 'function')
                 ssfId = defaults.mso.xslx.formatId.date;
               o = {
