@@ -5,8 +5,17 @@
     <title>Issue 303: export pdf doesn't support chinese</title>
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+    <!-- Export to pdf format using pdfmake -->
     <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
-    <script type="text/javascript" src="../libs/pdfmake/msyh_fonts.js"></script>
+
+    <!-- Chinese font used by pdfmake-->
+    <script type="text/javascript" src="../libs/pdfmake/gbsn00lp_fonts.js"></script>
+
+    <!-- Alternative chinese font used by pdfmake-->
+    <!--
+    <script type="text/javascript" src="../libs/pdfmake/ZCOOLXiaoWei_fonts.js"></script>
+    -->
 
     <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
     <script type="text/javascript" src="../tableExport.js"></script>
@@ -41,14 +50,8 @@
   <body>
   <p>
     <a href="#" onClick="$('#issue303').tableExport({type:'pdf',pdfmake:{enabled:true,
-                                                                         docDefinition:{pageOrientation:'landscape',
-                                                                         defaultStyle:{font:'msyh'}},
-                                                                         fonts:{msyh: {
-                                                                                  normal:      'msyh.ttf',
-                                                                                  bold:        'msyh.ttf',
-                                                                                  italics:     'msyh.ttf',
-                                                                                  bolditalics: 'msyh.ttf'
-                                                                                }}}});">
+                                                                         docDefinition:{pageOrientation:'landscape'}
+                                                                         }});">
     <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (pdfmake)</a>
   </p>
   <table id="issue303" class="">

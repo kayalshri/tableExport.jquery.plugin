@@ -31,11 +31,20 @@ To export the table in XLSX (Excel 2007+ XML Format) format, you need to include
 <script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
 ```
 
-To export the table as a PDF file the following includes are required:
+To export the table as a PDF file the following includes are required if using jsPDF and jsPDF-AutoTable as pdf producer:
 
 ```html
 <script type="text/javascript" src="libs/jsPDF/jspdf.min.js"></script>
 <script type="text/javascript" src="libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+```
+
+As an alternative pdf producer you can use pdfmake. Instead of jsPDF include then   
+
+```html
+<script type="text/javascript" src="libs/pdfmake/pdfmake.min.js"></script>
+<script type="text/javascript" src="libs/pdfmake/vfs_fonts.js"></script>
+<!-- For output of arabic characters include mirza_fonts.js instead of vfs_fonts.js -->
+<!-- For output of chinese characters include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js instead of vfs_fonts.js -->
 ```
 
 To export the table in PNG format, you need to include:
@@ -65,8 +74,9 @@ Library | Version
 [es6-promise](https://github.com/stefanpenner/es6-promise) | \>= 4.2.4
 [FileSaver](https://github.com/hhurz/tableExport.jquery.plugin/blob/master/libs/FileSaver/FileSaver.min.js) | \>= 1.2.0
 [html2canvas](https://github.com/niklasvh/html2canvas) | \>= 0.5.0-beta4
-[jsPDF](https://github.com/MrRio/jsPDF) | 1.3.2 - 1.3.4
+[jsPDF](https://github.com/MrRio/jsPDF) | \>=1.3.4
 [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) | 2.0.14 or 2.0.17
+[pdfmake](https://github.com/bpampuch/pdfmake) | 0.1.65
 [SheetJS](https://github.com/SheetJS/js-xlsx) | \>= 0.12.5
 
 
@@ -134,6 +144,15 @@ $('table').tableExport({fileName: sFileName,
                                             tableExport: {onBeforeAutotable: DoBeforeAutotable,
                                                           onCellData: DoCellData}}}
                        });
+```
+
+```
+// PDF export using pdfmake
+
+$('#tableID').tableExport({type:'pdf',
+                           pdfmake:{enabled:true,
+                                    docDefinition:{pageOrientation:'landscape'}}
+                          });
 ```
 
 Options (Default settings)

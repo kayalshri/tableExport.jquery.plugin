@@ -109,9 +109,9 @@
         docDefinition: {
           pageOrientation: 'portrait',  // 'portrait' or 'landscape'
           defaultStyle: {
-            font:          'Roboto'     // Default is 'Roboto', for an arabic font set this option to 'Mirza' and include mirza_fonts.js
-          }
-        },
+            font:          'Roboto'     // Default font is 'Roboto' (contained in vfs_fonts.js)
+          }                             // For an arabic font include mirza_fonts.js instead of vfs_fonts.js
+        },                              // For a chinese font include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js instead instead of vfs_fonts.js
         fonts: {}
       },
       preserve: {
@@ -981,23 +981,51 @@
           }]
         };
 
-        $.extend(true, docDefinition, defaults.pdfmake.docDefinition);
+        if (typeof pdfMake !== 'undefined') {
 
-        pdfMake.fonts = {
-          Roboto: {
-            normal: 'Roboto-Regular.ttf',
-            bold: 'Roboto-Medium.ttf',
-            italics: 'Roboto-Italic.ttf',
-            bolditalics: 'Roboto-MediumItalic.ttf'
+          pdfMake.fonts = {
+            Roboto: {
+              normal: 'Roboto-Regular.ttf',
+              bold: 'Roboto-Medium.ttf',
+              italics: 'Roboto-Italic.ttf',
+              bolditalics: 'Roboto-MediumItalic.ttf'
+            }
+          };
+          
+          if (pdfMake.vfs.hasOwnProperty ('Mirza-Regular.ttf')) {
+            defaults.pdfmake.docDefinition.defaultStyle.font = 'Mirza';
+            $.extend(true, pdfMake.fonts, {Mirza: {normal:      'Mirza-Regular.ttf',
+                                                   bold:        'Mirza-Bold.ttf',
+                                                   italics:     'Mirza-Medium.ttf',
+                                                   bolditalics: 'Mirza-SemiBold.ttf'
+                                                   }});
           }
-        };
+          else if (pdfMake.vfs.hasOwnProperty ('gbsn00lp.ttf')) {
+            defaults.pdfmake.docDefinition.defaultStyle.font = 'gbsn00lp';
+            $.extend(true, pdfMake.fonts, {gbsn00lp: {normal:      'gbsn00lp.ttf',
+                                                      bold:        'gbsn00lp.ttf',
+                                                      italics:     'gbsn00lp.ttf',
+                                                      bolditalics: 'gbsn00lp.ttf'
+                                                      }});
+          }
+          else if (pdfMake.vfs.hasOwnProperty ('ZCOOLXiaoWei-Regular.ttf')) {
+            defaults.pdfmake.docDefinition.defaultStyle.font = 'ZCOOLXiaoWei';
+            $.extend(true, pdfMake.fonts, {ZCOOLXiaoWei: {normal:      'ZCOOLXiaoWei-Regular.ttf',
+                                                          bold:        'ZCOOLXiaoWei-Regular.ttf',
+                                                          italics:     'ZCOOLXiaoWei-Regular.ttf',
+                                                          bolditalics: 'ZCOOLXiaoWei-Regular.ttf'
+                                                          }});
+          }
 
-        $.extend(true, pdfMake.fonts, defaults.pdfmake.fonts);
+          $.extend(true, docDefinition, defaults.pdfmake.docDefinition);
+          $.extend(true, pdfMake.fonts, defaults.pdfmake.fonts);
 
-        pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
-          saveToFile(buffer, defaults.fileName + '.pdf', 'application/pdf', '', '', false);
-        });
-
+          if (typeof pdfMake.createPdf !== 'undefined') {
+            pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
+              saveToFile(buffer, defaults.fileName + '.pdf', 'application/pdf', '', '', false);
+            });
+          }
+        }
       } else if (defaults.jspdf.autotable === false) {
         // pdf output using jsPDF's core html support
 

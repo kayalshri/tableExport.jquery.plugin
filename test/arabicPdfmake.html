@@ -12,12 +12,16 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
 
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <!-- to export to different format (Excel...and more) -->
-    <script type="text/javascript" src="../libs/pdfmake/pdfmake.js"></script>
+
+    <!-- Export to pdf format using pdfmake -->
+    <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
+
+    <!-- Arabic font used by pdfmake-->
     <script type="text/javascript" src="../libs/pdfmake/mirza_fonts.js"></script>
+
     <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
     <script type="text/javascript" src="../tableExport.js"></script>
-    
+
   </head>
 
   <body>
@@ -170,14 +174,8 @@
             <li><a class="glyphicon glyphicon-log-out" href="index.php" >خروج</a></li>
             <li ><a class="glyphicon glyphicon-export" href="#" onclick="$('#tableau_eleves').tableExport({type:'excel',escape:false});">تصدير</a></li>
             <li><a class="glyphicon glyphicon-print" href="#" onclick="$('#tableau_eleves').tableExport({type:'pdf',pdfmake:{enabled:true,
-                                                                                                                             docDefinition:{pageOrientation:'landscape',
-                                                                                                                             defaultStyle:{font:'Mirza'}},
-                                                                                                                             fonts:{Mirza: {
-                                                                                                                                      normal:      'Mirza-Regular.ttf',
-                                                                                                                                      bold:        'Mirza-Bold.ttf',
-                                                                                                                                      italics:     'Mirza-Medium.ttf',
-                                                                                                                                      bolditalics: 'Mirza-SemiBold.ttf'
-                                                                                                                                    }}}});">طباعة</a></li>
+                                                                                                                             docDefinition:{pageOrientation:'landscape'}
+                                                                                                                             }});">طباعة</a></li>
           </ul>
 
         </div>
