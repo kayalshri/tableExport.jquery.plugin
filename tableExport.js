@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.20
+ * Version 1.10.21
  *
  * Copyright (c) 2015-2020 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -914,72 +914,83 @@
         // pdf output using pdfmake
         // https://github.com/bpampuch/pdfmake
 
-        var widths = [];
-        var body = [];
-        rowIndex = 0;
-        ranges = [];
-
-        /**
-         * @return {number}
-         */
-        var CollectPdfmakeData = function ($rows, colselector, length) {
-          var rlength = 0;
-
-          $($rows).each(function () {
-            var r = [];
-
-            ForEachVisibleCell(this, colselector, rowIndex, length,
-              function (cell, row, col) {
-                if (typeof cell !== 'undefined' && cell !== null) {
-
-                  var colspan = getColspan(cell);
-                  var rowspan = getRowspan(cell);
-
-                  var cellValue = parseString(cell, row, col) || ' ';
-
-                  if (colspan > 1 || rowspan > 1) {
-                    colspan = colspan || 1;
-                    rowspan = rowspan || 1;
-                    r.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
-                  } else
-                    r.push(cellValue);
-                } else
-                  r.push(' ');
-              });
-
-            if (r.length)
-              body.push(r);
-
-            if (rlength < r.length)
-              rlength = r.length;
-
-            rowIndex++;
-          });
-
-          return rlength;
-        };
-
-        $hrows = collectHeadRows($(this));
-
-        var colcount = CollectPdfmakeData($hrows, 'th,td', $hrows.length);
-
-        for (var i = widths.length; i < colcount; i++)
-          widths.push('*');
-
-        // Data
-        $rows = collectRows($(this));
-
-        CollectPdfmakeData($rows, 'th,td', $hrows.length + $rows.length);
-
         var docDefinition = {
-          content: [{
-            table: {
-              headerRows: $hrows.length,
-              widths: widths,
-              body: body
-            }
-          }]
+          content: []
         };
+
+        $.extend(true, docDefinition, defaults.pdfmake.docDefinition);
+
+        ranges = [];
+        
+        $(el).filter(function () {
+          return isVisible($(this));
+        }).each(function () {
+          var $table = $(this);
+
+          var widths = [];
+          var body = [];
+          rowIndex = 0;
+
+          /**
+           * @return {number}
+           */
+          var CollectPdfmakeData = function ($rows, colselector, length) {
+            var rlength = 0;
+
+            $($rows).each(function () {
+              var r = [];
+
+              ForEachVisibleCell(this, colselector, rowIndex, length,
+                function (cell, row, col) {
+                  if (typeof cell !== 'undefined' && cell !== null) {
+
+                    var colspan = getColspan(cell);
+                    var rowspan = getRowspan(cell);
+
+                    var cellValue = parseString(cell, row, col) || ' ';
+
+                    if (colspan > 1 || rowspan > 1) {
+                      colspan = colspan || 1;
+                      rowspan = rowspan || 1;
+                      r.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
+                    } else
+                      r.push(cellValue);
+                  } else
+                    r.push(' ');
+                });
+
+              if (r.length)
+                body.push(r);
+
+              if (rlength < r.length)
+                rlength = r.length;
+
+              rowIndex++;
+            });
+
+            return rlength;
+          };
+
+          $hrows = collectHeadRows($table);
+
+          var colcount = CollectPdfmakeData($hrows, 'th,td', $hrows.length);
+
+          for (var i = widths.length; i < colcount; i++)
+            widths.push('*');
+
+          // Data
+          $rows = collectRows($table);
+
+          CollectPdfmakeData($rows, 'th,td', $hrows.length + $rows.length);
+        
+          docDefinition.content.push({ table: {
+                                          headerRows: $hrows.length,
+                                          widths: widths,
+                                          body: body
+                                       },
+                                       pageBreak: docDefinition.content.length ? "before" : undefined
+                                     });
+        }); // ...for each table
 
         if (typeof pdfMake !== 'undefined') {
 
@@ -1017,7 +1028,6 @@
                                                           }});
           }
 
-          $.extend(true, docDefinition, defaults.pdfmake.docDefinition);
           $.extend(true, pdfMake.fonts, defaults.pdfmake.fonts);
 
           if (typeof pdfMake.createPdf !== 'undefined') {

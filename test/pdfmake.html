@@ -56,8 +56,12 @@
           <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (pdfmake)</a>
         </li>
         <li>
-          <a href="#" onClick="$('#mixspans').tableExport({type:'pdf',pdfmake:{enabled:true}});">
+          <a href="#" onClick="$('#mixspans').tableExport({type:'pdf',pdfmake:{enabled:true,docDefinition:{}}});">
           <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (pdfmake colspan & rowspan)</a>
+        </li>
+        <li>
+          <a href="#" onClick="$('#countries, #mixspans').tableExport({type:'pdf',pdfmake:{enabled:true,docDefinition:{pageOrientation:'landscape'}}});">
+            <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (multiple tables)</a>
         </li>
       </ul>
     </section>
