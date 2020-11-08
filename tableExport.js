@@ -105,13 +105,13 @@
       onTableExportEnd:    null,        // function() - called when export ends
       outputMode:          'file',      // 'file', 'string', 'base64' or 'window' (experimental)
       pdfmake: {
-        enabled:           false,       // true: use pdfmake instead of jspdf and jspdf-autotable (experimental)
+        enabled:           false,       // true: Use pdfmake as pdf producer instead of jspdf and jspdf-autotable
         docDefinition: {
           pageOrientation: 'portrait',  // 'portrait' or 'landscape'
           defaultStyle: {
-            font:          'Roboto'     // Default font is 'Roboto' (contained in vfs_fonts.js)
+            font:          'Roboto'     // Default font is 'Roboto' (needs vfs_fonts.js to be included)
           }                             // For an arabic font include mirza_fonts.js instead of vfs_fonts.js
-        },                              // For a chinese font include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js instead instead of vfs_fonts.js
+        },                              // For a chinese font include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js instead of vfs_fonts.js
         fonts: {}
       },
       preserve: {
@@ -992,7 +992,7 @@
                                      });
         }); // ...for each table
 
-        if (typeof pdfMake !== 'undefined') {
+        if (typeof pdfMake !== 'undefined' && typeof pdfMake.createPdf !== 'undefined') {
 
           pdfMake.fonts = {
             Roboto: {
@@ -1002,7 +1002,7 @@
               bolditalics: 'Roboto-MediumItalic.ttf'
             }
           };
-          
+
           if (pdfMake.vfs.hasOwnProperty ('Mirza-Regular.ttf')) {
             defaults.pdfmake.docDefinition.defaultStyle.font = 'Mirza';
             $.extend(true, pdfMake.fonts, {Mirza: {normal:      'Mirza-Regular.ttf',
@@ -1030,11 +1030,9 @@
 
           $.extend(true, pdfMake.fonts, defaults.pdfmake.fonts);
 
-          if (typeof pdfMake.createPdf !== 'undefined') {
-            pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
-              saveToFile(buffer, defaults.fileName + '.pdf', 'application/pdf', '', '', false);
-            });
-          }
+          pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
+            saveToFile(buffer, defaults.fileName + '.pdf', 'application/pdf', '', '', false);
+          });
         }
       } else if (defaults.jspdf.autotable === false) {
         // pdf output using jsPDF's core html support
@@ -1458,11 +1456,22 @@
 
     function GetColumnNames (table) {
       var result = [];
+      var maxCols = 0;
+      var row = 0;
+      var col = 0;
       $(table).find('thead').first().find('th').each(function (index, el) {
-        if ($(el).attr('data-field') !== undefined)
-          result[index] = $(el).attr('data-field');
-        else
-          result[index] = index.toString();
+        var hasDataField = $(el).attr('data-field') !== undefined;
+        if (typeof el.parentNode.rowIndex !== 'undefined' && row !== el.parentNode.rowIndex) {
+          row = el.parentNode.rowIndex;
+          col = 0;
+          maxCols = 0;
+        }
+        var colSpan = getColspan(el);
+        maxCols += (colSpan ? colSpan : 1);
+        while (col < maxCols) {
+          result[col] = (hasDataField ? $(el).attr('data-field') : col.toString());
+          col++;
+        }
       });
       return result;
     }
@@ -1538,50 +1547,59 @@
           isVisible($(tableRow))) {
 
           var $cells = findTableElements($(tableRow), selector);
-          var cellCount = 0;
+          var cellsCount = $cells.length;
+          var colCount = 0;
+          var colIndex = 0;
 
-          $cells.each(function (colIndex) {
+          $cells.each(function () {
             var $cell = $(this);
-            var c;
             var colspan = getColspan(this);
             var rowspan = getRowspan(this);
+            var c;
 
             // Skip ranges
             $.each(ranges, function () {
               var range = this;
-              if (rowIndex >= range.s.r && rowIndex <= range.e.r && cellCount >= range.s.c && cellCount <= range.e.c) {
-                for (c = 0; c <= range.e.c - range.s.c; ++c)
-                  cellcallback(null, rowIndex, cellCount++);
+              if (rowIndex > range.s.r && rowIndex <= range.e.r && colCount >= range.s.c && colCount <= range.e.c) {
+                for (c = 0; c <= range.e.c - range.s.c; ++c) {
+                  cellsCount++;
+                  colIndex++;
+                  cellcallback(null, rowIndex, colCount++);
+                }
               }
             });
 
-            if (isColumnIgnored($cell, $cells.length, colIndex) === false) {
-              // Handle Row Span
-              if (rowspan || colspan) {
-                rowspan = rowspan || 1;
-                colspan = colspan || 1;
-                ranges.push({
-                  s: {r: rowIndex, c: cellCount},
-                  e: {r: rowIndex + rowspan - 1, c: cellCount + colspan - 1}
-                });
-              }
-
-              // Handle Value
-              cellcallback(this, rowIndex, cellCount++);
+            // Handle span's
+            if (rowspan || colspan) {
+              rowspan = rowspan || 1;
+              colspan = colspan || 1;
+              ranges.push({
+                s: {r: rowIndex, c: colCount},
+                e: {r: rowIndex + rowspan - 1, c: colCount + colspan - 1}
+              });
             }
 
-            // Handle Colspan
-            if (colspan)
-              for (c = 0; c < colspan - 1; ++c)
-                cellcallback(null, rowIndex, cellCount++);
+            if (isColumnIgnored($cell, cellsCount, colIndex++) === false) {
+              // Handle value
+              cellcallback(this, rowIndex, colCount++);
+            }
+
+            // Handle colspan
+            if (colspan > 1) {
+              for (c = 0; c < colspan - 1; ++c) {
+                colIndex++;
+                cellcallback(null, rowIndex, colCount++);
+              }
+            }
           });
 
           // Skip ranges
           $.each(ranges, function () {
             var range = this;
-            if (rowIndex >= range.s.r && rowIndex <= range.e.r && cellCount >= range.s.c && cellCount <= range.e.c) {
-              for (c = 0; c <= range.e.c - range.s.c; ++c)
-                cellcallback(null, rowIndex, cellCount++);
+            if (rowIndex >= range.s.r && rowIndex <= range.e.r && colCount >= range.s.c && colCount <= range.e.c) {
+              for (c = 0; c <= range.e.c - range.s.c; ++c) {
+                cellcallback(null, rowIndex, colCount++);
+              }
             }
           });
         }
