@@ -1,6 +1,6 @@
 {
   "name": "tableexport.jquery.plugin",
-  "version": "1.10.20",
+  "version": "1.10.21",
   "description": "html table export",
   "main": "tableExport.js",
   "authors": [
@@ -27,12 +27,14 @@
     "globals"
   ],
   "ignore": [
+    ".git",
+    ".idea",
     "package.json",
+    "package-lock.json",
     "libs",
-    "tools",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tools"
   ]
 }

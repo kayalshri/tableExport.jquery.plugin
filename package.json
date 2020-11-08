@@ -1,6 +1,6 @@
 {
   "name": "tableexport.jquery.plugin",
-  "version": "1.10.20",
+  "version": "1.10.21",
   "description": "html table export",
   "main": "tableExport.min.js",
   "dependencies": {
@@ -30,6 +30,9 @@
   "license": "MIT",
   "homepage": "https://github.com/hhurz/tableExport.jquery.plugin/",
   "ignore": [
+    ".git",
+    ".idea",
+    "bower.json",
     "libs",
     "test",
     "tools",
