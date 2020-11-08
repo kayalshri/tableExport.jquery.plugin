@@ -29,14 +29,9 @@
   "author": "hhurz",
   "license": "MIT",
   "homepage": "https://github.com/hhurz/tableExport.jquery.plugin/",
-  "ignore": [
-    ".git",
-    ".idea",
-    "bower.json",
-    "libs",
-    "test",
-    "tools",
-    "bower.json",
-    "tableExport.js"
+  "files": [
+    "LICENSE",
+    "README.md",
+    "tableExport.min.js"
   ]
 }
