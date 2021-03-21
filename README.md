@@ -31,20 +31,26 @@ To export the table in XLSX (Excel 2007+ XML Format) format, you need to include
 <script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
 ```
 
-To export the table as a PDF file the following includes are required if using jsPDF and jsPDF-AutoTable as pdf producer:
+To export an html table to a PDF file, you can use jsPDF-AutoTable as a PDF producer:
 
 ```html
 <script type="text/javascript" src="libs/jsPDF/jspdf.min.js"></script>
 <script type="text/javascript" src="libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 ```
 
-As an alternative pdf producer you can use pdfmake. Instead of jsPDF include then   
+Many HTML stylings can be converted to PDF with jsPDF, but support for non-western character sets is almost non-existent. Especially if you want to export Arabic or Chinese characters to your PDF file, you can use pdfmake as an alternative PDF producer. The disadvantage compared to jspdf is that using pdfmake has a reduced styling capability. To use pdfmake enable the pdfmake option and instead of the jsPDF files include    
 
 ```html
 <script type="text/javascript" src="libs/pdfmake/pdfmake.min.js"></script>
 <script type="text/javascript" src="libs/pdfmake/vfs_fonts.js"></script>
-<!-- For output of arabic characters include mirza_fonts.js instead of vfs_fonts.js -->
-<!-- For output of chinese characters include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js instead of vfs_fonts.js -->
+
+<!-- To export arabic characters include mirza_fonts.js _instead_ of vfs_fonts.js
+<script type="text/javascript" src="libs/pdfmake/mirza_fonts.js"></script>
+-->
+
+<!-- For a chinese font include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js _instead_ of vfs_fonts.js 
+<script type="text/javascript" src="libs/pdfmake/gbsn00lp_fonts.js"></script>
+-->
 ```
 
 To export the table in PNG format, you need to include:
@@ -224,8 +230,17 @@ onTableExportBegin: null
 onTableExportEnd: null
 outputMode: 'file'
 pdfmake: enabled: false
-         docDefinition: pageOrientation: 'portrait'
-                        defaultStyle: font: 'Roboto'
+         docDefinition: pageSize: 'A4'
+                        pageOrientation: 'portrait'
+                        styles: header: background: '#34495E'
+                                        color: '#FFFFFF'
+                                        bold: true
+                                        alignment: 'center'
+                                        fillColor: '#34495E
+                        alternateRow: fillColor: '#f5f5f5'
+                        defaultStyle: color: '#000000'
+                                      fontSize: 8
+                                      font: 'Roboto'
          fonts: {}
 preserve: leadingWS: false
           trailingWS: false

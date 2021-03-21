@@ -230,9 +230,10 @@
       <li><a href="#" onClick="doExport('#issue45', {type: 'xlsx', onCellHtmlData: DoOnCellHtmlData, numbers: {html: {decimalMark: ',', thousandsSeparator: '.'}, output: {decimalMark: '.', thousandsSeparator: ''}}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (tableexport-cellformat)</a></li>
       <li><a href="#" onClick="doExport('#issue81', {type: 'xlsx', onCellData: DoOnXlsxCellData});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 193: Number format)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (colspan + rowspan)</a></li>
-      <li><a href="#" onClick="doExport('#issue93', {type: 'xlsx', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (Issue 93: colspan & rowspan)</a></li>
+      <li><a href="#" onClick="doExport('#issue93', {type: 'xlsx', ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('table', {type: 'excel', mso: {fileFormat: 'xlsx'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLSX (multiple tables)</a></li>
       <li><a href="#" onClick="doExport('#issue313', {type: 'excel', ignoreColumn: [3], mso: {fileFormat: 'xlsx'}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 313: Only the header column is hidden)</a></li>
+      <li><a href="#" onClick="doExport('#issue121', {type: 'xlsx'});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLSX (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel', htmlHyperlink: 'href'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS</a></li>
       <li><a href="#" onClick="doExport('#countries', {type: 'excel', htmlHyperlink: 'content', mso: {pageOrientation: 'landscape'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (landscape)</a></li>
@@ -250,13 +251,15 @@
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7], ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue124', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 124: Multiple lines</a></li>
       <li><a href="#" onClick="doExport('#issue220', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 220: Colspan of hidden columns</a></li>
-      <li><a href="#" onClick="doExport('#issue313', {type: 'excel', ignoreColumn: ['C4']});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLS (Issue 313: Only the header column is hidden)</a></li>
-      <li><a href="#" onClick="doExport('#issue313', {type: 'excel', ignoreColumn: [3]});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XLS (Issue 313: Only the header column is hidden)</a></li>
+      <li><a href="#" onClick="doExport('#issue313', {type: 'excel', ignoreColumn: ['C4']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 313: Only the header column is hidden)</a></li>
+      <li><a href="#" onClick="doExport('#issue313', {type: 'excel', ignoreColumn: [3]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 313: Only the header column is hidden)</a></li>
+      <li><a href="#" onClick="doExport('#issue121', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>
       <br>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel', mso: {fileFormat: 'xmlss'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', mso: {fileFormat: 'xmlss'}, ignoreColumn: [4,7],ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('table', {type: 'excel', mso: {fileFormat: 'xmlss'}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XMLSS (multiple tables)</a></li>
       <li><a href="#" onClick="doExport('#issue313', {type: 'excel', ignoreColumn: [3], mso: {fileFormat: 'xmlss'}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XMLSS (Issue 313: Only the header column is hidden)</a></li>
+      <li><a href="#" onClick="doExport('#issue121', {type: 'excel', mso: {fileFormat: 'xmlss'}});"> <img src='icons/xls.png' alt="XLSX" style="width:24px"> XMLSS (Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</a></li>
       <br>
       <li><a href="#" onClick="doExport('#countries', {type: 'doc', mso: {pageOrientation: 'landscape'}});"> <img src='icons/word.png' alt="Word" style="width:24px"> Word</a></li>
       <br>
@@ -437,7 +440,7 @@
       <li><a href="#" onClick="doExport('#issue60',
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
-        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable issue60))</a></li>
+        <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (jsPDF-AutoTable issue60)</a></li>
       <li><a href="#" onClick="doExport('#issue164',
                       {type: 'pdf',
                         jspdf: {autotable: {tableWidth: 'wrap'}}});">
@@ -1492,7 +1495,7 @@
     </table>
 
     <table id="issue313" class="">
-      <caption>Issue 313: If Column export is hidden, only the header column is hidden after export</caption>
+      <caption>Issue 313: If column export is hidden, only the header column is hidden after export</caption>
       <thead>
       <tr>
         <th colspan="3">H1C1</th>
@@ -1522,6 +1525,30 @@
         <td>2</td>
         <td>3</td>
         <td>4</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <caption>Issue 121: Newlines (&lt;br /&gt;) in cells disappear after export to excel</caption>
+    <table id="issue121" class="">
+      <thead>
+      <tr>
+        <th>column 1</th>
+        <th>column 2</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>A</td>
+        <td>Line 1<br>Line 2<br>Line 3</td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td> </td>
+      </tr>
+      <tr>
+        <td>C</td>
+        <td> </td>
       </tr>
       </tbody>
     </table>

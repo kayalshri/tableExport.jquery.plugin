@@ -1,9 +1,9 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.21
+ * Version 1.10.22
  *
- * Copyright (c) 2015-2020 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
+ * Copyright (c) 2015-2021 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
  * Based on https://github.com/kayalshri/tableExport.jquery.plugin
  *
@@ -107,11 +107,26 @@
       pdfmake: {
         enabled:           false,       // true: Use pdfmake as pdf producer instead of jspdf and jspdf-autotable
         docDefinition: {
+          pageSize:        'A4',        // 4A0,2A0,A{0-10},B{0-10},C{0-10},RA{0-4},SRA{0-4},EXECUTIVE,FOLIO,LEGAL,LETTER,TABLOID
           pageOrientation: 'portrait',  // 'portrait' or 'landscape'
+          styles: {
+            header: {
+              background:  '#34495E',
+              color:       '#FFFFFF',
+              bold:        true,
+              alignment:   'center',
+              fillColor:   '#34495E'
+            },
+            alternateRow: {
+              fillColor:   '#f5f5f5'
+            }
+          },
           defaultStyle: {
-            font:          'Roboto'     // Default font is 'Roboto' (needs vfs_fonts.js to be included)
-          }                             // For an arabic font include mirza_fonts.js instead of vfs_fonts.js
-        },                              // For a chinese font include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js instead of vfs_fonts.js
+            color:         '#000000',
+            fontSize:      8,
+            font:          'Roboto'     // Default font is 'Roboto' which needs vfs_fonts.js to be included
+          }                             // To export arabic characters include mirza_fonts.js _instead_ of vfs_fonts.js
+        },                              // For a chinese font include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js _instead_ of vfs_fonts.js
         fonts: {}
       },
       preserve: {
@@ -942,22 +957,30 @@
 
               ForEachVisibleCell(this, colselector, rowIndex, length,
                 function (cell, row, col) {
+                  var cellContent;
+                  
                   if (typeof cell !== 'undefined' && cell !== null) {
-
                     var colspan = getColspan(cell);
                     var rowspan = getRowspan(cell);
-
-                    var cellValue = parseString(cell, row, col) || ' ';
+                    
+                    cellContent = {text: parseString(cell, row, col) || ' '};
 
                     if (colspan > 1 || rowspan > 1) {
-                      colspan = colspan || 1;
-                      rowspan = rowspan || 1;
-                      r.push({colSpan: colspan, rowSpan: rowspan, text: cellValue});
-                    } else
-                      r.push(cellValue);
-                  } else
-                    r.push(' ');
+                      cellContent['colSpan'] = colspan || 1;
+                      cellContent['rowSpan'] = rowspan || 1;
+                    } 
+                  } 
+                  else
+                    cellContent = {text: ' '};
+
+                  if (colselector.indexOf('th') >= 0)
+                    cellContent['style'] = 'header';
+                  
+                  r.push(cellContent);
                 });
+
+              for (var i = r.length; i < length; i++)
+                r.push('');
 
               if (r.length)
                 body.push(r);
@@ -981,14 +1004,31 @@
           // Data
           $rows = collectRows($table);
 
-          CollectPdfmakeData($rows, 'th,td', $hrows.length + $rows.length);
+          colcount = CollectPdfmakeData($rows, 'td', $hrows.length + $rows.length);
+
+          for (var i = widths.length; i < colcount; i++)
+            widths.push('*');
         
           docDefinition.content.push({ table: {
-                                          headerRows: $hrows.length,
+                                          headerRows: $hrows.length ? $hrows.length : null,
                                           widths: widths,
                                           body: body
-                                       },
-                                       pageBreak: docDefinition.content.length ? "before" : undefined
+                                        },
+                                        layout: {
+                                          layout: 'noBorders',
+                                          hLineStyle: function (i, node) { return 0; },
+                                          vLineWidth: function (i, node) { return 0; },
+                                          hLineColor: function (i, node) { return i < node.table.headerRows ? 
+                                                        defaults.pdfmake.docDefinition.styles.header.background : 
+                                                        defaults.pdfmake.docDefinition.styles.alternateRow.fillColor; },
+                                          vLineColor: function (i, node) { return i < node.table.headerRows ? 
+                                                        defaults.pdfmake.docDefinition.styles.header.background : 
+                                                        defaults.pdfmake.docDefinition.styles.alternateRow.fillColor; },
+                                          fillColor: function (rowIndex, node, columnIndex) { return (rowIndex % 2 === 0) ? 
+                                                        defaults.pdfmake.docDefinition.styles.alternateRow.fillColor : 
+                                                        null; }
+                                        },
+                                        pageBreak: docDefinition.content.length ? "before" : undefined
                                      });
         }); // ...for each table
 
@@ -1004,7 +1044,7 @@
           };
 
           if (pdfMake.vfs.hasOwnProperty ('Mirza-Regular.ttf')) {
-            defaults.pdfmake.docDefinition.defaultStyle.font = 'Mirza';
+            docDefinition.defaultStyle.font = 'Mirza';
             $.extend(true, pdfMake.fonts, {Mirza: {normal:      'Mirza-Regular.ttf',
                                                    bold:        'Mirza-Bold.ttf',
                                                    italics:     'Mirza-Medium.ttf',
@@ -1012,7 +1052,7 @@
                                                    }});
           }
           else if (pdfMake.vfs.hasOwnProperty ('gbsn00lp.ttf')) {
-            defaults.pdfmake.docDefinition.defaultStyle.font = 'gbsn00lp';
+            docDefinition.defaultStyle.font = 'gbsn00lp';
             $.extend(true, pdfMake.fonts, {gbsn00lp: {normal:      'gbsn00lp.ttf',
                                                       bold:        'gbsn00lp.ttf',
                                                       italics:     'gbsn00lp.ttf',
@@ -1020,7 +1060,7 @@
                                                       }});
           }
           else if (pdfMake.vfs.hasOwnProperty ('ZCOOLXiaoWei-Regular.ttf')) {
-            defaults.pdfmake.docDefinition.defaultStyle.font = 'ZCOOLXiaoWei';
+            docDefinition.defaultStyle.font = 'ZCOOLXiaoWei';
             $.extend(true, pdfMake.fonts, {ZCOOLXiaoWei: {normal:      'ZCOOLXiaoWei-Regular.ttf',
                                                           bold:        'ZCOOLXiaoWei-Regular.ttf',
                                                           italics:     'ZCOOLXiaoWei-Regular.ttf',
@@ -2294,7 +2334,7 @@
           var v = parseString(elt, _R, _C + CSOffset, cellInfo);
           var o = {t: 's', v: v};
           var _t = '';
-          var cellFormat = $(elt).attr('data-tableexport-cellformat');
+          var cellFormat = $(elt).attr('data-tableexport-cellformat') || '';
 
           if (cellFormat !== '') {
             var ssfId = parseInt($(elt).attr('data-tableexport-xlsxformatid') || 0);
@@ -2323,7 +2363,13 @@
 
             if (v.length === 0)
               o.t = 'z';
-            else if (v.trim().length === 0 || _t === 's') {
+            else if (v.trim().length === 0) {
+            }
+            else if (_t === 's') {
+              if ($(elt).find('a').length) {
+                v = defaults.htmlHyperlink !== 'href' ? v : '';
+                o = {f: '=HYPERLINK("' + $(elt).find('a').attr('href') + (v.length ? '","' + v : '') + '")'};
+              }
             }
             else if (cellInfo.type === 'function')
               o = {f: v};
@@ -2331,10 +2377,6 @@
               o = {t: 'b', v: true};
             else if (v === 'FALSE')
               o = {t: 'b', v: false};
-            else if (_t === '' && $(elt).find('a').length) {
-              v = defaults.htmlHyperlink !== 'href' ? v : '';
-              o = {f: '=HYPERLINK("' + $(elt).find('a').attr('href') + (v.length ? '","' + v : '') + '")'};
-            }
             else if (_t === 'n' || isFinite(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
               var vn = xlsxToNumber(v, defaults.numbers.output);
               if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
