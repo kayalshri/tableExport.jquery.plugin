@@ -151,6 +151,9 @@
       if (result !== "" && row > 0 && col === 0) {
         result = "\x1F" + data;
       }
+      else if (result !== "" && row > 0 && col === 2) {
+        //result = "\x1F" + data;
+      }
       return result;
     }
 
@@ -173,6 +176,8 @@
       var result = "";
       if (row > 0 && col === 0)
         result = "\\@";
+      else if (row > 0 && col === 2)
+        result = "0"; // #issue 327: Preserve long numbers
       return result;
     }
 
@@ -246,7 +251,7 @@
                                                         }});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (excelstyles)</a></li>
       <li><a href="#" onClick="doExport('#issue53a', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 I: complex table thead rowspan colspan)</a></li>
       <li><a href="#" onClick="doExport('#issue53b', {type: 'excel', ignoreColumn:[3,4]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue53 II: complex table thead rowspan colspan)</a></li>
-      <li><a href="#" onClick="doExport('#issue81', {type: 'excel', numbers: {output: false}, onMsoNumberFormat: DoOnMsoNumberFormat, worksheetName: 'MSO-FORMATS', excelstyles: ['background-color', 'color']});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
+      <li><a href="#" onClick="doExport('#issue81', {type: 'excel', numbers: {output: false}, mso: {onMsoNumberFormat: DoOnMsoNumberFormat, worksheetName: 'MSO-FORMATS', styles: ['background-color', 'color']}});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (issue 81: Export String to excel with rows formatted as text)</a></li>
       <li><a href="#" onClick="doExport('#mixspans', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (colspan + rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue93', {type: 'excel', ignoreColumn: [4,7], ignoreRow: [4,8]});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 93: colspan & rowspan)</a></li>
       <li><a href="#" onClick="doExport('#issue124', {type: 'excel'});"> <img src='icons/xls.png' alt="XLS" style="width:24px"> XLS (Issue 124: Multiple lines</a></li>
@@ -1130,20 +1135,24 @@
       <tr>
         <th>Number as text</th>
         <th>Number</th>
+        <th>Long Number</th>
       </tr>
       </thead>
       <tbody>
       <tr>
         <td data-tableexport-msonumberformat="\@">1,357,805.84</td>
         <td>00212704</td>
+        <td data-tableexport-msonumberformat="0">370911202104140038</td>
       </tr>
       <tr>
         <td>00212336</td>
         <td data-tableexport-msonumberformat="\#\,\#\#0\.00_ \;\[Red\]\-\#\,\#\#0\.00\ ">-212336</td>
+        <td>370911202104140025</td>
       </tr>
       <tr>
         <td>00212347</td>
         <td>1357805,84</td>
+        <td>370911202104130330</td>
       </tr>
       </tbody>
     </table>
