@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.24
+ * Version 1.10.25
  *
  * Copyright (c) 2015-2021 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
  *
@@ -936,7 +936,7 @@
         $.extend(true, docDefinition, defaults.pdfmake.docDefinition);
 
         ranges = [];
-        
+
         $(el).filter(function () {
           return isVisible($(this));
         }).each(function () {
@@ -958,29 +958,26 @@
               ForEachVisibleCell(this, colselector, rowIndex, length,
                 function (cell, row, col) {
                   var cellContent;
-                  
+
                   if (typeof cell !== 'undefined' && cell !== null) {
                     var colspan = getColspan(cell);
                     var rowspan = getRowspan(cell);
-                    
+
                     cellContent = {text: parseString(cell, row, col) || ' '};
 
                     if (colspan > 1 || rowspan > 1) {
                       cellContent['colSpan'] = colspan || 1;
                       cellContent['rowSpan'] = rowspan || 1;
-                    } 
-                  } 
+                    }
+                  }
                   else
                     cellContent = {text: ' '};
 
                   if (colselector.indexOf('th') >= 0)
                     cellContent['style'] = 'header';
-                  
+
                   r.push(cellContent);
                 });
-
-              for (var i = r.length; i < length; i++)
-                r.push('');
 
               if (r.length)
                 body.push(r);
@@ -1008,7 +1005,7 @@
 
           for (var i = widths.length; i < colcount; i++)
             widths.push('*');
-        
+
           docDefinition.content.push({ table: {
                                           headerRows: $hrows.length ? $hrows.length : null,
                                           widths: widths,
@@ -1018,14 +1015,14 @@
                                           layout: 'noBorders',
                                           hLineStyle: function (i, node) { return 0; },
                                           vLineWidth: function (i, node) { return 0; },
-                                          hLineColor: function (i, node) { return i < node.table.headerRows ? 
-                                                        defaults.pdfmake.docDefinition.styles.header.background : 
+                                          hLineColor: function (i, node) { return i < node.table.headerRows ?
+                                                        defaults.pdfmake.docDefinition.styles.header.background :
                                                         defaults.pdfmake.docDefinition.styles.alternateRow.fillColor; },
-                                          vLineColor: function (i, node) { return i < node.table.headerRows ? 
-                                                        defaults.pdfmake.docDefinition.styles.header.background : 
+                                          vLineColor: function (i, node) { return i < node.table.headerRows ?
+                                                        defaults.pdfmake.docDefinition.styles.header.background :
                                                         defaults.pdfmake.docDefinition.styles.alternateRow.fillColor; },
-                                          fillColor: function (rowIndex, node, columnIndex) { return (rowIndex % 2 === 0) ? 
-                                                        defaults.pdfmake.docDefinition.styles.alternateRow.fillColor : 
+                                          fillColor: function (rowIndex, node, columnIndex) { return (rowIndex % 2 === 0) ?
+                                                        defaults.pdfmake.docDefinition.styles.alternateRow.fillColor :
                                                         null; }
                                         },
                                         pageBreak: docDefinition.content.length ? "before" : undefined
@@ -1042,6 +1039,8 @@
               bolditalics: 'Roboto-MediumItalic.ttf'
             }
           };
+
+          // pdfmake >= 0.2.0 - replace pdfMake.vfs with pdfMake.virtualfs
 
           if (pdfMake.vfs.hasOwnProperty ('Mirza-Regular.ttf')) {
             docDefinition.defaultStyle.font = 'Mirza';
@@ -1070,9 +1069,13 @@
 
           $.extend(true, pdfMake.fonts, defaults.pdfmake.fonts);
 
+          // pdfmake <= 0.1.71
           pdfMake.createPdf(docDefinition).getBuffer(function (buffer) {
             saveToFile(buffer, defaults.fileName + '.pdf', 'application/pdf', '', '', false);
           });
+
+          // pdfmake >= 0.2.0 - replace above code with:
+          //pdfMake.createPdf(docDefinition).download(defaults.fileName);
         }
       } else if (defaults.jspdf.autotable === false) {
         // pdf output using jsPDF's core html support
@@ -2299,8 +2302,8 @@
               $.inArray(_R - rows.length, defaults.ignoreRow) !== -1)) ||
             isVisible($(row)) === false) {
           continue;
-        } 
-        
+        }
+
         var elts = (row.children);
         var _CLength = 0;
         for (_C = 0; _C < elts.length; ++_C) {
