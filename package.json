@@ -1,6 +1,6 @@
 {
   "name": "tableexport.jquery.plugin",
-  "version": "1.10.25",
+  "version": "1.10.26",
   "description": "html table export",
   "main": "tableExport.min.js",
   "dependencies": {
@@ -33,6 +33,7 @@
   "files": [
     "LICENSE",
     "README.md",
-    "tableExport.min.js"
+    "tableExport.min.js",
+    "libs"
   ]
 }
