@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <style type="text/css">
+    .pvtTable, th, td {
+      background-color: white;
+      border: 1px solid blue;
+    }
+
+    .pvtColLabel,
+    .pvtRowLabel {
+      background-color: gray;
+      color: white;
+    }
+
+    .pvtTotalLabel,
+    .pvtGrandTotal,
+    .pvtTotal {
+      background-color: green;
+      color: white;
+      border: 1px solid green;
+    }
+
+    .pvtTable > tbody > tr:nth-child(2n+1) > td {
+      background-color: #ccdf88;
+    }
+  </style>
+
+</head>
+<body>
+  <p>
+  <a href="#" onclick="$('.pvtTable').tableExport({type:'excel',
+                                                   mso: {
+                                                     styles:['background-color',
+                                                             'border-top-color', 'border-left-color', 'border-right-color', 'border-bottom-color',
+                                                             'border-top-width', 'border-left-width', 'border-right-width', 'border-bottom-width',
+                                                             'border-top-style', 'border-left-style', 'border-right-style', 'border-bottom-style',
+                                                             'color']
+                                                     }});">Export to Excel</a>
+  </p>
+  <section>
+    <table class="pvtTable">
+      <thead>
+        <tr>
+          <th></th>
+          <th class="pvtColLabel">black</th>
+          <th class="pvtColLabel">hisp</th>
+          <th class="pvtColLabel">other</th>
+          <th class="pvtTotalLabel">Totals</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pvtRowLabel">no</td>
+          <td class="pvtVal row0 col0">317</td>
+          <td class="pvtVal row0 col1">494</td>
+          <td class="pvtVal row0 col2">2,485</td>
+          <td class="pvtTotal rowTotal">3,296</td>
+        </tr>
+        <tr>
+          <td class="pvtRowLabel">yes</td>
+          <td class="pvtVal row1 col0">187</td>
+          <td class="pvtVal row1 col1">186</td>
+          <td class="pvtVal row1 col2">691</td>
+          <td class="pvtTotal rowTotal">1,064</td>
+        </tr>
+        <tr>
+          <td class="pvtTotalLabel">Totals</td>
+          <td class="pvtTotal colTotal">504</td>
+          <td class="pvtTotal colTotal">680</td>
+          <td class="pvtTotal colTotal">3,176</td>
+          <td class="pvtGrandTotal">4,360</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</body>
+</html>

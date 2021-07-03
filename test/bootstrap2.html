@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/export/bootstrap-table-export.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/toolbar/bootstrap-table-toolbar.js"></script>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2014-11-29/FileSaver.min.js"></script>
+
+  <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
+  <script type="text/javascript" src="../libs/pdfmake/vfs_fonts.js"></script>
+
+  <script type="text/javascript" src="../tableExport.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
+
+  <script type="text/javaScript">
+
+  $(document).ready(function()
+  {
+    $('#table_sortSearchResult').bootstrapTable('refreshOptions', {
+        exportOptions: {fileName: "tableExport",
+                        pdfmake: {enabled:true}
+                       }
+
+    });
+  });
+
+  </script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="toolbar">
+      </div>
+      <table class="std_table"
+            id="table_sortSearchResult"
+            data-toggle="table"
+            data-maintain-selected="true"
+              data-sort-name="Zeitpunkt"
+            data-sort-order="asc"
+              data-search="true"
+              data-show-pagination-switch="true"
+              data-pagination="true"
+              data-page-list="[10, 25, 50, 100, ALL]"
+                data-page-size="25"
+              data-show-footer="false"
+              data-side-pagination="client"
+              data-show-export="true"
+              data-export-types="['excel', 'pdf']"
+              data-export-options='{
+              }'
+            data-click-to-select="true"
+          >
+      <thead>
+        <tr>
+          <th data-field="Zeitpunkt" data-sortable="true" data-sorter="dateSorter">
+            Zeitpunkt
+          </th>
+          <th data-field="Geändert von" data-sortable="true">
+            Geändert von
+          </th>
+          <th data-field="Art" data-sortable="true">
+            Art
+          </th>
+          <th data-field="Objekt" data-sortable="false">
+            Objekt
+          </th>
+          <th data-field="Änderungen" data-sortable="false">
+            Änderungen
+          </th>
+          <th data-field="Alte Werte" data-sortable="false">
+            Alte Werte
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>21.03.2017 11:20:12</td>
+          <td>admin \n new line</td>
+          <td>Modifikation
+          new line</td>
+          <td>maxi.aigner, Lehrer, <b>ALP</b>, GS, test, </td>
+          <td><b>givenName</b>:= Maximilian P.<br>mebisASVUID:-<br>mebisDeactivated:-<br><b>mebisIsNewsletter</b>:= FALSE</td>
+          <td><b>givenName</b>: Maximilian<br><b>mebisASVUID</b>: 3cbe1b2ce1b517e1126689bc92e73472<br><b>mebisDeactivated</b>: FALSE</td>
+          </tr>
+        <tr>
+          <td>22.03.2017 17:55:26</td>
+          <td>admin</td>
+          <td>Modifikation</td>
+          <td>maxi.aigner, Lehrer, ALP, GS, test, </td>
+          <td><b>givenName</b>:= Maximilian PQ.</td>
+          <td><b>givenName</b>: Maximilian P.</td>
+          </tr>
+      </tbody>
+      </table>
+    </div>
+  </body>
+</html>

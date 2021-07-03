@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <!-- <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script> -->
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var Table = document.getElementById ( 'container' );
+      var T = [];
+      var r = 0;
+      var c = 1;
+      var rmax = 5555;
+      var cmax = 26;
+
+      T.push('<table id="grid">');
+      T.push('<thead>');
+      T.push('<tr>');
+
+      T.push('<th>col #</th>');
+      while (++c <= cmax+1)
+        T.push('<td>col ' + c + '</td>');
+
+      T.push('</tr>');
+      T.push('</thead>');
+      T.push('<tbody>');
+
+      while (r++ < rmax) {
+        c = 0;
+
+        T.push('<tr>');
+        T.push('<td>' + r + '</td>');
+        while (c++ < cmax)
+          T.push('<td>' + getRandomInt(100,10000) + '</td>');
+        T.push('</tr>');
+      }
+
+      T.push('</tbody>');
+      T.push('</table>');
+
+      Table.innerHTML = T.join ("");
+
+      $('#export').click(function() {
+        $('#grid').tableExport({
+          type:'excel',
+          mso: {
+            styles: ['border-bottom', 'border-top', 'border-left', 'border-right']
+          }
+        });
+        // $('#grid').tableExport({type:'xlsx'});
+      });
+    });
+
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+</script>
+
+</head>
+  <body>
+    <button id="export">Export to Excel</button>
+    <div id="container">
+    </div>
+  </body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>نقاط الامتحانات</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <!-- Excel export -->
+    <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+    <script type="text/javascript" src="../tableExport.min.js"></script>
+    
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" class="glyphicon glyphicon-home"></a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="search form-control" placeholder="بحث" id="search_eleve">
+          </form>
+
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">لوحة القيادة</h1>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <h4>الفوج</h4>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <h4>المستوى</h4>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <h4>المؤسسة</h4>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <h4>الطور</h4>
+            </div>
+          </div>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <select required="true" name="groupe">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder" id="filtre_niveau">
+              <select required="true" name="classe">
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <select required="true" name="etablissement">
+                <option value="مؤسسة">مؤسسة</option>
+              </select>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <select required="true" name="niveau">
+                <option value="ابتدائي">ابتدائي</option>
+                <option value="متوسط">متوسط</option>
+              </select>
+            </div>
+          </div>
+
+          <h2 class="sub-header">قائمة التلاميذ</h2>
+          <div class="table-responsive">
+            <table class="table table-striped" id="tableau_eleves">
+              <thead>
+                <tr>
+
+                  <th>العمليات</th>
+                  <th>ث3</th>
+                  <th>ث2</th>
+                  <th>ث1</th>
+                  <th> الفوج</th>
+                  <th> المستوى</th>
+                  <th> المؤسسة</th>
+                  <th> الطور</th>
+                  <th>مكان الميلاد</th>
+                  <th>تاريخ الميلاد</th>
+
+                  <th>الاسم</th>
+                  <th>اللقب</th>
+                  <th>رقم التسجيل</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <button type="submit" name="btn-login" class="btn btn-warning">
+                          تعديل
+                    </button>
+                  </td>
+                  <td><input type="number" min="0" max="20" step="0.01" value="15.64" name="moyenne" required="true" disabled></td>
+                  <td><input type="number" min="0" max="20" step="0.01" name="moyenne" required="true"></td>
+                  <td><input type="number" min="0" max="20" step="0.01" name="moyenne" required="true"></td>
+                  <td>2</td>
+                  <td>4</td>
+                  <td>قداش الطاهر</td>
+                  <td>ابتدائي</td>
+                  <td>الطارف</td>
+                  <td>17/06/2009</td>
+                  <td>بن فلان</td>
+                  <td>محمد</td>
+                  <td>0001</td>
+                </tr>
+                <tr>
+                  <td>
+                    <button type="submit" name="btn-login" class="btn btn-warning">
+                       تعديل
+                    </button>
+                  </td>
+                  <td><input type="number" min="0" max="20" step="0.01" name="moyenne" required="true"></td>
+                  <td><input type="number" min="0" max="20" step="0.01" name="moyenne" required="true"></td>
+                  <td><input type="number" min="0" max="20" step="0.01" name="moyenne" required="true"></td>
+                  <td>1</td>
+                  <td>5</td>
+                  <td> لبرق موسى</td>
+                  <td>متوسط</td>
+                  <td>الذرعان</td>
+                  <td>18/02/2003</td>
+                  <td>بن فلان</td>
+                  <td>سارة</td>
+                  <td>0002</td>
+                </tr>
+              </tbody>
+
+            </table>
+          </div>
+          <div class="form-group" id="form_buttons">
+            <button type="reset" name="btn-login" class="btn btn-danger">
+                  <i class="glyphicon glyphicon-thumbs-down"></i>  مسح
+            </button>
+
+              <button type="submit" name="btn-login" class="btn btn-success">
+                    <i class="glyphicon glyphicon-thumbs-up "></i>  تأكيد
+              </button>
+
+          </div>
+        </div>
+
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <!--<li class="active"><a href="dashboard.html">الرئيسية <span class="sr-only">(current)</span></a></li>-->
+            <li><a class="glyphicon glyphicon-log-out" href="index.php" >خروج</a></li>
+            <li><a class="glyphicon glyphicon-export" href="#" onclick="$('#tableau_eleves').tableExport({type:'excel',escape:false});">تصدير</a></li>
+          </ul>
+
+        </div>
+
+      </div>
+    </div>
+
+
+  </body>
+
+
+</html>

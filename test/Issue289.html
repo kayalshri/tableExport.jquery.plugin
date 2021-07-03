@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <script type="text/javaScript">'use strict';
+
+  function doExport () {
+    $('#tab_isee').tableExport({
+      type: 'excel',
+      date: {html: 'dd/mm/yyyy'},
+      mso: {fileFormat: 'xlsx'},
+      xslx: {formatId: {date: 14, numbers: 2}},
+      numbers: {html: {decimalMark: ',', thousandsSeparator: '.'},
+        output: {decimalMark: '.', thousandsSeparator: ''}}
+    });
+  }
+  </script>
+</head>
+<body>
+<a href="#" onclick="doExport()">Export to XLSX</a>
+<table class="table table-hover" id="tab_isee">
+  <thead>
+  <tr>
+    <th>Prodotto</th>
+    <th>Tipologia</th>
+    <th class="text-right">Controvalore</th>
+    <th>Data saldo</th>
+    <th>Issue 289</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-5,10</td>
+    <td data-tableexport-xlsxformatid="14">31/01/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Euromobiliare Reddito A</td>
+    <td>Fondi</td>
+    <td class="text-right" nowrap="">5.090,73</td>
+    <td data-tableexport-xlsxformatid="14"></td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-15,10</td>
+    <td data-tableexport-xlsxformatid="14">28/02/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Euromobiliare Reddito A</td>
+    <td>Fondi</td>
+    <td class="text-right" nowrap="">5.086,78</td>
+    <td data-tableexport-xlsxformatid="14">28/02/2018</td>
+    <td>950E2862</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-15,10</td>
+    <td data-tableexport-xlsxformatid="14">31/03/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Euromobiliare Reddito A</td>
+    <td>Fondi</td>
+    <td class="text-right" nowrap="">5.139,08</td>
+    <td data-tableexport-xlsxformatid="14">31/03/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-15,10</td>
+    <td data-tableexport-xlsxformatid="14">30/04/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Euromobiliare Reddito A</td>
+    <td>Fondi</td>
+    <td class="text-right" nowrap="">5.118,06</td>
+    <td data-tableexport-xlsxformatid="14">30/04/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Euromobiliare Reddito A</td>
+    <td>Fondi</td>
+    <td class="text-right" nowrap="">5.054,49</td>
+    <td data-tableexport-xlsxformatid="14">31/05/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Euromobiliare Reddito A</td>
+    <td>Fondi</td>
+    <td class="text-right" nowrap="">5.068,64</td>
+    <td data-tableexport-xlsxformatid="14">30/06/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Euromobiliare Reddito A</td>
+    <td>Fondi</td>
+    <td class="text-right" nowrap="">5.056,85</td>
+    <td data-tableexport-xlsxformatid="14">31/07/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-5,10</td>
+    <td data-tableexport-xlsxformatid="14">31/08/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-5,10</td>
+    <td data-tableexport-xlsxformatid="14">30/09/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-5,10</td>
+    <td data-tableexport-xlsxformatid="14">31/10/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-5,10</td>
+    <td data-tableexport-xlsxformatid="14">30/11/2018</td>
+    <td>31</td>
+  </tr>
+  <tr>
+    <td>Custodia Di Liquidita' Di Terzi</td>
+    <td>Custodia Amministrazione</td>
+    <td class="text-right" nowrap="">-5,10</td>
+    <td data-tableexport-xlsxformatid="14">31/12/2018</td>
+    <td>31</td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

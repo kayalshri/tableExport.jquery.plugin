@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--suppress JSNonStrictModeUsed -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Issue297</title>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.16.0/extensions/export/bootstrap-table-export.js"></script>
+
+    <script type="text/javascript" src="../tableExport.js"></script>
+    <script src="//unpkg.com/tableexport.jquery.plugin/libs/jsPDF/jspdf.min.js"></script>
+    <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.6/xlsx.core.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.10.1/bootstrap-table.min.css" />
+
+    <script>
+      $(document).ready(function()
+      {
+        var $table = $('#table-results');
+          $table.bootstrapTable('destroy').bootstrapTable({
+            exportDataType: 'all',
+            exportTypes: ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'xlsx', 'pdf'],
+            exportOptions: {
+              fileName: 'user information report', //file name setting
+              excelstyles: ['background-color', 'color', 'font-size', 'font-weight'],
+              jspdf: {
+                format: 'bestfit',
+                autotable: {
+                  theme: 'grid',
+                  bodyStyles: {
+                    lineColor: 128
+                  },
+                  styles: {
+                    overflow: 'linebreak',
+                    fontSize: 8
+                  },
+                  alternateRowStyles: {
+                    fillColor: [255, 255, 255]
+                  }
+                }
+              }
+            }
+          });
+      });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <table id="table-results" class="table"
+               data-show-export="true"
+               data-pagination="true"
+               data-side-pagination="client"
+               data-click-to-select="true"
+               data-show-toggle="true"
+               data-show-columns="true"
+               data-page-size="50"
+               data-page-list="[50, 100, 300, 500, all]"
+               data-export-data-type="all">
+
+            <thead>
+            <tr>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Group</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>Jane</td>
+                <td>Doe</td>
+                <td data-tableexport-value="Group 1, Group 2, Group 3">Group 1 <a href="#" data-toggle="tooltip" title="Group 2, Group 3">+2</a></td>
+            </tr>
+            <tr>
+                <td>Jane</td>
+                <td>Doe</td>
+                <td>Group 1 <a href="#" data-toggle="tooltip" title="Group 2, Group 3">+2</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

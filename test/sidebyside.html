@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF/jspdf.min.js"></script>
+  <script type="text/javascript" src="../libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <style type="text/css">
+    <!--
+    table  {
+      border-collapse: collapse;
+    }
+
+    table > thead > tr > td,
+    table > thead > tr > th {
+      background-color: gray;
+      border: 1px solid #efefef;
+      color: white;
+      padding: 0.2rem;
+    }
+
+    table > tbody > tr > td {
+      border: 1px solid #999;
+      padding: 0.2rem;
+    }
+
+    .table-striped {
+      background-color: white;
+      padding: 0.5rem;
+    }
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td {
+      background-color: #ccdf88;
+    }
+    -->
+  </style>
+  <script type="text/javaScript">
+
+    function doExport(selector, params) {
+      var options = {
+        tableName: 'Side by Side Tables'
+      };
+      $.extend(true, options, params);
+      $(selector).tableExport(options);
+    }
+    
+    function doBeforeAutotable(table, columns, rows, settings) {
+      var n = settings.tableExport.mytableno;
+      
+      if (settings.tableExport.mytableno == 5) {
+        settings.tableExport.mytableno = 0;
+        settings.tableExport.doc.addPage();
+      }
+
+      settings.startY = 10;
+      settings.margin.left = 10 + settings.tableExport.mytableno * (settings.tableWidth + 10);
+      settings.margin.right =  settings.margin.left + settings.tableWidth;
+      settings.tableExport.mytableno++;
+    }
+
+  </script>
+</head>
+<body>
+  <section>
+    <h1>
+      Sise by Side HTML Table Export<br>
+    </h1>
+  </section>
+  <section>
+    <ul>
+      <li>
+        <a href="#" onClick="doExport('.table-striped',
+                                      {type: 'pdf',
+                                       jspdf: {orientation: 'l',
+                                       autotable: {startY: 10,
+                                                   margin: {left: 10, top: 10},
+                                                   pageBreak: 'avoid',
+                                                   tableWidth: 60,
+                                                   tableExport: {mytableno: 0,
+                                                                 onBeforeAutotable: doBeforeAutotable}
+                                                   }
+                                       }
+                                      });">
+           <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (Side by Side)</a>
+      </li>
+    </ul>
+    <div>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    </div>
+    <div>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    </div>
+    <div>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    <table class="table-striped"><thead><tr><th>C1</th><th>C2</th><th>C3</th></tr></thead><tbody><tr><td>A</td><td>B</td><td>C</td></tr><tr><td>D</td><td>E</td><td>F</td></tr><tr><td>G</td><td>H</td><td>I</td></tr></tbody></table>
+    </div>
+  </section>
+</body>
+</html>

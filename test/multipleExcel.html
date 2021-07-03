@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <style type="text/css">
+    <!-- h3 {
+      font-size: 1em;
+      font-weight: normal;
+    }
+
+    .table-striped {
+      background-color: white;
+    }
+
+    table > thead > tr > td,
+    table > thead > tr > th {
+      background-color: gray;
+      color: white;
+    }
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td {
+      background-color: #ccdf88;
+    }
+
+    .table-striped.numformat > tbody > tr > td {
+      text-align: right;
+      vertical-align: top;
+    }
+
+    .table-striped th.hidden,
+    .table-striped td.hidden {
+      position: absolute;
+      visibility: hidden;
+    }
+
+    -->
+  </style>
+
+</head>
+<body>
+  <a href="#" onclick="$('.pvtTable').tableExport({type:'excel',
+                                                   mso: {
+                                                     fileFormat: 'xmlss',
+                                                     worksheetName: ['Table 1','Table 2']}});">Export to Excel (XML Spreadsheet 2003 file format)</a>
+  <table data-numcols="3" data-numrows="2" class="pvtTable">
+    <thead>
+      <tr>
+        <th></th>
+        <th class="pvtColLabel">black</th>
+        <th class="pvtColLabel">hisp</th>
+        <th class="pvtColLabel">other</th>
+        <th class="pvtTotalLabel">Totals</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="pvtRowLabel">no</td>
+        <td data-value="317" class="pvtVal row0 col0">317</td>
+        <td data-value="494" class="pvtVal row0 col1">494</td>
+        <td data-value="2485" class="pvtVal row0 col2">2,485</td>
+        <td data-for="row0" data-value="3296" class="pvtTotal rowTotal">3,296</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">yes</td>
+        <td data-value="187" class="pvtVal row1 col0">187</td>
+        <td data-value="186" class="pvtVal row1 col1">186</td>
+        <td data-value="691" class="pvtVal row1 col2">691</td>
+        <td data-for="row1" data-value="1064" class="pvtTotal rowTotal">1,064</td>
+      </tr>
+      <tr>
+        <td class="pvtTotalLabel">Totals</td>
+        <td data-for="col0" data-value="504" class="pvtTotal colTotal">504</td>
+        <td data-for="col1" data-value="680" class="pvtTotal colTotal">680</td>
+        <td data-for="col2" data-value="3176" class="pvtTotal colTotal">3,176</td>
+        <td data-value="4360" class="pvtGrandTotal">4,360</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Percent</td>
+        <td data-for="col0" data-value="504" class="pvtTotal colTotal">504%</td>
+        <td data-for="col1" data-value="680" class="pvtTotal colTotal">680%</td>
+        <td data-for="col2" data-value="3176" class="pvtTotal colTotal">3,176%</td>
+        <td data-value="4360" class="pvtGrandTotal">4,360%</td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <br />
+  <br />
+  <br />
+  <table class="pvtTable" data-numrows="95" data-numcols="4">
+    <thead>
+      <tr>
+        <th></th>
+        <th></th>
+        <th class="pvtColLabel" colspan="2">no</th>
+        <th class="pvtColLabel" colspan="2">yes</th>
+        <th class="pvtTotalLabel">Totals</th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        <th class="pvtColLabel">no</th>
+        <th class="pvtColLabel">yes</th>
+        <th class="pvtColLabel">no</th>
+        <th class="pvtColLabel">yes</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="pvtRowLabel">Agricultural</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row0 col0" data-value="1">1</td>
+        <td class="pvtVal row0 col1" data-value="1">1</td>
+        <td class="pvtVal row0 col2" data-value="null"></td>
+        <td class="pvtVal row0 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="2" data-for="row0">2</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row1 col0" data-value="11">11</td>
+        <td class="pvtVal row1 col1" data-value="null"></td>
+        <td class="pvtVal row1 col2" data-value="5">5</td>
+        <td class="pvtVal row1 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="16" data-for="row1">16</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Farm_Laborers_and_Foreman</td>
+        <td class="pvtVal row2 col0" data-value="53">53</td>
+        <td class="pvtVal row2 col1" data-value="1">1</td>
+        <td class="pvtVal row2 col2" data-value="6">6</td>
+        <td class="pvtVal row2 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="60" data-for="row2">60</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row3 col0" data-value="18">18</td>
+        <td class="pvtVal row3 col1" data-value="null"></td>
+        <td class="pvtVal row3 col2" data-value="10">10</td>
+        <td class="pvtVal row3 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="28" data-for="row3">28</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row4 col0" data-value="3">3</td>
+        <td class="pvtVal row4 col1" data-value="null"></td>
+        <td class="pvtVal row4 col2" data-value="null"></td>
+        <td class="pvtVal row4 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="3" data-for="row4">3</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row5 col0" data-value="20">20</td>
+        <td class="pvtVal row5 col1" data-value="1">1</td>
+        <td class="pvtVal row5 col2" data-value="1">1</td>
+        <td class="pvtVal row5 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="22" data-for="row5">22</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row6 col0" data-value="5">5</td>
+        <td class="pvtVal row6 col1" data-value="null"></td>
+        <td class="pvtVal row6 col2" data-value="null"></td>
+        <td class="pvtVal row6 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="5" data-for="row6">5</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row7 col0" data-value="2">2</td>
+        <td class="pvtVal row7 col1" data-value="1">1</td>
+        <td class="pvtVal row7 col2" data-value="null"></td>
+        <td class="pvtVal row7 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="3" data-for="row7">3</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row8 col0" data-value="1">1</td>
+        <td class="pvtVal row8 col1" data-value="null"></td>
+        <td class="pvtVal row8 col2" data-value="null"></td>
+        <td class="pvtVal row8 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="1" data-for="row8">1</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Business_and_Repair_Service</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row9 col0" data-value="22">22</td>
+        <td class="pvtVal row9 col1" data-value="null"></td>
+        <td class="pvtVal row9 col2" data-value="3">3</td>
+        <td class="pvtVal row9 col3" data-value="1">1</td>
+        <td class="pvtTotal rowTotal" data-value="26" data-for="row9">26</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row10 col0" data-value="111">111</td>
+        <td class="pvtVal row10 col1" data-value="5">5</td>
+        <td class="pvtVal row10 col2" data-value="8">8</td>
+        <td class="pvtVal row10 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="124" data-for="row10">124</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row11 col0" data-value="4">4</td>
+        <td class="pvtVal row11 col1" data-value="1">1</td>
+        <td class="pvtVal row11 col2" data-value="4">4</td>
+        <td class="pvtVal row11 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="9" data-for="row11">9</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row12 col0" data-value="39">39</td>
+        <td class="pvtVal row12 col1" data-value="1">1</td>
+        <td class="pvtVal row12 col2" data-value="null"></td>
+        <td class="pvtVal row12 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="40" data-for="row12">40</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row13 col0" data-value="26">26</td>
+        <td class="pvtVal row13 col1" data-value="1">1</td>
+        <td class="pvtVal row13 col2" data-value="4">4</td>
+        <td class="pvtVal row13 col3" data-value="1">1</td>
+        <td class="pvtTotal rowTotal" data-value="32" data-for="row13">32</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row14 col0" data-value="55">55</td>
+        <td class="pvtVal row14 col1" data-value="null"></td>
+        <td class="pvtVal row14 col2" data-value="2">2</td>
+        <td class="pvtVal row14 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="57" data-for="row14">57</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row15 col0" data-value="15">15</td>
+        <td class="pvtVal row15 col1" data-value="1">1</td>
+        <td class="pvtVal row15 col2" data-value="null"></td>
+        <td class="pvtVal row15 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="16" data-for="row15">16</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row16 col0" data-value="23">23</td>
+        <td class="pvtVal row16 col1" data-value="null"></td>
+        <td class="pvtVal row16 col2" data-value="3">3</td>
+        <td class="pvtVal row16 col3" data-value="1">1</td>
+        <td class="pvtTotal rowTotal" data-value="27" data-for="row16">27</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Construction</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row17 col0" data-value="10">10</td>
+        <td class="pvtVal row17 col1" data-value="null"></td>
+        <td class="pvtVal row17 col2" data-value="2">2</td>
+        <td class="pvtVal row17 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="12" data-for="row17">12</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row18 col0" data-value="142">142</td>
+        <td class="pvtVal row18 col1" data-value="1">1</td>
+        <td class="pvtVal row18 col2" data-value="31">31</td>
+        <td class="pvtVal row18 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="174" data-for="row18">174</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row19 col0" data-value="56">56</td>
+        <td class="pvtVal row19 col1" data-value="null"></td>
+        <td class="pvtVal row19 col2" data-value="20">20</td>
+        <td class="pvtVal row19 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="76" data-for="row19">76</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row20 col0" data-value="4">4</td>
+        <td class="pvtVal row20 col1" data-value="null"></td>
+        <td class="pvtVal row20 col2" data-value="1">1</td>
+        <td class="pvtVal row20 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="5" data-for="row20">5</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row21 col0" data-value="34">34</td>
+        <td class="pvtVal row21 col1" data-value="1">1</td>
+        <td class="pvtVal row21 col2" data-value="8">8</td>
+        <td class="pvtVal row21 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="43" data-for="row21">43</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row22 col0" data-value="12">12</td>
+        <td class="pvtVal row22 col1" data-value="null"></td>
+        <td class="pvtVal row22 col2" data-value="2">2</td>
+        <td class="pvtVal row22 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="14" data-for="row22">14</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row23 col0" data-value="1">1</td>
+        <td class="pvtVal row23 col1" data-value="null"></td>
+        <td class="pvtVal row23 col2" data-value="null"></td>
+        <td class="pvtVal row23 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="1" data-for="row23">1</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row24 col0" data-value="1">1</td>
+        <td class="pvtVal row24 col1" data-value="null"></td>
+        <td class="pvtVal row24 col2" data-value="1">1</td>
+        <td class="pvtVal row24 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="2" data-for="row24">2</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Entertainment</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row25 col0" data-value="5">5</td>
+        <td class="pvtVal row25 col1" data-value="null"></td>
+        <td class="pvtVal row25 col2" data-value="null"></td>
+        <td class="pvtVal row25 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="5" data-for="row25">5</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row26 col0" data-value="3">3</td>
+        <td class="pvtVal row26 col1" data-value="null"></td>
+        <td class="pvtVal row26 col2" data-value="null"></td>
+        <td class="pvtVal row26 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="3" data-for="row26">3</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row27 col0" data-value="9">9</td>
+        <td class="pvtVal row27 col1" data-value="null"></td>
+        <td class="pvtVal row27 col2" data-value="1">1</td>
+        <td class="pvtVal row27 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="10" data-for="row27">10</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row28 col0" data-value="3">3</td>
+        <td class="pvtVal row28 col1" data-value="null"></td>
+        <td class="pvtVal row28 col2" data-value="1">1</td>
+        <td class="pvtVal row28 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="4" data-for="row28">4</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row29 col0" data-value="14">14</td>
+        <td class="pvtVal row29 col1" data-value="1">1</td>
+        <td class="pvtVal row29 col2" data-value="1">1</td>
+        <td class="pvtVal row29 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="16" data-for="row29">16</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row30 col0" data-value="1">1</td>
+        <td class="pvtVal row30 col1" data-value="null"></td>
+        <td class="pvtVal row30 col2" data-value="null"></td>
+        <td class="pvtVal row30 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="1" data-for="row30">1</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row31 col0" data-value="20">20</td>
+        <td class="pvtVal row31 col1" data-value="null"></td>
+        <td class="pvtVal row31 col2" data-value="6">6</td>
+        <td class="pvtVal row31 col3" data-value="1">1</td>
+        <td class="pvtTotal rowTotal" data-value="27" data-for="row31">27</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Finance</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row32 col0" data-value="49">49</td>
+        <td class="pvtVal row32 col1" data-value="2">2</td>
+        <td class="pvtVal row32 col2" data-value="9">9</td>
+        <td class="pvtVal row32 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="60" data-for="row32">60</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row33 col0" data-value="4">4</td>
+        <td class="pvtVal row33 col1" data-value="null"></td>
+        <td class="pvtVal row33 col2" data-value="4">4</td>
+        <td class="pvtVal row33 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="8" data-for="row33">8</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row34 col0" data-value="5">5</td>
+        <td class="pvtVal row34 col1" data-value="null"></td>
+        <td class="pvtVal row34 col2" data-value="null"></td>
+        <td class="pvtVal row34 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="5" data-for="row34">5</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row35 col0" data-value="28">28</td>
+        <td class="pvtVal row35 col1" data-value="null"></td>
+        <td class="pvtVal row35 col2" data-value="2">2</td>
+        <td class="pvtVal row35 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="30" data-for="row35">30</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row36 col0" data-value="15">15</td>
+        <td class="pvtVal row36 col1" data-value="null"></td>
+        <td class="pvtVal row36 col2" data-value="null"></td>
+        <td class="pvtVal row36 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="15" data-for="row36">15</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row37 col0" data-value="32">32</td>
+        <td class="pvtVal row37 col1" data-value="null"></td>
+        <td class="pvtVal row37 col2" data-value="1">1</td>
+        <td class="pvtVal row37 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="33" data-for="row37">33</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row38 col0" data-value="10">10</td>
+        <td class="pvtVal row38 col1" data-value="null"></td>
+        <td class="pvtVal row38 col2" data-value="null"></td>
+        <td class="pvtVal row38 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="10" data-for="row38">10</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Manufacturing</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row39 col0" data-value="50">50</td>
+        <td class="pvtVal row39 col1" data-value="3">3</td>
+        <td class="pvtVal row39 col2" data-value="21">21</td>
+        <td class="pvtVal row39 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="74" data-for="row39">74</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row40 col0" data-value="227">227</td>
+        <td class="pvtVal row40 col1" data-value="5">5</td>
+        <td class="pvtVal row40 col2" data-value="111">111</td>
+        <td class="pvtVal row40 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="343" data-for="row40">343</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Farm_Laborers_and_Foreman</td>
+        <td class="pvtVal row41 col0" data-value="2">2</td>
+        <td class="pvtVal row41 col1" data-value="null"></td>
+        <td class="pvtVal row41 col2" data-value="null"></td>
+        <td class="pvtVal row41 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="2" data-for="row41">2</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row42 col0" data-value="55">55</td>
+        <td class="pvtVal row42 col1" data-value="1">1</td>
+        <td class="pvtVal row42 col2" data-value="27">27</td>
+        <td class="pvtVal row42 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="83" data-for="row42">83</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row43 col0" data-value="48">48</td>
+        <td class="pvtVal row43 col1" data-value="null"></td>
+        <td class="pvtVal row43 col2" data-value="3">3</td>
+        <td class="pvtVal row43 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="51" data-for="row43">51</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row44 col0" data-value="289">289</td>
+        <td class="pvtVal row44 col1" data-value="8">8</td>
+        <td class="pvtVal row44 col2" data-value="196">196</td>
+        <td class="pvtVal row44 col3" data-value="4">4</td>
+        <td class="pvtTotal rowTotal" data-value="497" data-for="row44">497</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row45 col0" data-value="104">104</td>
+        <td class="pvtVal row45 col1" data-value="null"></td>
+        <td class="pvtVal row45 col2" data-value="14">14</td>
+        <td class="pvtVal row45 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="118" data-for="row45">118</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row46 col0" data-value="36">36</td>
+        <td class="pvtVal row46 col1" data-value="null"></td>
+        <td class="pvtVal row46 col2" data-value="2">2</td>
+        <td class="pvtVal row46 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="38" data-for="row46">38</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row47 col0" data-value="14">14</td>
+        <td class="pvtVal row47 col1" data-value="null"></td>
+        <td class="pvtVal row47 col2" data-value="11">11</td>
+        <td class="pvtVal row47 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="25" data-for="row47">25</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Mining</td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row48 col0" data-value="6">6</td>
+        <td class="pvtVal row48 col1" data-value="1">1</td>
+        <td class="pvtVal row48 col2" data-value="6">6</td>
+        <td class="pvtVal row48 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="13" data-for="row48">13</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row49 col0" data-value="5">5</td>
+        <td class="pvtVal row49 col1" data-value="null"></td>
+        <td class="pvtVal row49 col2" data-value="1">1</td>
+        <td class="pvtVal row49 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="6" data-for="row49">6</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row50 col0" data-value="2">2</td>
+        <td class="pvtVal row50 col1" data-value="null"></td>
+        <td class="pvtVal row50 col2" data-value="null"></td>
+        <td class="pvtVal row50 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="2" data-for="row50">2</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row51 col0" data-value="24">24</td>
+        <td class="pvtVal row51 col1" data-value="1">1</td>
+        <td class="pvtVal row51 col2" data-value="14">14</td>
+        <td class="pvtVal row51 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="39" data-for="row51">39</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row52 col0" data-value="5">5</td>
+        <td class="pvtVal row52 col1" data-value="null"></td>
+        <td class="pvtVal row52 col2" data-value="2">2</td>
+        <td class="pvtVal row52 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="7" data-for="row52">7</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row53 col0" data-value="1">1</td>
+        <td class="pvtVal row53 col1" data-value="null"></td>
+        <td class="pvtVal row53 col2" data-value="null"></td>
+        <td class="pvtVal row53 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="1" data-for="row53">1</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Personal_Service</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row54 col0" data-value="6">6</td>
+        <td class="pvtVal row54 col1" data-value="null"></td>
+        <td class="pvtVal row54 col2" data-value="null"></td>
+        <td class="pvtVal row54 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="6" data-for="row54">6</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row55 col0" data-value="5">5</td>
+        <td class="pvtVal row55 col1" data-value="null"></td>
+        <td class="pvtVal row55 col2" data-value="null"></td>
+        <td class="pvtVal row55 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="5" data-for="row55">5</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row56 col0" data-value="4">4</td>
+        <td class="pvtVal row56 col1" data-value="null"></td>
+        <td class="pvtVal row56 col2" data-value="null"></td>
+        <td class="pvtVal row56 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="4" data-for="row56">4</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row57 col0" data-value="7">7</td>
+        <td class="pvtVal row57 col1" data-value="null"></td>
+        <td class="pvtVal row57 col2" data-value="null"></td>
+        <td class="pvtVal row57 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="7" data-for="row57">7</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row58 col0" data-value="4">4</td>
+        <td class="pvtVal row58 col1" data-value="1">1</td>
+        <td class="pvtVal row58 col2" data-value="1">1</td>
+        <td class="pvtVal row58 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="6" data-for="row58">6</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row59 col0" data-value="5">5</td>
+        <td class="pvtVal row59 col1" data-value="null"></td>
+        <td class="pvtVal row59 col2" data-value="null"></td>
+        <td class="pvtVal row59 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="5" data-for="row59">5</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row60 col0" data-value="3">3</td>
+        <td class="pvtVal row60 col1" data-value="null"></td>
+        <td class="pvtVal row60 col2" data-value="null"></td>
+        <td class="pvtVal row60 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="3" data-for="row60">3</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row61 col0" data-value="27">27</td>
+        <td class="pvtVal row61 col1" data-value="2">2</td>
+        <td class="pvtVal row61 col2" data-value="8">8</td>
+        <td class="pvtVal row61 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="37" data-for="row61">37</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Professional_and_Related Service</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row62 col0" data-value="54">54</td>
+        <td class="pvtVal row62 col1" data-value="null"></td>
+        <td class="pvtVal row62 col2" data-value="5">5</td>
+        <td class="pvtVal row62 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="59" data-for="row62">59</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row63 col0" data-value="6">6</td>
+        <td class="pvtVal row63 col1" data-value="1">1</td>
+        <td class="pvtVal row63 col2" data-value="8">8</td>
+        <td class="pvtVal row63 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="15" data-for="row63">15</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row64 col0" data-value="8">8</td>
+        <td class="pvtVal row64 col1" data-value="null"></td>
+        <td class="pvtVal row64 col2" data-value="4">4</td>
+        <td class="pvtVal row64 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="12" data-for="row64">12</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row65 col0" data-value="20">20</td>
+        <td class="pvtVal row65 col1" data-value="null"></td>
+        <td class="pvtVal row65 col2" data-value="1">1</td>
+        <td class="pvtVal row65 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="21" data-for="row65">21</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row66 col0" data-value="null"></td>
+        <td class="pvtVal row66 col1" data-value="null"></td>
+        <td class="pvtVal row66 col2" data-value="3">3</td>
+        <td class="pvtVal row66 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="3" data-for="row66">3</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row67 col0" data-value="113">113</td>
+        <td class="pvtVal row67 col1" data-value="1">1</td>
+        <td class="pvtVal row67 col2" data-value="29">29</td>
+        <td class="pvtVal row67 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="143" data-for="row67">143</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row68 col0" data-value="3">3</td>
+        <td class="pvtVal row68 col1" data-value="null"></td>
+        <td class="pvtVal row68 col2" data-value="null"></td>
+        <td class="pvtVal row68 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="3" data-for="row68">3</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row69 col0" data-value="36">36</td>
+        <td class="pvtVal row69 col1" data-value="1">1</td>
+        <td class="pvtVal row69 col2" data-value="40">40</td>
+        <td class="pvtVal row69 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="77" data-for="row69">77</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Public_Administration</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row70 col0" data-value="7">7</td>
+        <td class="pvtVal row70 col1" data-value="null"></td>
+        <td class="pvtVal row70 col2" data-value="13">13</td>
+        <td class="pvtVal row70 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="20" data-for="row70">20</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row71 col0" data-value="18">18</td>
+        <td class="pvtVal row71 col1" data-value="null"></td>
+        <td class="pvtVal row71 col2" data-value="12">12</td>
+        <td class="pvtVal row71 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="30" data-for="row71">30</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row72 col0" data-value="6">6</td>
+        <td class="pvtVal row72 col1" data-value="null"></td>
+        <td class="pvtVal row72 col2" data-value="8">8</td>
+        <td class="pvtVal row72 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="14" data-for="row72">14</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row73 col0" data-value="10">10</td>
+        <td class="pvtVal row73 col1" data-value="1">1</td>
+        <td class="pvtVal row73 col2" data-value="null"></td>
+        <td class="pvtVal row73 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="11" data-for="row73">11</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row74 col0" data-value="11">11</td>
+        <td class="pvtVal row74 col1" data-value="1">1</td>
+        <td class="pvtVal row74 col2" data-value="5">5</td>
+        <td class="pvtVal row74 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="17" data-for="row74">17</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row75 col0" data-value="18">18</td>
+        <td class="pvtVal row75 col1" data-value="null"></td>
+        <td class="pvtVal row75 col2" data-value="5">5</td>
+        <td class="pvtVal row75 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="23" data-for="row75">23</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row76 col0" data-value="21">21</td>
+        <td class="pvtVal row76 col1" data-value="null"></td>
+        <td class="pvtVal row76 col2" data-value="39">39</td>
+        <td class="pvtVal row76 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="60" data-for="row76">60</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Trade</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row77 col0" data-value="128">128</td>
+        <td class="pvtVal row77 col1" data-value="3">3</td>
+        <td class="pvtVal row77 col2" data-value="44">44</td>
+        <td class="pvtVal row77 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="175" data-for="row77">175</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row78 col0" data-value="128">128</td>
+        <td class="pvtVal row78 col1" data-value="2">2</td>
+        <td class="pvtVal row78 col2" data-value="10">10</td>
+        <td class="pvtVal row78 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="140" data-for="row78">140</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Farm_Laborers_and_Foreman</td>
+        <td class="pvtVal row79 col0" data-value="1">1</td>
+        <td class="pvtVal row79 col1" data-value="null"></td>
+        <td class="pvtVal row79 col2" data-value="null"></td>
+        <td class="pvtVal row79 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="1" data-for="row79">1</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row80 col0" data-value="60">60</td>
+        <td class="pvtVal row80 col1" data-value="2">2</td>
+        <td class="pvtVal row80 col2" data-value="53">53</td>
+        <td class="pvtVal row80 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="115" data-for="row80">115</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row81 col0" data-value="189">189</td>
+        <td class="pvtVal row81 col1" data-value="null"></td>
+        <td class="pvtVal row81 col2" data-value="21">21</td>
+        <td class="pvtVal row81 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="210" data-for="row81">210</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row82 col0" data-value="131">131</td>
+        <td class="pvtVal row82 col1" data-value="2">2</td>
+        <td class="pvtVal row82 col2" data-value="26">26</td>
+        <td class="pvtVal row82 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="159" data-for="row82">159</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row83 col0" data-value="15">15</td>
+        <td class="pvtVal row83 col1" data-value="null"></td>
+        <td class="pvtVal row83 col2" data-value="null"></td>
+        <td class="pvtVal row83 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="15" data-for="row83">15</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row84 col0" data-value="119">119</td>
+        <td class="pvtVal row84 col1" data-value="2">2</td>
+        <td class="pvtVal row84 col2" data-value="10">10</td>
+        <td class="pvtVal row84 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="131" data-for="row84">131</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row85 col0" data-value="180">180</td>
+        <td class="pvtVal row85 col1" data-value="4">4</td>
+        <td class="pvtVal row85 col2" data-value="38">38</td>
+        <td class="pvtVal row85 col3" data-value="1">1</td>
+        <td class="pvtTotal rowTotal" data-value="223" data-for="row85">223</td>
+      </tr>
+      <tr>
+        <td class="pvtRowLabel">Transportation</td>
+        <td class="pvtRowLabel">Clerical_and_kindred</td>
+        <td class="pvtVal row86 col0" data-value="17">17</td>
+        <td class="pvtVal row86 col1" data-value="1">1</td>
+        <td class="pvtVal row86 col2" data-value="29">29</td>
+        <td class="pvtVal row86 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="47" data-for="row86">47</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Craftsmen, Foremen_and_kindred</td>
+        <td class="pvtVal row87 col0" data-value="36">36</td>
+        <td class="pvtVal row87 col1" data-value="1">1</td>
+        <td class="pvtVal row87 col2" data-value="26">26</td>
+        <td class="pvtVal row87 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="63" data-for="row87">63</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Farm_Laborers_and_Foreman</td>
+        <td class="pvtVal row88 col0" data-value="1">1</td>
+        <td class="pvtVal row88 col1" data-value="null"></td>
+        <td class="pvtVal row88 col2" data-value="null"></td>
+        <td class="pvtVal row88 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="1" data-for="row88">1</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Laborers_and_farmers</td>
+        <td class="pvtVal row89 col0" data-value="20">20</td>
+        <td class="pvtVal row89 col1" data-value="2">2</td>
+        <td class="pvtVal row89 col2" data-value="17">17</td>
+        <td class="pvtVal row89 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="39" data-for="row89">39</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Managers, Officials_and_Proprietors</td>
+        <td class="pvtVal row90 col0" data-value="14">14</td>
+        <td class="pvtVal row90 col1" data-value="null"></td>
+        <td class="pvtVal row90 col2" data-value="1">1</td>
+        <td class="pvtVal row90 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="15" data-for="row90">15</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Operatives_and_kindred</td>
+        <td class="pvtVal row91 col0" data-value="25">25</td>
+        <td class="pvtVal row91 col1" data-value="1">1</td>
+        <td class="pvtVal row91 col2" data-value="37">37</td>
+        <td class="pvtVal row91 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="63" data-for="row91">63</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Professional, Technical_and_kindred</td>
+        <td class="pvtVal row92 col0" data-value="29">29</td>
+        <td class="pvtVal row92 col1" data-value="null"></td>
+        <td class="pvtVal row92 col2" data-value="6">6</td>
+        <td class="pvtVal row92 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="35" data-for="row92">35</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Sales_Workers</td>
+        <td class="pvtVal row93 col0" data-value="4">4</td>
+        <td class="pvtVal row93 col1" data-value="null"></td>
+        <td class="pvtVal row93 col2" data-value="null"></td>
+        <td class="pvtVal row93 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="4" data-for="row93">4</td>
+      </tr>
+      <tr>
+        <td></td>
+        <td class="pvtRowLabel">Service_Workers</td>
+        <td class="pvtVal row94 col0" data-value="7">7</td>
+        <td class="pvtVal row94 col1" data-value="null"></td>
+        <td class="pvtVal row94 col2" data-value="12">12</td>
+        <td class="pvtVal row94 col3" data-value="null"></td>
+        <td class="pvtTotal rowTotal" data-value="19" data-for="row94">19</td>
+      </tr>
+      <tr>
+        <td class="pvtTotalLabel">Totals</td>
+        <td></td>
+        <td class="pvtTotal colTotal" data-value="3231" data-for="col0">3,231</td>
+        <td class="pvtTotal colTotal" data-value="65" data-for="col1">65</td>
+        <td class="pvtTotal colTotal" data-value="1055" data-for="col2">1,055</td>
+        <td class="pvtTotal colTotal" data-value="9" data-for="col3">9</td>
+        <td class="pvtGrandTotal" data-value="4360">4,360</td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang=zh>
+  <head>
+    <meta charset="utf-8">
+    <title>Issue 303: export pdf doesn't support chinese</title>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+    <!-- Export to pdf format using pdfmake -->
+    <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
+    <!--
+    <script type="text/javascript" src="../libs/pdfmake/vfs_fonts.js"></script>
+    -->
+
+    <!-- Chinese font used by pdfmake-->
+    <script type="text/javascript" src="../libs/pdfmake/gbsn00lp_fonts.js"></script>
+
+    <!-- Alternative chinese font used by pdfmake-->
+    <!--
+    <script type="text/javascript" src="../libs/pdfmake/ZCOOLXiaoWei_fonts.js"></script>
+    -->
+
+    <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+    <script type="text/javascript" src="../tableExport.js"></script>
+    <style type="text/css">
+      <!--
+      caption {
+        font-size: 1em;
+        white-space: nowrap;
+        text-align: left;
+      }
+
+      table  {
+        border-collapse: collapse;
+        margin-top: 2em;
+      }
+
+      table > thead > tr > td,
+      table > thead > tr > th {
+        background-color: gray;
+        border: 1px solid #efefef;
+        color: white;
+        padding: 0.2rem;
+      }
+
+      table > tbody > tr > td {
+        border: 1px solid #999;
+        padding: 0.2rem;
+      }
+      -->
+    </style>
+  </head>
+  <body>
+  <p>
+    <a href="#" onClick="$('#issue303').tableExport({type:'pdf',pdfmake:{enabled:true,
+                                                                         docDefinition:{pageOrientation:'landscape'}
+                                                                         }});">
+    <img src='icons/pdf.png' alt="PDF" style="width:24px"> PDF (pdfmake)</a>
+  </p>
+  <table id="issue303" class="">
+    <caption>Issue 303: Chinese pdf export</caption>
+    <thead>
+    <tr>
+      <th>日期</th>
+      <th>项目ID</th>
+      <th>业主状态</th>
+      <th>城市</th>
+      <th>项目结果</th>
+      <th>回访节点</th>
+      <th>达成阶段</th>
+      <th>死单原因</th>
+      <th>创建时间</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>201611xx</td><td>12479xx</td><td>其他</td><td>吉安市</td><td>未量房死单</td><td>未量房</td><td>量房7天内</td><td>其他</td><td>2016-11-xx 17:31:03</td>
+    </tr>
+    <tr>
+      <td>201611xx</td><td>10897xxx</td><td>延期装修</td><td>苏州市</td><td>已看方案死单</td><td>已看方案</td><td>看三家</td><td>其他</td><td>2016-11-xx 15:18:24</td>
+    </tr>
+    <tr>
+      <td>201611xx</td><td>14741xxx</td><td>延期装修</td><td>西安市</td><td>未看方案死单</td><td>已量房</td><td>量房14天内</td><td>其他</td><td>2016-11-xx 14:07:14</td>
+    </tr>
+    <tr>
+      <td>201611xx</td><td>15098xxx</td><td>其他</td><td>六盘水市</td><td>未量房死单</td><td>未量房</td><td>量房7天内</td><td>公司电话报价</td><td>2016-11-xx 14:41:45</td>
+    </tr>
+    </tbody>
+  </table>
+  </body>
+</html>

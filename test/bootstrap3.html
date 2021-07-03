@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+  <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/export/bootstrap-table-export.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/toolbar/bootstrap-table-toolbar.js"></script>
+  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/filter-control/bootstrap-table-filter-control.js"></script>
+
+  <script type="text/javascript" src="../tableExport.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
+
+  <script type="text/javaScript">
+
+    $(document).ready(function()
+    {
+      var $table = $('#table');
+
+      $table.bootstrapTable('refreshOptions', {
+
+        exportOptions: {},
+        onExpandRow: function(index, row, $detail) {
+
+          $detail.html('<table></table>').find('table').bootstrapTable({
+            columns: [{
+              field: 'col3',
+              title: 'Col3'
+            }, {
+              field: 'col4',
+              title: 'Col4'
+            }, {
+              field: 'col5',
+              title: 'Col5'
+            }],
+            data: row.nested,
+            detailView: row.nested[0]['other'] !== undefined,
+            onExpandRow: function(indexb, rowb, $detailb) {
+              $detailb.html('<table></table>').find('table').bootstrapTable({
+                columns: [{
+                  field: 'col6',
+                  title: 'Col6'
+                }, {
+                  field: 'col7',
+                  title: 'Col7'
+                }],
+                data: rowb.other
+              });
+            }
+          });
+
+        }
+
+      });
+
+    });
+
+  </script>
+
+</head>
+<body>
+    <table id="table"
+           data-toggle="table"
+           data-show-export="true"
+           data-pagination="false"
+           data-search="true"
+           data-detail-view="true"
+           data-url="bootstrap3.json">
+      <thead>
+        <tr>
+          <th data-field="col1" data-sortable="true">Col 1</th>
+          <th data-field="col2" data-sortable="true">Col 2</th>
+        </tr>
+      </thead>
+    </table>
+</body>
+</html>
