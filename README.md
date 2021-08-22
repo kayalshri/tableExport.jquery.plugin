@@ -31,11 +31,10 @@ To export the table in XLSX (Excel 2007+ XML Format) format, you need to include
 <script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
 ```
 
-To export an html table to a PDF file, you can use jsPDF-AutoTable as a PDF producer:
+To export an html table to a PDF file, you can use jsPDF as a PDF producer:
 
 ```html
-<script type="text/javascript" src="libs/jsPDF/jspdf.min.js"></script>
-<script type="text/javascript" src="libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+<script type="text/javascript" src="libs/jsPDF/jspdf.umd.min.js"></script>
 ```
 
 Many HTML stylings can be converted to PDF with jsPDF, but support for non-western character sets is almost non-existent. Especially if you want to export Arabic or Chinese characters to your PDF file, you can use pdfmake as an alternative PDF producer. The disadvantage compared to jspdf is that using pdfmake has a reduced styling capability. To use pdfmake enable the pdfmake option and instead of the jsPDF files include    
@@ -78,12 +77,11 @@ Library | Version
 --------|--------
 [jQuery](https://github.com/jquery/jquery) | \>= 1.9.1
 [es6-promise](https://github.com/stefanpenner/es6-promise) | \>= 4.2.4
-[FileSaver](https://github.com/hhurz/tableExport.jquery.plugin/blob/master/libs/FileSaver/FileSaver.min.js) | \>= 1.2.0
-[html2canvas](https://github.com/niklasvh/html2canvas) | \>= 0.5.0-beta4
-[jsPDF](https://github.com/MrRio/jsPDF) | \>=1.3.4
-[jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) | 2.0.14 or 2.0.17
-[pdfmake](https://github.com/bpampuch/pdfmake) | 0.1.65
-[SheetJS](https://github.com/SheetJS/js-xlsx) | \>= 0.12.5
+[FileSaver](https://github.com/eligrey/FileSaver.js) | \>= 2.0.1
+[html2canvas](https://github.com/niklasvh/html2canvas) | \>= 1.0.0
+[jsPDF](https://github.com/MrRio/jsPDF) | \>=2.0.0
+[pdfmake](https://github.com/bpampuch/pdfmake) | 0.1.71
+[SheetJS](https://github.com/SheetJS/js-xlsx) | \>= 0.16.0
 
 
 
@@ -271,7 +269,7 @@ To export in XSLX format [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) i
 
 Note: There is an option ``` preventInjection ``` (default is enabled) that prevents formula injection when exporting in CSV or Excel format. To achieve that a single quote will be prepended to cell strings that start with =,+,- or @   
 
-For jspdf options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF) and [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) resp.
+For jsPDF options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF). To generate tables with jsPDF this plugin uses a specific modified version (2.0.17) of [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable). Due to compatibility reasons the source code of this version has been integrated and was adapted.
 
 There is an extended setting for ``` jsPDF option 'format' ```. Setting the option value to ``` 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
 

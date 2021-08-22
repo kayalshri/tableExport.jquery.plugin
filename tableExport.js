@@ -1,9 +1,10 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.10.26
+ * Version 1.20.0
  *
- * Copyright (c) 2015-2021 hhurz, https://github.com/hhurz/tableExport.jquery.plugin
+ * Copyright (c) 2015-2021 hhurz,
+ *   https://github.com/hhurz/tableExport.jquery.plugin
  *
  * Based on https://github.com/kayalshri/tableExport.jquery.plugin
  *
@@ -995,7 +996,7 @@
 
           var colcount = CollectPdfmakeData($hrows, 'th,td', $hrows.length);
 
-          for (var i = widths.length; i < colcount; i++)
+          for (let i = widths.length; i < colcount; i++)
             widths.push('*');
 
           // Data
@@ -1003,7 +1004,7 @@
 
           colcount = CollectPdfmakeData($rows, 'td', $hrows.length + $rows.length);
 
-          for (var i = widths.length; i < colcount; i++)
+          for (let i = widths.length; i < colcount; i++)
             widths.push('*');
 
           docDefinition.content.push({ table: {
@@ -1080,23 +1081,25 @@
       } else if (defaults.jspdf.autotable === false) {
         // pdf output using jsPDF's core html support
 
-        var addHtmlOptions = {
-          dim: {
-            w: getPropertyUnitValue($(el).first().get(0), 'width', 'mm'),
-            h: getPropertyUnitValue($(el).first().get(0), 'height', 'mm')
-          },
-          pagesplit: false
-        };
-
-        var doc = new jsPDF(defaults.jspdf.orientation, defaults.jspdf.unit, defaults.jspdf.format);
-        doc.addHTML($(el).first(),
-          defaults.jspdf.margins.left,
-          defaults.jspdf.margins.top,
-          addHtmlOptions,
-          function () {
+        let doc = new jspdf.jsPDF({orientation: defaults.jspdf.orientation,
+                                   unit: defaults.jspdf.unit,
+                                   format: defaults.jspdf.format});
+        doc.html(el[0], {
+          callback: function () {
             jsPdfOutput(doc, false);
-          });
-        //delete doc;
+          },
+          html2canvas: {scale: ((doc.internal.pageSize.width - defaults.jspdf.margins.left * 2) / el[0].scrollWidth)},
+          x: defaults.jspdf.margins.left,
+          y: defaults.jspdf.margins.top
+          /*
+          margin: [
+            defaults.jspdf.margins.left,
+            defaults.jspdf.margins.top,
+            getPropertyUnitValue($(el).first().get(0), 'width', 'mm'),
+            getPropertyUnitValue($(el).first().get(0), 'height', 'mm')
+          ]
+          */
+        });
       } else {
         // pdf output using jsPDF AutoTable plugin
         // https://github.com/simonbengtsson/jsPDF-AutoTable
@@ -1140,7 +1143,7 @@
         // The jsPDF doc object is stored in defaults.jspdf.autotable.tableExport,
         // thus it can be accessed from any callback function
         if (teOptions.doc == null) {
-          teOptions.doc = new jsPDF(defaults.jspdf.orientation,
+          teOptions.doc = new jspdf.jsPDF(defaults.jspdf.orientation,
             defaults.jspdf.unit,
             defaults.jspdf.format);
           teOptions.wScaleFactor = 1;
@@ -1442,7 +1445,7 @@
             if (typeof teOptions.onBeforeAutotable === 'function')
               teOptions.onBeforeAutotable($(this), teOptions.columns, teOptions.rows, atOptions);
 
-            teOptions.doc.autoTable(teOptions.columns, teOptions.rows, atOptions);
+            jsPdfAutoTable(teOptions.doc, teOptions.columns, teOptions.rows, atOptions);
 
             // onAfterAutotable: optional callback function after returning
             // from jsPDF AutoTable that can be used to modify the AutoTable options
@@ -1450,7 +1453,7 @@
               teOptions.onAfterAutotable($(this), atOptions);
 
             // set the start position for the next table (in case there is one)
-            defaults.jspdf.autotable.startY = teOptions.doc.autoTableEndPosY() + atOptions.margin.top;
+            defaults.jspdf.autotable.startY = jsPdfAutoTableEndPosY() + atOptions.margin.top;
 
           });
 
@@ -1700,7 +1703,7 @@
       }
 
       try {
-        var blob = doc.output('blob');
+        const blob = doc.output('blob')
         saveAs(blob, defaults.fileName + '.pdf');
       } catch (e) {
         downloadFile(defaults.fileName + '.pdf',
@@ -1710,18 +1713,18 @@
     }
 
     function prepareAutoTableText (cell, data, cellopt) {
-      var cs = 0;
+      let cs = 0
       if (typeof cellopt !== 'undefined')
         cs = cellopt.colspan;
 
       if (cs >= 0) {
         // colspan handling
-        var cellWidth = cell.width;
-        var textPosX = cell.textPos.x;
-        var i = data.table.columns.indexOf(data.column);
+        let cellWidth = cell.width
+        let textPosX = cell.textPos.x
+        const i = data.table.columns.indexOf(data.column)
 
-        for (var c = 1; c < cs; c++) {
-          var column = data.table.columns[i + c];
+        for (let c = 1; c < cs; c++) {
+          const column = data.table.columns[i + c]
           cellWidth += column.width;
         }
 
@@ -1899,7 +1902,7 @@
               i = true;
 
             if (b || i)
-              teOptions.doc.setFontType((b && i) ? 'bolditalic' : b ? 'bold' : 'italic');
+              teOptions.doc.setFont('undefined ', (b && i) ? 'bolditalic' : b ? 'bold' : 'italic');
 
             var w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
 
@@ -1911,7 +1914,7 @@
                   var s = txt.charAt(0);
                   w = teOptions.doc.getStringUnitWidth(s) * teOptions.doc.internal.getFontSize();
                   if ((x + w) <= (cell.textPos.x + cell.width)) {
-                    teOptions.doc.autoTableText(s, x, y, style);
+                    jsPdfAutoTableText(s, x, y, style);
                     txt = txt.substring(1, txt.length);
                   }
                   w = teOptions.doc.getStringUnitWidth(txt) * teOptions.doc.internal.getFontSize();
@@ -1927,7 +1930,7 @@
                 }
               }
 
-              teOptions.doc.autoTableText(txt, x, y, style);
+              jsPdfAutoTableText(txt, x, y, style);
               x += w;
             }
 
@@ -1937,7 +1940,7 @@
               else if ($(tag).is('i'))
                 i = false;
 
-              teOptions.doc.setFontType((!b && !i) ? 'normal' : b ? 'bold' : 'italic');
+              teOptions.doc.setFont('undefined ', (!b && !i) ? 'normal' : b ? 'bold' : 'italic');
             }
 
             tag = tag.nextSibling;
@@ -1945,7 +1948,7 @@
           cell.textPos.x = x;
           cell.textPos.y = y;
         } else {
-          teOptions.doc.autoTableText(cell.text, cell.textPos.x, cell.textPos.y, style);
+          jsPdfAutoTableText(cell.text, cell.textPos.x, cell.textPos.y, style);
         }
       }
     }
@@ -2545,10 +2548,13 @@
             binaryData.push(data);
             blobUrl = window.URL.createObjectURL(new Blob(binaryData, {type: header}));
             DownloadLink.href = blobUrl;
-          } else if (header.toLowerCase().indexOf('base64,') >= 0)
+          }
+          else if (header.toLowerCase().indexOf('base64,') >= 0) {
             DownloadLink.href = header + base64encode(data);
-          else
+          }
+          else {
             DownloadLink.href = header + encodeURIComponent(data);
+          }
 
           document.body.appendChild(DownloadLink);
 
@@ -2558,7 +2564,8 @@
 
             DownloadEvt.initEvent('click', true, false);
             DownloadLink.dispatchEvent(DownloadEvt);
-          } else if (document.createEventObject)
+          }
+          else if (document.createEventObject)
             DownloadLink.fireEvent('onclick');
           else if (typeof DownloadLink.onclick === 'function')
             DownloadLink.onclick();
@@ -2623,9 +2630,679 @@
       return output;
     }
 
+    // ----------------------------------------------------------------------------------------------------
+    // jsPDF-AutoTable 2.0.17 - BEGIN
+    // Adopted and adapted source code from https://github.com/simonbengtsson/jsPDF-AutoTable
+    // ----------------------------------------------------------------------------------------------------
+
+    var jsPdfDoc, // The current jspdf instance
+      jsPdfCursor, // An object keeping track of the x and y position of the next table cell to draw
+      jsPdfSettings, // Default options merged with user options
+      jsPdfPageCount, // The  page count the current table spans
+      jsPdfTable; // The current Table instance
+
+    function jsPdfAutoTable (doc, headers, data, options) {
+      jsPdfValidateInput(headers, data, options);
+      jsPdfDoc = doc;
+      jsPdfSettings = jsPdfInitOptions(options || {});
+      jsPdfPageCount = 1;
+
+      // Need a cursor y as it needs to be reset after each page (row.y can't do that)
+      jsPdfCursor = { y: jsPdfSettings.startY === false ? jsPdfSettings.margin.top : jsPdfSettings.startY };
+
+      var userStyles = {
+        textColor: 30, // Setting text color to dark gray as it can't be obtained from jsPDF
+        fontSize: jsPdfDoc.internal.getFontSize(),
+        fontStyle: jsPdfDoc.internal.getFont().fontStyle
+      };
+
+      // Create the table model with its columns, rows and cells
+      jsPdfCreateModels(headers, data);
+      jsPdfCalculateWidths();
+
+      // Page break if there is room for only the first data row
+      var firstRowHeight = jsPdfTable.rows[0] && jsPdfSettings.pageBreak === 'auto' ? jsPdfTable.rows[0].height : 0;
+      var minTableBottomPos = jsPdfSettings.startY + jsPdfSettings.margin.bottom + jsPdfTable.headerRow.height + firstRowHeight;
+      if (jsPdfSettings.pageBreak === 'avoid') {
+        minTableBottomPos += jsPdfTable.height;
+      }
+      if ((jsPdfSettings.pageBreak === 'always' && jsPdfSettings.startY !== false) ||
+        (jsPdfSettings.startY !== false && minTableBottomPos > jsPdfDoc.internal.pageSize.height)) {
+        jsPdfDoc.addPage();
+        jsPdfCursor.y = jsPdfSettings.margin.top;
+      }
+
+      jsPdfApplyStyles(userStyles);
+      jsPdfSettings.beforePageContent(jsPdfHooksData());
+      if (jsPdfSettings.drawHeaderRow(jsPdfTable.headerRow, jsPdfHooksData({row: jsPdfTable.headerRow})) !== false) {
+        jsPdfPrintRow(jsPdfTable.headerRow, jsPdfSettings.drawHeaderCell);
+      }
+      jsPdfApplyStyles(userStyles);
+      jsPdfPrintRows();
+      jsPdfSettings.afterPageContent(jsPdfHooksData());
+
+      jsPdfApplyStyles(userStyles);
+
+      return jsPdfDoc;
+    }
+
+    /**
+     * Returns the Y position of the last drawn cell
+     * @returns int
+     */
+    function jsPdfAutoTableEndPosY () {
+      if (typeof jsPdfCursor === 'undefined' || typeof jsPdfCursor.y === 'undefined') {
+        return 0;
+      }
+      return jsPdfCursor.y;
+    }
+
+    /**
+     * Improved text function with halign and valign support
+     * Inspiration from:
+     * http://stackoverflow.com/questions/28327510/align-text-right-using-jspdf/28433113#28433113
+     */
+    function jsPdfAutoTableText (text, x, y, styles) {
+      if (typeof x !== 'number' || typeof y !== 'number') {
+        console.error('The x and y parameters are required. Missing for the text: ', text);
+      }
+      var fontSize = jsPdfDoc.internal.getFontSize() / jsPdfDoc.internal.scaleFactor;
+
+      // As defined in jsPDF source code
+      var lineHeightProportion = FONT_ROW_RATIO;
+
+      var splitRegex = /\r\n|\r|\n/g;
+      var splittedText = null;
+      var lineCount = 1;
+      if (styles.valign === 'middle' || styles.valign === 'bottom' || styles.halign === 'center' || styles.halign === 'right') {
+        splittedText = typeof text === 'string' ? text.split(splitRegex) : text;
+
+        lineCount = splittedText.length || 1;
+      }
+
+      // Align the top
+      y += fontSize * (2 - lineHeightProportion);
+
+      if (styles.valign === 'middle')
+        y -= (lineCount / 2) * fontSize;
+      else if (styles.valign === 'bottom')
+        y -= lineCount * fontSize;
+
+      if (styles.halign === 'center' || styles.halign === 'right') {
+        var alignSize = fontSize;
+        if (styles.halign === 'center')
+          alignSize *= 0.5;
+
+        if (lineCount >= 1) {
+          for (var iLine = 0; iLine < splittedText.length; iLine++) {
+            jsPdfDoc.text(splittedText[iLine], x - jsPdfDoc.getStringUnitWidth(splittedText[iLine]) * alignSize, y);
+            y += fontSize;
+          }
+          return jsPdfDoc;
+        }
+        x -= jsPdfDoc.getStringUnitWidth(text) * alignSize;
+      }
+
+      jsPdfDoc.text(text, x, y);
+      return jsPdfDoc;
+    }
+
+    function jsPdfValidateInput(headers, data, options) {
+      if (!headers || typeof headers !== 'object') {
+        console.error("The headers should be an object or array, is: " + typeof headers);
+      }
+
+      if (!data || typeof data !== 'object') {
+        console.error("The data should be an object or array, is: " + typeof data);
+      }
+
+      if (!!options && typeof options !== 'object') {
+        console.error("The data should be an object or array, is: " + typeof data);
+      }
+
+      if (!Array.prototype.forEach) {
+        console.error("The current browser does not support Array.prototype.forEach which is required for jsPDF-AutoTable");
+      }
+    }
+
+    function jsPdfInitOptions(userOptions) {
+      var settings = jsPdfExtend(jsPdfDefaultOptions(), userOptions);
+
+      // Options
+      if (typeof settings.extendWidth !== 'undefined') {
+        settings.tableWidth = settings.extendWidth ? 'auto' : 'wrap';
+        console.error("Use of deprecated option: extendWidth, use tableWidth instead.");
+      }
+      if (typeof settings.margins !== 'undefined') {
+        if (typeof settings.margin === 'undefined') settings.margin = settings.margins;
+        console.error("Use of deprecated option: margins, use margin instead.");
+      }
+
+      [['padding', 'cellPadding'], ['lineHeight', 'rowHeight'], 'fontSize', 'overflow'].forEach(function (o) {
+        var deprecatedOption = typeof o === 'string' ? o : o[0];
+        var style = typeof o === 'string' ? o : o[1];
+        if (typeof settings[deprecatedOption] !== 'undefined') {
+          if (typeof settings.styles[style] === 'undefined') {
+            settings.styles[style] = settings[deprecatedOption];
+          }
+          console.error("Use of deprecated option: " + deprecatedOption + ", use the style " + style + " instead.");
+        }
+      });
+
+      // Unifying
+      var marginSetting = settings.margin;
+      settings.margin = {};
+      if (typeof marginSetting.horizontal === 'number') {
+        marginSetting.right = marginSetting.horizontal;
+        marginSetting.left = marginSetting.horizontal;
+      }
+      if (typeof marginSetting.vertical === 'number') {
+        marginSetting.top = marginSetting.vertical;
+        marginSetting.bottom = marginSetting.vertical;
+      }
+      ['top', 'right', 'bottom', 'left'].forEach(function (side, i) {
+        if (typeof marginSetting === 'number') {
+          settings.margin[side] = marginSetting;
+        } else {
+          var key = Array.isArray(marginSetting) ? i : side;
+          settings.margin[side] = typeof marginSetting[key] === 'number' ? marginSetting[key] : 40;
+        }
+      });
+
+      return settings;
+    }
+
+    /**
+     * Create models from the user input
+     *
+     * @param inputHeaders
+     * @param inputData
+     */
+    function jsPdfCreateModels(inputHeaders, inputData) {
+      jsPdfTable = new jsPdfTableClass();
+      jsPdfTable.x = jsPdfSettings.margin.left;
+
+      var splitRegex = /\r\n|\r|\n/g;
+
+      // Header row and columns
+      var headerRow = new jsPdfRowClass(inputHeaders);
+      headerRow.index = -1;
+
+      var themeStyles = jsPdfExtend(jsPdfDefaultStyles, jsPdfThemes[jsPdfSettings.theme].table, jsPdfThemes[jsPdfSettings.theme].header);
+      headerRow.styles = jsPdfExtend(themeStyles, jsPdfSettings.styles, jsPdfSettings.headerStyles);
+
+      // Columns and header row
+      inputHeaders.forEach(function (rawColumn, dataKey) {
+        if (typeof rawColumn === 'object') {
+          dataKey = typeof rawColumn.dataKey !== 'undefined' ? rawColumn.dataKey : rawColumn.key;
+        }
+
+        if (typeof rawColumn.width !== 'undefined') {
+          console.error("Use of deprecated option: column.width, use column.styles.columnWidth instead.");
+        }
+
+        var col = new jsPdfColumnClass(dataKey);
+        col.styles = jsPdfSettings.columnStyles[col.dataKey] || {};
+        jsPdfTable.columns.push(col);
+
+        var cell = new jsPdfCellClass();
+        cell.raw = typeof rawColumn === 'object' ? rawColumn.title : rawColumn;
+        cell.styles = jsPdfExtend(headerRow.styles);
+        cell.text = '' + cell.raw;
+        cell.contentWidth = cell.styles.cellPadding * 2 + jsPdfGetStringWidth(cell.text, cell.styles);
+        cell.text = cell.text.split(splitRegex);
+
+        headerRow.cells[dataKey] = cell;
+        jsPdfSettings.createdHeaderCell(cell, {column: col, row: headerRow, settings: jsPdfSettings});
+      });
+      jsPdfTable.headerRow = headerRow;
+
+      // Rows och cells
+      inputData.forEach(function (rawRow, i) {
+        var row = new jsPdfRowClass(rawRow);
+        var isAlternate = i % 2 === 0;
+        var themeStyles = jsPdfExtend(jsPdfDefaultStyles, jsPdfThemes[jsPdfSettings.theme].table, isAlternate ? jsPdfThemes[jsPdfSettings.theme].alternateRow : {});
+        var userStyles = jsPdfExtend(jsPdfSettings.styles, jsPdfSettings.bodyStyles, isAlternate ? jsPdfSettings.alternateRowStyles : {});
+        row.styles = jsPdfExtend(themeStyles, userStyles);
+        row.index = i;
+        jsPdfTable.columns.forEach(function (column) {
+          var cell = new jsPdfCellClass();
+          cell.raw = rawRow[column.dataKey];
+          cell.styles = jsPdfExtend(row.styles, column.styles);
+          cell.text = typeof cell.raw !== 'undefined' ? '' + cell.raw : ''; // Stringify 0 and false, but not undefined
+          row.cells[column.dataKey] = cell;
+          jsPdfSettings.createdCell(cell, jsPdfHooksData({column: column, row: row}));
+          cell.contentWidth = cell.styles.cellPadding * 2 + jsPdfGetStringWidth(cell.text, cell.styles);
+          cell.text = cell.text.split(splitRegex);
+        });
+        jsPdfTable.rows.push(row);
+      });
+    }
+
+    /**
+     * Calculate the column widths
+     */
+    function jsPdfCalculateWidths() {
+      // Column and table content width
+      var tableContentWidth = 0;
+      jsPdfTable.columns.forEach(function (column) {
+        column.contentWidth = jsPdfTable.headerRow.cells[column.dataKey].contentWidth;
+        jsPdfTable.rows.forEach(function (row) {
+          var cellWidth = row.cells[column.dataKey].contentWidth;
+          if (cellWidth > column.contentWidth) {
+            column.contentWidth = cellWidth;
+          }
+        });
+        column.width = column.contentWidth;
+        tableContentWidth += column.contentWidth;
+      });
+      jsPdfTable.contentWidth = tableContentWidth;
+
+      var maxTableWidth = jsPdfDoc.internal.pageSize.width - jsPdfSettings.margin.left - jsPdfSettings.margin.right;
+      var preferredTableWidth = maxTableWidth; // settings.tableWidth === 'auto'
+      if (typeof jsPdfSettings.tableWidth === 'number') {
+        preferredTableWidth = jsPdfSettings.tableWidth;
+      } else if (jsPdfSettings.tableWidth === 'wrap') {
+        preferredTableWidth = jsPdfTable.contentWidth;
+      }
+      jsPdfTable.width = preferredTableWidth < maxTableWidth ? preferredTableWidth : maxTableWidth;
+
+      // To avoid subjecting columns with little content with the chosen overflow method,
+      // never shrink a column more than the table divided by column count (its "fair part")
+      var dynamicColumns = [];
+      var dynamicColumnsContentWidth = 0;
+      var fairWidth = jsPdfTable.width / jsPdfTable.columns.length;
+      var staticWidth = 0;
+      jsPdfTable.columns.forEach(function (column) {
+        var colStyles = jsPdfExtend(jsPdfDefaultStyles, jsPdfThemes[jsPdfSettings.theme].table, jsPdfSettings.styles, column.styles);
+        if (colStyles.columnWidth === 'wrap') {
+          column.width = column.contentWidth;
+        } else if (typeof colStyles.columnWidth === 'number') {
+          column.width = colStyles.columnWidth;
+        } else if (colStyles.columnWidth === 'auto' || true) {
+          if (column.contentWidth <= fairWidth && jsPdfTable.contentWidth > jsPdfTable.width) {
+            column.width = column.contentWidth;
+          } else {
+            dynamicColumns.push(column);
+            dynamicColumnsContentWidth += column.contentWidth;
+            column.width = 0;
+          }
+        }
+        staticWidth += column.width;
+      });
+
+      // Distributes extra width or trims columns down to fit
+      jsPdfDistributeWidth(dynamicColumns, staticWidth, dynamicColumnsContentWidth, fairWidth);
+
+      // Row height, table height and text overflow
+      jsPdfTable.height = 0;
+      var all = jsPdfTable.rows.concat(jsPdfTable.headerRow);
+      all.forEach(function (row, i) {
+        var lineBreakCount = 0;
+        var cursorX = jsPdfTable.x;
+        jsPdfTable.columns.forEach(function (col) {
+          var cell = row.cells[col.dataKey];
+          col.x = cursorX;
+          jsPdfApplyStyles(cell.styles);
+          var textSpace = col.width - cell.styles.cellPadding * 2;
+          if (cell.styles.overflow === 'linebreak') {
+            // Add one pt to textSpace to fix rounding error
+            cell.text = jsPdfDoc.splitTextToSize(cell.text, textSpace + 1, {fontSize: cell.styles.fontSize});
+          } else if (cell.styles.overflow === 'ellipsize') {
+            cell.text = jsPdfEllipsize(cell.text, textSpace, cell.styles);
+          } else if (cell.styles.overflow === 'visible') {
+            // Do nothing
+          } else if (cell.styles.overflow === 'hidden') {
+            cell.text = jsPdfEllipsize(cell.text, textSpace, cell.styles, '');
+          } else if (typeof cell.styles.overflow === 'function') {
+            cell.text = cell.styles.overflow(cell.text, textSpace);
+          } else {
+            console.error("Unrecognized overflow type: " + cell.styles.overflow);
+          }
+          var count = Array.isArray(cell.text) ? cell.text.length - 1 : 0;
+          if (count > lineBreakCount) {
+            lineBreakCount = count;
+          }
+          cursorX += col.width;
+        });
+
+        row.heightStyle = row.styles.rowHeight;
+        // TODO Pick the highest row based on font size as well
+        row.height = row.heightStyle + lineBreakCount * row.styles.fontSize * FONT_ROW_RATIO;
+        jsPdfTable.height += row.height;
+      });
+    }
+
+    function jsPdfDistributeWidth(dynamicColumns, staticWidth, dynamicColumnsContentWidth, fairWidth) {
+      var extraWidth = jsPdfTable.width - staticWidth - dynamicColumnsContentWidth;
+      for (var i = 0; i < dynamicColumns.length; i++) {
+        var col = dynamicColumns[i];
+        var ratio = col.contentWidth / dynamicColumnsContentWidth;
+        // A column turned out to be none dynamic, start over recursively
+        var isNoneDynamic = col.contentWidth + extraWidth * ratio < fairWidth;
+        if (extraWidth < 0 && isNoneDynamic) {
+          dynamicColumns.splice(i, 1);
+          dynamicColumnsContentWidth -= col.contentWidth;
+          col.width = fairWidth;
+          staticWidth += col.width;
+          jsPdfDistributeWidth(dynamicColumns, staticWidth, dynamicColumnsContentWidth, fairWidth);
+          break;
+        } else {
+          col.width = col.contentWidth + extraWidth * ratio;
+        }
+      }
+    }
+
+    function jsPdfPrintRows() {
+      jsPdfTable.rows.forEach(function (row, i) {
+        if (jsPdfIsNewPage(row.height)) {
+          jsPdfAddPage();
+        }
+        row.y = jsPdfCursor.y;
+        if (jsPdfSettings.drawRow(row, jsPdfHooksData({row: row})) !== false) {
+          jsPdfPrintRow(row, jsPdfSettings.drawCell);
+        }
+      });
+    }
+
+    function jsPdfAddPage() {
+      jsPdfSettings.afterPageContent(jsPdfHooksData());
+      jsPdfDoc.addPage();
+      jsPdfPageCount++;
+      jsPdfCursor = {x: jsPdfSettings.margin.left, y: jsPdfSettings.margin.top};
+      jsPdfSettings.beforePageContent(jsPdfHooksData());
+      if (jsPdfSettings.drawHeaderRow(jsPdfTable.headerRow, jsPdfHooksData({row: jsPdfTable.headerRow})) !== false) {
+        jsPdfPrintRow(jsPdfTable.headerRow, jsPdfSettings.drawHeaderCell);
+      }
+    }
+
+    /**
+     * Add a new page if cursor is at the end of page
+     * @param rowHeight
+     * @returns {boolean}
+     */
+    function jsPdfIsNewPage(rowHeight) {
+      var afterRowPos = jsPdfCursor.y + rowHeight + jsPdfSettings.margin.bottom;
+      return afterRowPos >= jsPdfDoc.internal.pageSize.height;
+    }
+
+    function jsPdfPrintRow(row, hookHandler) {
+      for (var i = 0; i < jsPdfTable.columns.length; i++) {
+        var column = jsPdfTable.columns[i];
+        var cell = row.cells[column.dataKey];
+        if(!cell) {
+          continue;
+        }
+        jsPdfApplyStyles(cell.styles);
+
+        cell.x = column.x;
+        cell.y = jsPdfCursor.y;
+        cell.height = row.height;
+        cell.width = column.width;
+
+        if (cell.styles.valign === 'top') {
+          cell.textPos.y = jsPdfCursor.y + cell.styles.cellPadding;
+        } else if (cell.styles.valign === 'bottom') {
+          cell.textPos.y = jsPdfCursor.y + row.height - cell.styles.cellPadding;
+        } else {
+          cell.textPos.y = jsPdfCursor.y + row.height / 2;
+        }
+
+        if (cell.styles.halign === 'right') {
+          cell.textPos.x = cell.x + cell.width - cell.styles.cellPadding;
+        } else if (cell.styles.halign === 'center') {
+          cell.textPos.x = cell.x + cell.width / 2;
+        } else {
+          cell.textPos.x = cell.x + cell.styles.cellPadding;
+        }
+
+        var data = jsPdfHooksData({column: column, row: row});
+        if (hookHandler(cell, data) !== false) {
+          jsPdfDoc.rect(cell.x, cell.y, cell.width, cell.height, cell.styles.fillStyle);
+          jsPdfAutoTableText(cell.text, cell.textPos.x, cell.textPos.y, {
+            halign: cell.styles.halign,
+            valign: cell.styles.valign
+          });
+        }
+      }
+
+      jsPdfCursor.y += row.height;
+    }
+
+    function jsPdfApplyStyles(styles) {
+      var arr = [
+        {func: jsPdfDoc.setFillColor, value: styles.fillColor},
+        {func: jsPdfDoc.setTextColor, value: styles.textColor},
+        {func: jsPdfDoc.setFont, value: styles.font, style: styles.fontStyle},
+        {func: jsPdfDoc.setDrawColor, value: styles.lineColor},
+        {func: jsPdfDoc.setLineWidth, value: styles.lineWidth},
+        {func: jsPdfDoc.setFont, value: styles.font},
+        {func: jsPdfDoc.setFontSize, value: styles.fontSize}
+      ];
+      arr.forEach(function (obj) {
+        if (typeof obj.value !== 'undefined') {
+          if (obj.value.constructor === Array) {
+            obj.func.apply(jsPdfDoc, obj.value);
+          } else if (typeof obj.style !== 'undefined') {
+            obj.func(obj.value, obj.style);
+          } else {
+            obj.func(obj.value);
+          }
+        }
+      });
+    }
+
+    function jsPdfHooksData(additionalData) {
+      additionalData = additionalData || {};
+      var data = {
+        pageCount: jsPdfPageCount,
+        settings: jsPdfSettings,
+        table: jsPdfTable,
+        cursor: jsPdfCursor
+      };
+      for (var prop in additionalData) {
+        if (additionalData.hasOwnProperty(prop)) {
+          data[prop] = additionalData[prop];
+        }
+      }
+      return data;
+    }
+
+    /**
+     * Ellipsize the text to fit in the width
+     */
+    function jsPdfEllipsize(text, width, styles, ellipsizeStr) {
+      ellipsizeStr = typeof  ellipsizeStr !== 'undefined' ? ellipsizeStr : '...';
+
+      if (Array.isArray(text)) {
+        text.forEach(function (str, i) {
+          text[i] = jsPdfEllipsize(str, width, styles, ellipsizeStr);
+        });
+        return text;
+      }
+
+      if (width >= jsPdfGetStringWidth(text, styles)) {
+        return text;
+      }
+      while (width < jsPdfGetStringWidth(text + ellipsizeStr, styles)) {
+        if (text.length < 2) {
+          break;
+        }
+        text = text.substring(0, text.length - 1);
+      }
+      return text.trim() + ellipsizeStr;
+    }
+
+    function jsPdfGetStringWidth(text, styles) {
+      jsPdfApplyStyles(styles);
+      var w = jsPdfDoc.getStringUnitWidth(text);
+      return w * styles.fontSize;
+    }
+
+    function jsPdfExtend(defaults) {
+      var extended = {};
+      var prop;
+      for (prop in defaults) {
+        if (defaults.hasOwnProperty(prop)) {
+          extended[prop] = defaults[prop];
+        }
+      }
+      for (var i = 1; i < arguments.length; i++) {
+        const options = arguments[i]
+        for (prop in options) {
+          if (options.hasOwnProperty(prop)) {
+            extended[prop] = options[prop];
+          }
+        }
+      }
+      return extended;
+    }
+
+    // ----------------------------------------------------------------------------------------------------
+    // jsPDF-AutoTable 2.0.17 - END
+    // ----------------------------------------------------------------------------------------------------
+
     if (typeof defaults.onTableExportEnd === 'function')
       defaults.onTableExportEnd();
 
     return this;
   };
+
+  // Base style for all themes
+  var jsPdfDefaultStyles = {
+    cellPadding: 5,
+    fontSize: 10,
+    font: "helvetica", // helvetica, times, courier
+    lineColor: 200,
+    lineWidth: 0.1,
+    fontStyle: 'normal', // normal, bold, italic, bolditalic
+    overflow: 'ellipsize', // visible, hidden, ellipsize or linebreak
+    fillColor: 255,
+    textColor: 20,
+    halign: 'left', // left, center, right
+    valign: 'top', // top, middle, bottom
+    fillStyle: 'F', // 'S', 'F' or 'DF' (stroke, fill or fill then stroke)
+    rowHeight: 20,
+    columnWidth: 'auto'
+  };
+
+  // Styles for the themes
+  var jsPdfThemes = {
+    'striped': {
+      table: {
+        fillColor: 255,
+        textColor: 80,
+        fontStyle: 'normal',
+        fillStyle: 'F'
+      },
+      header: {
+        textColor: 255,
+        fillColor: [41, 128, 185],
+        rowHeight: 23,
+        fontStyle: 'bold'
+      },
+      body: {},
+      alternateRow: {fillColor: 245}
+    },
+    'grid': {
+      table: {
+        fillColor: 255,
+        textColor: 80,
+        fontStyle: 'normal',
+        lineWidth: 0.1,
+        fillStyle: 'DF'
+      },
+      header: {
+        textColor: 255,
+        fillColor: [26, 188, 156],
+        rowHeight: 23,
+        fillStyle: 'F',
+        fontStyle: 'bold'
+      },
+      body: {},
+      alternateRow: {}
+    },
+    'plain': {header: {fontStyle: 'bold'}}
+  };
+
+  // See README.md for documentation of the options
+  // See examples.js for usage examples
+  function jsPdfDefaultOptions () {
+    return {
+      // Styling
+      theme: 'striped', // 'striped', 'grid' or 'plain'
+      styles: {},
+      headerStyles: {},
+      bodyStyles: {},
+      alternateRowStyles: {},
+      columnStyles: {},
+
+      // Properties
+      startY: false, // false indicates the margin.top value
+      margin: 40,
+      pageBreak: 'auto', // 'auto', 'avoid', 'always'
+      tableWidth: 'auto', // number, 'auto', 'wrap'
+
+      // Hooks
+      createdHeaderCell: function (cell, data) {},
+      createdCell: function (cell, data) {},
+      drawHeaderRow: function (row, data) {},
+      drawRow: function (row, data) {},
+      drawHeaderCell: function (cell, data) {},
+      drawCell: function (cell, data) {},
+      beforePageContent: function (data) {},
+      afterPageContent: function (data) {}
+    }
+  }
+
+  class jsPdfTableClass {
+    constructor() {
+      this.height = 0;
+      this.width = 0;
+      this.x = 0;
+      this.y = 0;
+      this.contentWidth = 0;
+      this.rows = [];
+      this.columns = [];
+      this.headerRow = null;
+      this.settings = {};
+    }
+  }
+
+  class jsPdfRowClass {
+    constructor(raw) {
+      this.raw = raw || {};
+      this.index = 0;
+      this.styles = {};
+      this.cells = {};
+      this.height = 0;
+      this.y = 0;
+    }
+  }
+
+  class jsPdfCellClass {
+    constructor(raw) {
+      this.raw = raw;
+      this.styles = {};
+      this.text = '';
+      this.contentWidth = 0;
+      this.textPos = {};
+      this.height = 0;
+      this.width = 0;
+      this.x = 0;
+      this.y = 0;
+    }
+  }
+
+  class jsPdfColumnClass {
+    constructor(dataKey) {
+      this.dataKey = dataKey;
+      this.options = {};
+      this.styles = {};
+      this.contentWidth = 0;
+      this.width = 0;
+      this.x = 0;
+    }
+  }
+
 })(jQuery);
