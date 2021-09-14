@@ -26,9 +26,10 @@ To save the generated export files on client side, include in your html code:
 <script type="text/javascript" src="libs/FileSaver/FileSaver.min.js"></script>
 ```
 
-To export the table in XLSX (Excel 2007+ XML Format) format, you need to include additionally:
+To export the table in XLSX (Excel 2007+ XML Format) format, you need to include additionally [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx):
+
 ```html
-<script type="text/javascript" src="libs/js-xlsx/xlsx.core.min.js"></script>
+<script type="text/javascript" src="libs/xlsx/xlsx.core.min.js"></script>
 ```
 
 To export an html table to a PDF file, you can use jsPDF as a PDF producer:
