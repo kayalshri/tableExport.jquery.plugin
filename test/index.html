@@ -9,7 +9,7 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <!--<![endif]-->
   <!--[if lte IE 8]>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
   <![endif]-->
   <!--[if (!IE)|(gt IE 8)]><!-->
   <script type="text/javascript" src="../libs/pdfmake/pdfmake.min.js"></script>
@@ -97,7 +97,7 @@
   <script type="text/javaScript">
 
     function doExport(selector, params) {
-      var options = {
+      const options = {
         //ignoreRow: [1,11,12,-2],
         //ignoreColumn: [0,-1],
         //pdfmake: {enabled: true},
@@ -124,9 +124,9 @@
      * @return {string}
      */
     function DoOnCellHtmlData(cell, row, col, data) {
-      var result = "";
+      let result = "";
       if (data !== "") {
-        var html = $.parseHTML( data );
+        const html = $.parseHTML(data);
 
         $.each( html, function() {
           if ( typeof $(this).html() === 'undefined' )
@@ -146,7 +146,7 @@
      * @return {string}
      */
     function DoOnCsvCellData(cell, row, col, data) {
-      var result = data;
+      let result = data;
       if (result !== "" && row > 0 && col === 0) {
         result = "\x1F" + data;
       }
@@ -160,7 +160,7 @@
      * @return {number}
      */
     function DoOnXlsxCellData(cell, row, col, data) {
-      var result = data;
+      let result = data;
       if (result !== "" && (row < 1 || col !== 0)) {
         if ( result === +result )
           result = +result;
@@ -172,7 +172,7 @@
      * @return {string}
      */
     function DoOnMsoNumberFormat(cell, row, col) {
-      var result = "";
+      let result = "";
       if (row > 0 && col === 0)
         result = "\\@";
       else if (row > 0 && col === 2)

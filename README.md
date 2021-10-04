@@ -90,19 +90,19 @@ Library | Version
 Examples
 ========
 
-```
+```javascript
 // CSV format
 
 $('#tableID').tableExport({type:'csv'});
 ```
 
-```
+```javascript
 // Excel 2000 html format
 
 $('#tableID').tableExport({type:'excel'});
 ```
 
-```
+```javascript
 // XML Spreadsheet 2003 file format with multiple worksheet support
 
 $('table').tableExport({type:'excel',
@@ -110,7 +110,7 @@ $('table').tableExport({type:'excel',
                               worksheetName: ['Table 1','Table 2', 'Table 3']}});
 ```
 
-```
+```javascript
 // PDF export using jsPDF only
 
 $('#tableID').tableExport({type:'pdf',
@@ -120,7 +120,7 @@ $('#tableID').tableExport({type:'pdf',
                           });
 ```
 
-```
+```javascript
 // PDF format using jsPDF and jsPDF Autotable 
 
 $('#tableID').tableExport({type:'pdf',
@@ -134,7 +134,7 @@ $('#tableID').tableExport({type:'pdf',
                           });
 ```
 
-```
+```javascript
 // PDF format with callback example
 
 function DoCellData(cell, row, col, data) {}
@@ -151,7 +151,7 @@ $('table').tableExport({fileName: sFileName,
                        });
 ```
 
-```
+```javascript
 // PDF export using pdfmake
 
 $('#tableID').tableExport({type:'pdf',
@@ -163,7 +163,7 @@ $('#tableID').tableExport({type:'pdf',
 Options (Default settings)
 =======
 
-```
+```javascript
 csvEnclosure: '"'
 csvSeparator: ','
 csvUseBOM: true
@@ -217,7 +217,7 @@ mso: fileFormat: 'xlshtml'
                      numbers: 2
 numbers: html: decimalMark: '.'
                thousandsSeparator: ','
-         output: decimalMark: '.',
+         output: decimalMark: '.'
                  thousandsSeparator: ','
 onAfterSaveToFile: null
 onBeforeSaveToFile: null
@@ -235,7 +235,7 @@ pdfmake: enabled: false
                                         color: '#FFFFFF'
                                         bold: true
                                         alignment: 'center'
-                                        fillColor: '#34495E
+                                        fillColor: '#34495E'
                         alternateRow: fillColor: '#f5f5f5'
                         defaultStyle: color: '#000000'
                                       fontSize: 8
@@ -396,3 +396,8 @@ Excel Notes
 When exporting in Excel 2000 html format (xlshtml) the default extension of the result file is XLS although the type of the file content is HTML. When you open a file in Microsoft Office Excel 2007 or later that contains content that does not match the files extension, you receive the following warning message:
 ```The file you are trying to open, 'name.ext', is in a different format than specified by the file extension. Verify that the file is not corrupted and is from a trusted source before opening the file. Do you want to open the file now?```
 According to this [Knowledge base article](https://support.microsoft.com/en-us/help/948615/error-opening-file-the-file-format-differs-from-the-format-that-the-fi) The warning message can help prevent unexpected problems that might occur because of possible incompatibility between the actual content of the file and the file name extension. The article also gives you some hints to disable the warning message.
+
+Support
+=======
+The IDE used in the development of this project is supported by [JetBrains](https://jb.gg/OpenSource).
+<div><img alt="https://jb.gg/OpenSource" src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" style="width: 130px"></div>
