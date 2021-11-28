@@ -1,7 +1,7 @@
 /**
  * @preserve tableExport.jquery.plugin
  *
- * Version 1.20.1
+ * Version 1.20.2
  *
  * Copyright (c) 2015-2021 hhurz,
  *   https://github.com/hhurz/tableExport.jquery.plugin
@@ -21,21 +21,21 @@
       csvSeparator: ',',
       csvUseBOM: true,
       date: {
-        html: 'dd/mm/yyyy'  // Date format used in html source. Supported placeholders: dd, mm, yy, yyyy and a arbitrary single separator character
-      },
-      displayTableName: false,        // Deprecated
-      escape: false,        // Deprecated
-      exportHiddenCells: false,        // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
-      fileName: 'tableExport',
-      htmlContent: false,
-      htmlHyperlink: 'content',    // Export the 'content' or the 'href' link of <a> tags unless onCellHtmlHyperlink is not defined
-      ignoreColumn: [],
-      ignoreRow: [],
-      jsonScope: 'all',        // One of 'head', 'data', 'all'
+        html: 'dd/mm/yyyy'              // Date format used in html source. Supported placeholders: dd, mm, yy, yyyy and a arbitrary single separator character
+      },                                
+      displayTableName: false,          // Deprecated
+      escape: false,                    // Deprecated
+      exportHiddenCells: false,         // true = speed up export of large tables with hidden cells (hidden cells will be exported !)
+      fileName: 'tableExport',          
+      htmlContent: false,               
+      htmlHyperlink: 'content',         // Export the 'content' or the 'href' link of <a> tags unless onCellHtmlHyperlink is not defined
+      ignoreColumn: [],                 
+      ignoreRow: [],                    
+      jsonScope: 'all',                 // One of 'head', 'data', 'all'
       jspdf: {                          // jsPDF / jsPDF-AutoTable related options
-        orientation: 'p',
-        unit: 'pt',
-        format: 'a4',         // One of jsPDF page formats or 'bestfit' for automatic paper format selection
+        orientation: 'p',               
+        unit: 'pt',                     
+        format: 'a4',                   // One of jsPDF page formats or 'bestfit' for automatic paper format selection
         margins: {left: 20, right: 10, top: 10, bottom: 10},
         onDocCreated: null,
         autotable: {
@@ -43,25 +43,25 @@
             cellPadding: 2,
             rowHeight: 12,
             fontSize: 8,
-            fillColor: 255,          // Color value or 'inherit' to use css background-color from html table
-            textColor: 50,           // Color value or 'inherit' to use css color from html table
-            fontStyle: 'normal',     // 'normal', 'bold', 'italic', 'bolditalic' or 'inherit' to use css font-weight and font-style from html table
-            overflow: 'ellipsize',  // 'visible', 'hidden', 'ellipsize' or 'linebreak'
-            halign: 'inherit',    // 'left', 'center', 'right' or 'inherit' to use css horizontal cell alignment from html table
-            valign: 'middle'      // 'top', 'middle', or 'bottom'
-          },
-          headerStyles: {
-            fillColor: [52, 73, 94],
-            textColor: 255,
-            fontStyle: 'bold',
-            halign: 'inherit',    // 'left', 'center', 'right' or 'inherit' to use css horizontal header cell alignment from html table
-            valign: 'middle'      // 'top', 'middle', or 'bottom'
-          },
-          alternateRowStyles: {
-            fillColor: 245
-          },
-          tableExport: {
-            doc: null,    // jsPDF doc object. If set, an already created doc object will be used to export to
+            fillColor: 255,             // Color value or 'inherit' to use css background-color from html table
+            textColor: 50,              // Color value or 'inherit' to use css color from html table
+            fontStyle: 'normal',        // 'normal', 'bold', 'italic', 'bolditalic' or 'inherit' to use css font-weight and font-style from html table
+            overflow: 'ellipsize',      // 'visible', 'hidden', 'ellipsize' or 'linebreak'
+            halign: 'inherit',          // 'left', 'center', 'right' or 'inherit' to use css horizontal cell alignment from html table
+            valign: 'middle'            // 'top', 'middle', or 'bottom'
+          },                          
+          headerStyles: {             
+            fillColor: [52, 73, 94],  
+            textColor: 255,           
+            fontStyle: 'bold',        
+            halign: 'inherit',          // 'left', 'center', 'right' or 'inherit' to use css horizontal header cell alignment from html table
+            valign: 'middle'            // 'top', 'middle', or 'bottom'
+          },                          
+          alternateRowStyles: {       
+            fillColor: 245            
+          },                          
+          tableExport: {              
+            doc: null,                  // jsPDF doc object. If set, an already created doc object will be used to export to
             onAfterAutotable: null,
             onBeforeAutotable: null,
             onAutotableText: null,
@@ -71,45 +71,46 @@
         }
       },
       mso: {                            // MS Excel and MS Word related options
-        fileFormat: 'xlshtml',   // 'xlshtml' = Excel 2000 html format
-                                 // 'xmlss' = XML Spreadsheet 2003 file format (XMLSS)
-                                 // 'xlsx' = Excel 2007 Office Open XML format
+        fileFormat: 'xlshtml',          // 'xlshtml' = Excel 2000 html format
+                                        // 'xmlss' = XML Spreadsheet 2003 file format (XMLSS)
+                                        // 'xlsx' = Excel 2007 Office Open XML format
         onMsoNumberFormat: null,        // Excel 2000 html format only. See readme.md for more information about msonumberformat
-        pageFormat: 'a4',        // Page format used for page orientation
-        pageOrientation: 'portrait',  // portrait, landscape (xlshtml format only)
-        rtl: false,       // true = Set worksheet option 'DisplayRightToLeft'
-        styles: [],          // E.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
+        pageFormat: 'a4',               // Page format used for page orientation
+        pageOrientation: 'portrait',    // portrait, landscape (xlshtml format only)
+        rtl: false,                     // true = Set worksheet option 'DisplayRightToLeft'
+        styles: [],                     // E.g. ['border-bottom', 'border-top', 'border-left', 'border-right']
         worksheetName: '',
-        xslx: {                         // Specific Excel 2007 XML format settings:
+        xlsx: {                         // Specific Excel 2007 XML format settings:
           formatId: {                   // XLSX format (id) used to format excel cells. See readme.md: data-tableexport-xlsxformatid
-            date: 14,          // formatId or format string (e.g. 'm/d/yy') or function(cell, row, col) {return formatId}
-            numbers: 2            // formatId or format string (e.g. '\"T\"\ #0.00') or function(cell, row, col) {return formatId}
-          }
+            date: 14,                   // formatId or format string (e.g. 'm/d/yy') or function(cell, row, col) {return formatId}
+            numbers: 2                  // formatId or format string (e.g. '\"T\"\ #0.00') or function(cell, row, col) {return formatId}
+          },
+          onHyperlink: null             // function($cell, row, col, href, content, hyperlink): Return what to export for hyperlinks
         }
       },
       numbers: {
         html: {
-          decimalMark: '.',      // Decimal mark in html source
+          decimalMark: '.',             // Decimal mark in html source
           thousandsSeparator: ','       // Thousands separator in html source
         },
         output: {                       // Set 'output: false' to keep number format of html source in resulting output
-          decimalMark: '.',      // Decimal mark in resulting output
+          decimalMark: '.',             // Decimal mark in resulting output
           thousandsSeparator: ','       // Thousands separator in resulting output
         }
       },
-      onAfterSaveToFile: null,        // function(data, fileName)
-      onBeforeSaveToFile: null,        // saveIt = function(data, fileName, type, charset, encoding): Return false to abort save process
-      onCellData: null,        // Text to export = function($cell, row, col, href, cellText, cellType)
-      onCellHtmlData: null,        // Text to export = function($cell, row, col, htmlContent)
+      onAfterSaveToFile: null,          // function(data, fileName)
+      onBeforeSaveToFile: null,         // saveIt = function(data, fileName, type, charset, encoding): Return false to abort save process
+      onCellData: null,                 // Text to export = function($cell, row, col, href, cellText, cellType)
+      onCellHtmlData: null,             // Text to export = function($cell, row, col, htmlContent)
       onCellHtmlHyperlink: null,        // Text to export = function($cell, row, col, href, cellText)
-      onIgnoreRow: null,        // ignoreRow = function($tr, row): Return true to prevent export of the row
-      onTableExportBegin: null,        // function() - called when export starts
-      onTableExportEnd: null,        // function() - called when export ends
-      outputMode: 'file',      // 'file', 'string', 'base64' or 'window' (experimental)
+      onIgnoreRow: null,                // ignoreRow = function($tr, row): Return true to prevent export of the row
+      onTableExportBegin: null,         // function() - called when export starts
+      onTableExportEnd: null,           // function() - called when export ends
+      outputMode: 'file',               // 'file', 'string', 'base64' or 'window' (experimental)
       pdfmake: {
-        enabled: false,       // true: Use pdfmake as pdf producer instead of jspdf and jspdf-autotable
+        enabled: false,                 // true: Use pdfmake as pdf producer instead of jspdf and jspdf-autotable
         docDefinition: {
-          pageSize: 'A4',        // 4A0,2A0,A{0-10},B{0-10},C{0-10},RA{0-4},SRA{0-4},EXECUTIVE,FOLIO,LEGAL,LETTER,TABLOID
+          pageSize: 'A4',               // 4A0,2A0,A{0-10},B{0-10},C{0-10},RA{0-4},SRA{0-4},EXECUTIVE,FOLIO,LEGAL,LETTER,TABLOID
           pageOrientation: 'portrait',  // 'portrait' or 'landscape'
           styles: {
             header: {
@@ -126,25 +127,25 @@
           defaultStyle: {
             color: '#000000',
             fontSize: 8,
-            font: 'Roboto'     // Default font is 'Roboto' which needs vfs_fonts.js to be included
+            font: 'Roboto'              // Default font is 'Roboto' which needs vfs_fonts.js to be included
           }                             // To export arabic characters include mirza_fonts.js _instead_ of vfs_fonts.js
         },                              // For a chinese font include either gbsn00lp_fonts.js or ZCOOLXiaoWei_fonts.js _instead_ of vfs_fonts.js
         fonts: {}
       },
       preserve: {
-        leadingWS: false,       // preserve leading white spaces
-        trailingWS: false        // preserve trailing white spaces
+        leadingWS: false,               // preserve leading white spaces
+        trailingWS: false               // preserve trailing white spaces
       },
-      preventInjection: true,        // Prepend a single quote to cell strings that start with =,+,- or @ to prevent formula injection
+      preventInjection: true,           // Prepend a single quote to cell strings that start with =,+,- or @ to prevent formula injection
       sql: {
-        tableEnclosure: '`',        // If table name or column names contain any characters except letters, numbers, and
-        columnEnclosure: '`'         // underscores, usually the name must be delimited by enclosing it in back quotes (`)
+        tableEnclosure: '`',            // If table name or column names contain any characters except letters, numbers, and
+        columnEnclosure: '`'            // underscores, usually the name must be delimited by enclosing it in back quotes (`)
       },
       tbodySelector: 'tr',
-      tfootSelector: 'tr',        // Set empty ('') to prevent export of tfoot rows
+      tfootSelector: 'tr',              // Set empty ('') to prevent export of tfoot rows
       theadSelector: 'tr',
       tableName: 'Table',
-      type: 'csv'        // Export format: 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
+      type: 'csv'                       // Export format: 'csv', 'tsv', 'txt', 'sql', 'json', 'xml', 'excel', 'doc', 'png' or 'pdf'
     };
 
     const pageFormats = { // Size in pt of various paper formats. Adopted from jsPDF.
@@ -208,16 +209,16 @@
     const jsPdfDefaultStyles = { // Base style for all themes
       cellPadding: 5,
       fontSize: 10,
-      font: "helvetica", // helvetica, times, courier
+      font: "helvetica",         // helvetica, times, courier
       lineColor: 200,
       lineWidth: 0.1,
-      fontStyle: 'normal', // normal, bold, italic, bolditalic
-      overflow: 'ellipsize', // visible, hidden, ellipsize or linebreak
+      fontStyle: 'normal',       // normal, bold, italic, bolditalic
+      overflow: 'ellipsize',     // visible, hidden, ellipsize or linebreak
       fillColor: 255,
       textColor: 20,
-      halign: 'left', // left, center, right
-      valign: 'top', // top, middle, bottom
-      fillStyle: 'F', // 'S', 'F' or 'DF' (stroke, fill or fill then stroke)
+      halign: 'left',            // left, center, right
+      valign: 'top',             // top, middle, bottom
+      fillStyle: 'F',            // 'S', 'F' or 'DF' (stroke, fill or fill then stroke)
       rowHeight: 20,
       columnWidth: 'auto'
     };
@@ -242,20 +243,22 @@
       defaults.mso.fileFormat = defaults.type;
       defaults.type = 'excel';
     }
-    if (typeof defaults.excelFileFormat !== 'undefined' && defaults.mso.fileFormat === 'undefined')
+    if (typeof defaults.excelFileFormat !== 'undefined' && typeof defaults.mso.fileFormat === 'undefined')
       defaults.mso.fileFormat = defaults.excelFileFormat;
-    if (typeof defaults.excelPageFormat !== 'undefined' && defaults.mso.pageFormat === 'undefined')
+    if (typeof defaults.excelPageFormat !== 'undefined' && typeof defaults.mso.pageFormat === 'undefined')
       defaults.mso.pageFormat = defaults.excelPageFormat;
-    if (typeof defaults.excelPageOrientation !== 'undefined' && defaults.mso.pageOrientation === 'undefined')
+    if (typeof defaults.excelPageOrientation !== 'undefined' && typeof defaults.mso.pageOrientation === 'undefined')
       defaults.mso.pageOrientation = defaults.excelPageOrientation;
-    if (typeof defaults.excelRTL !== 'undefined' && defaults.mso.rtl === 'undefined')
+    if (typeof defaults.excelRTL !== 'undefined' && typeof defaults.mso.rtl === 'undefined')
       defaults.mso.rtl = defaults.excelRTL;
-    if (typeof defaults.excelstyles !== 'undefined' && defaults.mso.styles === 'undefined')
+    if (typeof defaults.excelstyles !== 'undefined' && typeof defaults.mso.styles === 'undefined')
       defaults.mso.styles = defaults.excelstyles;
-    if (typeof defaults.onMsoNumberFormat !== 'undefined' && defaults.mso.onMsoNumberFormat === 'undefined')
+    if (typeof defaults.onMsoNumberFormat !== 'undefined' && typeof defaults.mso.onMsoNumberFormat === 'undefined')
       defaults.mso.onMsoNumberFormat = defaults.onMsoNumberFormat;
-    if (typeof defaults.worksheetName !== 'undefined' && defaults.mso.worksheetName === 'undefined')
+    if (typeof defaults.worksheetName !== 'undefined' && typeof defaults.mso.worksheetName === 'undefined')
       defaults.mso.worksheetName = defaults.worksheetName;
+    if (typeof defaults.mso.xslx !== 'undefined' && typeof defaults.mso.xlsx === 'undefined')
+      defaults.mso.xlsx = defaults.mso.xslx;
 
     // Check values of some options
     defaults.mso.pageOrientation = (defaults.mso.pageOrientation.substr(0, 1) === 'l') ? 'landscape' : 'portrait';
@@ -2099,12 +2102,15 @@
 
                 if ($(this).is('a')) {
                   const href = $cell.find('a').attr('href') || '';
-                  if (typeof defaults.onCellHtmlHyperlink === 'function')
+                  if (typeof defaults.onCellHtmlHyperlink === 'function') {
                     result += defaults.onCellHtmlHyperlink($cell, rowIndex, colIndex, href, htmlData);
-                  else if (defaults.htmlHyperlink === 'href')
+                  }
+                  else if (defaults.htmlHyperlink === 'href') {
                     result += href;
-                  else // 'content'
+                  }
+                  else { // 'content'
                     result += htmlData;
+                  }
                   htmlData = '';
                 }
               }
@@ -2323,11 +2329,10 @@
       let ssfId;
       const ws = ({});
       const rows = table.getElementsByTagName('tr');
-      const sheetRows = 10000000;
+      const sheetRows = Math.min(10000000, rows.length);
       const range = {s: {r: 0, c: 0}, e: {r: 0, c: 0}};
       let merges = [], midx = 0;
-      const rowinfo = [];
-      let _R = 0, R = 0, _C, C, RS, CS;
+      let _R = 0, R = 0, _C = 0, C = 0, RS = 0, CS = 0;
       let elt;
       const ssfTable = XLSX.SSF.get_table();
 
@@ -2406,26 +2411,27 @@
           if (v != null) {
             let vd;
 
-            if (v.length === 0)
+            if (v.length === 0) {
               o.t = 'z';
+            }
             else if (v.trim().length === 0) {
             }
             else if (_t === 's') {
-              if ($(elt).find('a').length) {
-                v = defaults.htmlHyperlink !== 'href' ? v : '';
-                o = {f: '=HYPERLINK("' + $(elt).find('a').attr('href') + (v.length ? '","' + v : '') + '")'};
-              }
             }
-            else if (cellInfo.type === 'function')
+            else if (cellInfo.type === 'function') {
               o = {f: v};
-            else if (v === 'TRUE')
+            }
+            else if (v === 'TRUE') {
               o = {t: 'b', v: true};
-            else if (v === 'FALSE')
+            }
+            else if (v === 'FALSE') {
               o = {t: 'b', v: false};
+            }
             else if (_t === 'n' || isFinite(xlsxToNumber(v, defaults.numbers.output))) { // yes, defaults.numbers.output is right
               const vn = xlsxToNumber(v, defaults.numbers.output);
-              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function')
+              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.numbers !== 'function') {
                 ssfId = defaults.mso.xslx.formatId.numbers;
+              }
               if (isFinite(vn) || isFinite(v))
                 o = {
                   t: 'n',
@@ -2434,47 +2440,80 @@
                 };
             }
             else if ((vd = parseDateUTC(v)) !== false || _t === 'd') {
-              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.date !== 'function')
+              if (ssfId === 0 && typeof defaults.mso.xslx.formatId.date !== 'function') {
                 ssfId = defaults.mso.xslx.formatId.date;
+              }
               o = {
                 t: 'd',
                 v: (vd !== false ? vd : v),
                 z: (typeof ssfId === 'string') ? ssfId : (ssfId in ssfTable ? ssfTable[ssfId] : 'm/d/yy')
               };
             }
+            const $aTag = $(elt).find('a');
+            if ($aTag && $aTag.length) {
+              const href = $aTag[0].hasAttribute("href") ? $aTag.attr('href') : '';
+              const content = (defaults.htmlHyperlink !== 'href' || href === '') ? v : '';
+              const hyperlink = (href !== '') ? '=HYPERLINK("' + href + (content.length ? '","' + content : '') + '")' : '';
+
+              if (hyperlink !== '') {
+                if (typeof defaults.mso.xlsx.onHyperlink === 'function') {
+                  v = defaults.mso.xlsx.onHyperlink($(elt), _R, _C, href, content, hyperlink);
+                  if (v.indexOf('=HYPERLINK') !== 0) {
+                    o = {t: 's', v: v};
+                  } else {
+                    o = {f: v};
+                  }
+                } else {
+                  o = {f: hyperlink};
+                }
+              }
+            }
           }
           ws[xlsxEncodeCell({c: C, r: R})] = o;
-          if (range.e.c < C)
+          if (range.e.c < C) {
             range.e.c = C;
+          }
           C += CS;
         }
         ++R;
       }
-      if (merges.length) ws['!merges'] = merges;
-      if (rowinfo.length) ws['!rows'] = rowinfo;
-      range.e.r = R - 1;
+      if (merges.length) {
+        ws['!merges'] = (ws["!merges"] || []).concat(merges);
+      }
+      range.e.r = Math.max(range.e.r, R - 1);
       ws['!ref'] = xlsxEncodeRange(range);
-      if (R >= sheetRows)
+      if (R >= sheetRows) {
         ws['!fullref'] = xlsxEncodeRange((range.e.r = rows.length - _R + R - 1, range));
+      }
       return ws;
     }
 
-    function xlsxEncodeRow (row) { return '' + (row + 1); }
+    function xlsxEncodeRow (row) {
+      return '' + (row + 1);
+    }
 
     function xlsxEncodeCol (col) {
       let s = '';
-      for (++col; col; col = Math.floor((col - 1) / 26)) s = String.fromCharCode(((col - 1) % 26) + 65) + s;
+      for (++col; col; col = Math.floor((col - 1) / 26)) {
+        s = String.fromCharCode(((col - 1) % 26) + 65) + s;
+      }
       return s;
     }
 
-    function xlsxEncodeCell (cell) { return xlsxEncodeCol(cell.c) + xlsxEncodeRow(cell.r); }
+    function xlsxEncodeCell (cell) {
+      return xlsxEncodeCol(cell.c) + xlsxEncodeRow(cell.r);
+    }
 
     function xlsxEncodeRange (cs, ce) {
       if (typeof ce === 'undefined' || typeof ce === 'number') {
         return xlsxEncodeRange(cs.s, cs.e);
       }
-      if (typeof cs !== 'string') cs = xlsxEncodeCell((cs));
-      if (typeof ce !== 'string') ce = xlsxEncodeCell((ce));
+      if (typeof cs !== 'string') {
+        cs = xlsxEncodeCell((cs));
+      }
+      if (typeof ce !== 'string') {
+        ce = xlsxEncodeCell((ce));
+      }
       return cs === ce ? cs : cs + ':' + ce;
     }
 

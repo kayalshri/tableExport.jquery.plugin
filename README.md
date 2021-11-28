@@ -168,8 +168,6 @@ csvEnclosure: '"'
 csvSeparator: ','
 csvUseBOM: true
 date: html: 'dd/mm/yyyy'
-displayTableName: false  (Deprecated)
-escape: false  (Deprecated)
 exportHiddenCells: false
 fileName: 'tableExport'
 htmlContent: false
@@ -213,8 +211,9 @@ mso: fileFormat: 'xlshtml'
      rtl: false
      styles: []
      worksheetName: ''
-     xslx: formatId: date: 14
+     xlsx: formatId: date: 14
                      numbers: 2
+           onHyperlink: null
 numbers: html: decimalMark: '.'
                thousandsSeparator: ','
          output: decimalMark: '.'
@@ -252,29 +251,37 @@ theadSelector: 'tr'
 tableName: 'myTableName'
 type: 'csv'
 ```
-
-```ignoreColumn``` can be either an array of indexes (i.e. [0, 2]) or field names (i.e. ["id", "name"]).
+### Notes on options that apply to all formats
+The option ```ignoreColumn``` can be either an array of indexes (i.e. [0, 2]) or field names (i.e. ["id", "name"]), where
 * Indexes correspond to the position of the header elements `th` in the DOM starting at 0. (If the `th` elements are removed or added to the DOM, the indexes will be shifted so use the functionality wisely!)
 * Field names should correspond to the values set on the "data-field" attribute of the header elements `th` in the DOM.
 * "Nameless" columns without data-field attribute will be named by their index number (converted to a string)
 
 To disable formatting of numbers in the exported output, which can be useful for csv and excel format, set the option ``` numbers: output ``` to ``` false ```.
 
+There is an option ``` preventInjection ``` (enabled by default) that prevents the injection of formulas when exporting in CSV or Excel format. To achieve this, a single quote is appended to cell strings starting with =,+,- or @
+
+There are a couple of format-independent and format-specific callback functions that can be used to control the output result during export. All callback functions have a name starting with `on` and are initialized with null.
+
+### Notes for Excel formats
 Set the option ``` mso.fileFormat ``` to ``` 'xmlss' ``` if you want to export in XML Spreadsheet 2003 file format. Use this format if multiple tables should be exported into a single file. 
 
 Excel 2000 html format is the default excel file format which has better support of exporting table styles.
 
 The ``` mso.styles ``` option lets you define the css attributes of the original html table cells, that should be taken over when exporting to an excel worksheet (Excel 2000 html format only).
 
-To export in XSLX format [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that the implementation of this format type lets you only export table data, but not any styling information of the html table.
+To export in XSLX format [SheetJS/js-xlsx](https://github.com/SheetJS/js-xlsx) is used. Please note that with this format the amount of exportable styling information of the HTML table is limited compared to other formats.
 
-Note: There is an option ``` preventInjection ``` (default is enabled) that prevents formula injection when exporting in CSV or Excel format. To achieve that a single quote will be prepended to cell strings that start with =,+,- or @   
+When exporting in Excel 2000 html format (xlshtml), the default extension of the output file is XLS, although the type of the file content is HTML. When you open a file in Microsoft Office Excel 2007 or later that contains content that does not match the extensionof the file, you receive the following warning message:
+```The file you are trying to open, 'name.ext', is in a different format than specified by the file extension. Verify that the file is not corrupted and is from a trusted source before opening the file. Do you want to open the file now?```
+According to a [Knowledge base article](https://support.microsoft.com/en-us/help/948615/error-opening-file-the-file-format-differs-from-the-format-that-the-fi) the warning message can help prevent unexpected problems that might occur because of possible incompatibility between the actual content of the file and the file name extension. The article also gives you some hints to disable the warning message.
 
+### PDF format related options
 For jsPDF options see the documentation of [jsPDF](https://github.com/MrRio/jsPDF). To generate tables with jsPDF this plugin uses a specific modified version (2.0.17) of [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable). Due to compatibility reasons the source code of this version has been integrated and was adapted.
 
-There is an extended setting for ``` jsPDF option 'format' ```. Setting the option value to ``` 'bestfit' ``` lets the tableExport plugin try to choose the minimum required paper format and orientation in which the table (or tables in multitable mode) completely fits without column adjustment.
+There is an extended setting for the jsPDF option ``` format ```. If you set the value of the option to ``bestfit``, the tableExport plugin will try to choose the minimum required paper size and orientation in which the table (or tables in multitable mode) can be displayed without column adjustment.
 
-Also there is an extended setting for the ``` jsPDF-AutoTable options 'fillColor', 'textColor' and 'fontStyle'```. When setting these option values to ``` 'inherit' ``` the original css values for background and text color will be used as fill and text color while exporting to pdf. A css font-weight >= 700 results in a bold fontStyle and the italic css font-style will be used as italic fontStyle.
+Also there is an extended setting for the jsPDF-AutoTable options ``` 'fillColor', 'textColor' and 'fontStyle'```. When setting these option values to ``` 'inherit' ``` the original css values for background and text color will be used as fill and text color while exporting to pdf. A css font-weight >= 700 results in a bold fontStyle and the italic css font-style will be used as italic fontStyle.
 
 When exporting to pdf the option ``` outputImages ``` lets you enable or disable the output of images that are located in the original html table.
 
@@ -389,13 +396,6 @@ Optional html data attributes
                                                    "49"                @
                                                    "56"                上午/下午 hh時mm分ss秒
 ```
-
-Excel Notes
-===========
-
-When exporting in Excel 2000 html format (xlshtml) the default extension of the result file is XLS although the type of the file content is HTML. When you open a file in Microsoft Office Excel 2007 or later that contains content that does not match the files extension, you receive the following warning message:
-```The file you are trying to open, 'name.ext', is in a different format than specified by the file extension. Verify that the file is not corrupted and is from a trusted source before opening the file. Do you want to open the file now?```
-According to this [Knowledge base article](https://support.microsoft.com/en-us/help/948615/error-opening-file-the-file-format-differs-from-the-format-that-the-fi) The warning message can help prevent unexpected problems that might occur because of possible incompatibility between the actual content of the file and the file name extension. The article also gives you some hints to disable the warning message.
 
 Support
 =======

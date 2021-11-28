@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML table Export</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../libs/js-xlsx/xlsx.core.min.js"></script>
+  <script type="text/javascript" src="../libs/FileSaver/FileSaver.min.js"></script>
+  <script type="text/javascript" src="../tableExport.js"></script>
+  <script type="text/javascript">
+
+    function DoOnXlsxHyperlink($cell, row, col, href, content, hyperlink) {
+      if (row > 0) {
+        if (col === 3)
+          return hyperlink;
+        if (col === 4)
+          return content;
+        if (col === 5)
+          return href;
+        if (col === 6) {
+          const new_href = 'https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population';
+          const new_content = 'List of countries';
+
+          return '=HYPERLINK("' + new_href + '","' + new_content + '")';
+        }
+      }
+    }
+
+    $(document).ready(function() {
+      $('#export').click(function() {
+        $('#countries').tableExport( {
+          type: 'excel',
+          mso: {
+            fileFormat: 'xlsx',
+            xlsx: {
+              onHyperlink: DoOnXlsxHyperlink
+            }
+          }
+        });
+      });
+    });
+
+  </script>
+</head>
+<body>
+  <section>
+    <h1>
+      HTML table export to xlsx: onHyperlink Example<br>
+    </h1>
+  </section>
+  <section>
+    <button id="export">Export to Excel</button>
+    <p>
+      <table id="countries">
+        <thead>
+        <tr>
+          <th data-field="rank">Rank</th>
+          <th data-field="country">Country</th>
+          <th data-field="language">Language</th>
+          <th>Original hyperlink</th>
+          <th>Cell content as text</th>
+          <th>Cell href as text</th>
+          <th>Modified hyperlink</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>1</td>
+          <td>China</td>
+          <td>中文</td>
+          <td><a title="China" href="/wiki/China">China</a></td>
+          <td><a title="China" href="/wiki/China">China</a></td>
+          <td><a title="China" href="/wiki/China">China</a></td>
+          <td><a title="China" href="/wiki/China">China</a></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>India</td>
+          <td>हिन्दी</td>
+          <td><a title="India" href="/wiki/India">India</a></td>
+          <td><a title="India" href="/wiki/India">India</a></td>
+          <td><a title="India" href="/wiki/India">India</a></td>
+          <td><a title="India" href="/wiki/India">India</a></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>United States</td>
+          <td>English</td>
+          <td><a title="United States" href="/wiki/United_States">United States</a></td>
+          <td><a title="United States" href="/wiki/United_States">United States</a></td>
+          <td><a title="United States" href="/wiki/United_States">United States</a></td>
+          <td><a title="United States" href="/wiki/United_States">United States</a></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Indonesia</td>
+          <td></td>
+          <td><a title="Indonesia" href="/wiki/Indonesia">Indonesia</a></td>
+          <td><a title="Indonesia" href="/wiki/Indonesia">Indonesia</a></td>
+          <td><a title="Indonesia" href="/wiki/Indonesia">Indonesia</a></td>
+          <td><a title="Indonesia" href="/wiki/Indonesia">Indonesia</a></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Japan</td>
+          <td>日本語</td>
+          <td><a title="Japan" href="/wiki/Japan">Japan</a></td>
+          <td><a title="Japan" href="/wiki/Japan">Japan</a></td>
+          <td><a title="Japan" href="/wiki/Japan">Japan</a></td>
+          <td><a title="Japan" href="/wiki/Japan">Japan</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </p>
+  </section>
+</body>
+</html>
